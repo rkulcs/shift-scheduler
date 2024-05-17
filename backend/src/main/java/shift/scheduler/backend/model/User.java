@@ -1,8 +1,10 @@
-package shift.scheduler.backend.entity;
+package shift.scheduler.backend.model;
 
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.Transient;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 @MappedSuperclass
 public class User {
@@ -10,6 +12,8 @@ public class User {
     @Id
     private String username;
 
+    @NotBlank
+    @NotNull
     private String name;
 
     @Transient

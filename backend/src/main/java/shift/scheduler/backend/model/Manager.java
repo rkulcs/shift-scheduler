@@ -1,4 +1,4 @@
-package shift.scheduler.backend.entity;
+package shift.scheduler.backend.model;
 
 import jakarta.persistence.Entity;
 
