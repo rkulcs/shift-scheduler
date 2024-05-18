@@ -4,7 +4,6 @@ import jakarta.validation.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import shift.scheduler.backend.model.Employee;
@@ -76,6 +75,7 @@ public class UserController {
             ResponseEntity.badRequest().body("User not found");
         }
 
+        // TODO: Complete implementation
         if (passwordEncoder.matches(password, passwordHash))
             return ResponseEntity.ok("Successfully logged in");
         else
