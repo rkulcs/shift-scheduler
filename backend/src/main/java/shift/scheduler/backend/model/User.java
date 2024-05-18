@@ -10,6 +10,8 @@ import jakarta.validation.constraints.NotNull;
 public class User {
 
     @Id
+    @NotNull
+    @NotBlank
     private String username;
 
     @NotBlank
@@ -19,9 +21,17 @@ public class User {
     @Transient
     private String password;
 
+    @NotBlank
+    @NotNull
     private String passwordHash;
 
     public User() {}
+
+    public User(String username, String name, String password) {
+        this.username = username;
+        this.name = name;
+        this.password = password;
+    }
 
     public String getUsername() {
         return username;
@@ -53,5 +63,9 @@ public class User {
 
     public void setPasswordHash(String passwordHash) {
         this.passwordHash = passwordHash;
+    }
+
+    public static boolean validatePassword(String password) {
+        return (password != null && 8 <= password.length() && password.length() <= 200);
     }
 }

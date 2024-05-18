@@ -1,10 +1,12 @@
 package shift.scheduler.backend.controller;
 
 import jakarta.validation.ConstraintViolationException;
+import org.hibernate.TransactionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.TransactionSystemException;
 import org.springframework.web.bind.annotation.*;
 import shift.scheduler.backend.model.Employee;
 import shift.scheduler.backend.model.Manager;
@@ -16,14 +18,17 @@ import shift.scheduler.backend.repository.ManagerRepository;
 @RequestMapping("user")
 public class UserController {
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private ManagerRepository managerRepository;
+    private final ManagerRepository managerRepository;
 
-    @Autowired
-    private EmployeeRepository employeeRepository;
+    private final EmployeeRepository employeeRepository;
+
+    public UserController(PasswordEncoder passwordEncoder, ManagerRepository managerRepository, EmployeeRepository employeeRepository) {
+        this.passwordEncoder = passwordEncoder;
+        this.managerRepository = managerRepository;
+        this.employeeRepository = employeeRepository;
+    }
 
     @PostMapping(value = "/manager/register", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> registerManager(@RequestBody Manager manager) {
@@ -31,11 +36,14 @@ public class UserController {
         if (managerRepository.existsById(manager.getUsername()))
             return ResponseEntity.badRequest().body("Username taken");
 
+        if (!User.validatePassword(manager.getPassword()))
+            return ResponseEntity.badRequest().body("Invalid password");
+
         try {
             manager.setPasswordHash(passwordEncoder.encode(manager.getPassword()));
             managerRepository.save(manager);
             return ResponseEntity.ok("Account created");
-        } catch (ConstraintViolationException e) {
+        } catch (ConstraintViolationException | TransactionSystemException e) {
             return ResponseEntity.badRequest().body("Invalid user details");
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body("Internal server error");
@@ -48,11 +56,14 @@ public class UserController {
         if (employeeRepository.existsById(employee.getUsername()))
             return ResponseEntity.badRequest().body("Username taken");
 
+        if (!User.validatePassword(employee.getPassword()))
+            return ResponseEntity.badRequest().body("Invalid password");
+
         try {
             employee.setPasswordHash(passwordEncoder.encode(employee.getPassword()));
             employeeRepository.save(employee);
             return ResponseEntity.ok("Account created");
-        } catch (ConstraintViolationException e) {
+        } catch (ConstraintViolationException | TransactionSystemException e) {
             return ResponseEntity.badRequest().body("Invalid user details");
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body("Internal server error");
