@@ -6,7 +6,7 @@ import jakarta.persistence.TemporalType;
 
 import java.util.Calendar;
 
-@Entity
+//@Entity
 public class Shift extends TimePeriod {
 
     @Temporal(TemporalType.DATE)

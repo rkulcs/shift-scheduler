@@ -23,30 +23,8 @@ public class EmployeeController {
     private AvailabilityRepository availabilityRepository;
 
     // TODO: Perform authorization
-//    @PostMapping(value = "/{username}/availability/new", consumes = MediaType.APPLICATION_JSON_VALUE)
-//    public ResponseEntity<String> newAvailability(@RequestBody Availability availability,
-//                                                  @PathVariable String username) {
-//
-//        Employee employee = employeeRepository.findById(username).orElse(null);
-//
-//        if (employee == null)
-//            return ResponseEntity.badRequest().body("Employee does not exist");
-//
-//        availability.setEmployee(employee);
-//
-//        try {
-//            availabilityRepository.save(availability);
-//        } catch (ConstraintViolationException e) {
-//            return ResponseEntity.badRequest().body("Invalid details");
-//        } catch (Exception e) {
-//            return ResponseEntity.internalServerError().body("Internal server error");
-//        }
-//
-//        return ResponseEntity.ok("Availability added");
-//    }
-
     @PostMapping(value = "/{username}/availability", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> newAvailabilites(@RequestBody Collection<Availability> availabilities,
+    public ResponseEntity<String> newAvailabilities(@RequestBody Collection<Availability> availabilities,
                                                   @PathVariable String username) {
 
         Employee employee = employeeRepository.findById(username).orElse(null);

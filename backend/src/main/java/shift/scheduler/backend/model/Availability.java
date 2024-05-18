@@ -1,10 +1,9 @@
 package shift.scheduler.backend.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import jakarta.persistence.*;
 
 @Entity
+@IdClass(AvailabilityId.class)
 public class Availability extends TimePeriod {
 
     public enum Day {
@@ -17,16 +16,29 @@ public class Availability extends TimePeriod {
         SUN
     }
 
+    @Id
+    @ManyToOne
+    private Employee employee;
+
+    @Id
     @Enumerated(EnumType.ORDINAL)
-    private Day day;
+    private Availability.Day day;
 
     public Availability() {}
 
-    public Day getDay() {
+    public Employee getEmployee() {
+        return employee;
+    }
+
+    public void setEmployee(Employee employee) {
+        this.employee = employee;
+    }
+
+    public Availability.Day getDay() {
         return day;
     }
 
-    public void setDay(Day day) {
+    public void setDay(Availability.Day day) {
         this.day = day;
     }
 }
