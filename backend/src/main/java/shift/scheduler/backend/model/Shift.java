@@ -1,14 +1,19 @@
 package shift.scheduler.backend.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
+import jakarta.persistence.*;
+import shift.scheduler.backend.model.id.ShiftId;
 
 import java.util.Calendar;
 
-//@Entity
+@Entity
+@IdClass(ShiftId.class)
 public class Shift extends TimePeriod {
 
+    @Id
+    @ManyToOne
+    private Employee employee;
+
+    @Id
     @Temporal(TemporalType.DATE)
     private Calendar date;
 

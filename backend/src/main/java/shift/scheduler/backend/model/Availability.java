@@ -1,6 +1,7 @@
 package shift.scheduler.backend.model;
 
 import jakarta.persistence.*;
+import shift.scheduler.backend.model.id.AvailabilityId;
 
 @Entity
 @IdClass(AvailabilityId.class)
