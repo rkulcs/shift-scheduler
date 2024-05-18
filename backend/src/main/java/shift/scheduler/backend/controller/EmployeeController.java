@@ -10,6 +10,8 @@ import shift.scheduler.backend.model.Employee;
 import shift.scheduler.backend.repository.AvailabilityRepository;
 import shift.scheduler.backend.repository.EmployeeRepository;
 
+import java.util.Collection;
+
 @RestController
 @RequestMapping("employee")
 public class EmployeeController {
@@ -21,8 +23,30 @@ public class EmployeeController {
     private AvailabilityRepository availabilityRepository;
 
     // TODO: Perform authorization
-    @PostMapping(value = "/{username}/availability/new", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> newAvailability(@RequestBody Availability availability,
+//    @PostMapping(value = "/{username}/availability/new", consumes = MediaType.APPLICATION_JSON_VALUE)
+//    public ResponseEntity<String> newAvailability(@RequestBody Availability availability,
+//                                                  @PathVariable String username) {
+//
+//        Employee employee = employeeRepository.findById(username).orElse(null);
+//
+//        if (employee == null)
+//            return ResponseEntity.badRequest().body("Employee does not exist");
+//
+//        availability.setEmployee(employee);
+//
+//        try {
+//            availabilityRepository.save(availability);
+//        } catch (ConstraintViolationException e) {
+//            return ResponseEntity.badRequest().body("Invalid details");
+//        } catch (Exception e) {
+//            return ResponseEntity.internalServerError().body("Internal server error");
+//        }
+//
+//        return ResponseEntity.ok("Availability added");
+//    }
+
+    @PostMapping(value = "/{username}/availability", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> newAvailabilites(@RequestBody Collection<Availability> availabilities,
                                                   @PathVariable String username) {
 
         Employee employee = employeeRepository.findById(username).orElse(null);
@@ -30,16 +54,16 @@ public class EmployeeController {
         if (employee == null)
             return ResponseEntity.badRequest().body("Employee does not exist");
 
-        availability.setEmployee(employee);
+        availabilities.forEach(availability -> availability.setEmployee(employee));
 
         try {
-            availabilityRepository.save(availability);
+            availabilityRepository.saveAll(availabilities);
         } catch (ConstraintViolationException e) {
             return ResponseEntity.badRequest().body("Invalid details");
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body("Internal server error");
         }
 
-        return ResponseEntity.ok("Availability added");
+        return ResponseEntity.ok("Availabilities added");
     }
 }
