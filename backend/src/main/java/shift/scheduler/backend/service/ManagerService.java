@@ -13,15 +13,18 @@ public class ManagerService extends UserService {
     @Autowired
     private ManagerRepository managerRepository;
 
+    @Autowired
+    private AccountService accountService;
+
     @Override
     public User save(User user) throws EntityValidationException {
 
-        super.hashPassword(user);
+        if (user.getAccount() == null)
+            throw new EntityValidationException("Missing account details");
+
+        accountService.hashPassword(user.getAccount());
 
         Manager manager = (Manager) user;
-
-        if (managerRepository.existsById(manager.getUsername()))
-            throw new EntityValidationException("Username taken");
 
         try {
             managerRepository.save(manager);
@@ -33,11 +36,11 @@ public class ManagerService extends UserService {
 
     @Override
     public boolean existsByUsername(String username) {
-        return managerRepository.existsById(username);
+        return managerRepository.existsByAccountUsername(username);
     }
 
     @Override
     public User findByUsername(String username) {
-        return managerRepository.findById(username).orElse(null);
+        return managerRepository.findByAccountUsername(username).orElse(null);
     }
 }

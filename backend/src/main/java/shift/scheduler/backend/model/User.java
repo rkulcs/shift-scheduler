@@ -1,71 +1,39 @@
 package shift.scheduler.backend.model;
 
-import jakarta.persistence.Id;
-import jakarta.persistence.MappedSuperclass;
-import jakarta.persistence.Transient;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import jakarta.persistence.*;
+import org.hibernate.annotations.Cascade;
 
 @MappedSuperclass
-public class User {
+public abstract class User {
 
     @Id
-    @NotNull
-    @NotBlank
-    private String username;
+    @GeneratedValue
+    private Long id;
 
-    @NotBlank
-    @NotNull
-    private String name;
+    @OneToOne(cascade = CascadeType.ALL)
+    private Account account;
 
-    @Transient
-    private String password;
+    public Long getId() {
+        return id;
+    }
 
-    @NotBlank
-    @NotNull
-    private String passwordHash;
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public User() {}
+    public Account getAccount() {
+        return account;
+    }
 
-    public User(String username, String name, String password) {
-        this.username = username;
-        this.name = name;
-        this.password = password;
+    public void setAccount(Account account) {
+        this.account = account;
     }
 
     public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
+        return account.getUsername();
     }
 
     public String getPasswordHash() {
-        return passwordHash;
-    }
-
-    public void setPasswordHash(String passwordHash) {
-        this.passwordHash = passwordHash;
-    }
-
-    public static boolean validatePassword(String password) {
-        return (password != null && 8 <= password.length() && password.length() <= 200);
+        return account.getPasswordHash();
     }
 }

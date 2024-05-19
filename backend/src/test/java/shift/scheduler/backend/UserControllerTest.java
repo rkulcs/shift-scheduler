@@ -18,7 +18,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import shift.scheduler.backend.controller.UserController;
 import shift.scheduler.backend.model.Manager;
-import shift.scheduler.backend.model.User;
 import shift.scheduler.backend.repository.EmployeeRepository;
 import shift.scheduler.backend.repository.ManagerRepository;
 

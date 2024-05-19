@@ -1,7 +1,6 @@
 package shift.scheduler.backend.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 
 import java.util.Collection;
 
@@ -17,7 +16,6 @@ public class Employee extends User {
     private Collection<Availability> availabilities;
 
     public Employee() {
-        super();
     }
 
     public Short getMinHoursPerDay() {

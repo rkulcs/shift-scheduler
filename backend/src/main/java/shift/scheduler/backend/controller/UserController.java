@@ -1,14 +1,16 @@
 package shift.scheduler.backend.controller;
 
-import jakarta.validation.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.TransactionSystemException;
 import org.springframework.web.bind.annotation.*;
+import shift.scheduler.backend.model.Account;
 import shift.scheduler.backend.model.Employee;
 import shift.scheduler.backend.model.Manager;
 import shift.scheduler.backend.model.User;
+import shift.scheduler.backend.repository.EmployeeRepository;
+import shift.scheduler.backend.repository.ManagerRepository;
+import shift.scheduler.backend.service.AccountService;
 import shift.scheduler.backend.service.EmployeeService;
 import shift.scheduler.backend.service.ManagerService;
 import shift.scheduler.backend.service.UserService;
@@ -22,6 +24,9 @@ public class UserController {
 
     @Autowired
     private EmployeeService employeeService;
+
+    @Autowired
+    private AccountService accountService;
 
     public ResponseEntity<String> register(User user, UserService service) {
 
@@ -44,14 +49,16 @@ public class UserController {
     }
 
     @PostMapping(value = "/login", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> login(@RequestBody User user) {
+    public ResponseEntity<String> login(@RequestBody Account account) {
 
         boolean isValid = false;
 
-        if (employeeService.existsByUsername(user.getUsername())) {
-            isValid = employeeService.validatePassword(user);
-        } else if (managerService.existsByUsername(user.getUsername())) {
-            isValid = employeeService.validatePassword(user);
+        if (employeeService.existsByUsername(account.getUsername())) {
+            User user = employeeService.findByUsername(account.getUsername());
+            isValid = accountService.validatePassword(account, user);
+        } else if (managerService.existsByUsername(account.getUsername())) {
+            User user = managerService.findByUsername(account.getUsername());
+            isValid = accountService.validatePassword(account, user);
         } else {
             return ResponseEntity.badRequest().body("User not found");
         }
