@@ -40,9 +40,11 @@ public class EmployeeRepositoryTest {
             try {
                 employeeRepository.save(employee);
             } catch (Exception e) {
+                assertThat(employeeRepository.findByAccountUsername(username)).isEmpty();
+                return;
             }
 
-            assertThat(employeeRepository.findByAccountUsername(username)).isEmpty();
+            throw new Exception("Invalid account saved");
         }
     }
 }

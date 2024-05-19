@@ -7,9 +7,6 @@ import shift.scheduler.backend.model.Account;
 import shift.scheduler.backend.model.Manager;
 import shift.scheduler.backend.util.Util;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
@@ -43,9 +40,11 @@ public class ManagerRepositoryTest {
             try {
                 managerRepository.save(manager);
             } catch (Exception e) {
+                assertThat(managerRepository.findByAccountUsername(username)).isEmpty();
+                return;
             }
 
-            assertThat(managerRepository.findByAccountUsername(username)).isEmpty();
+            throw new Exception("Invalid account saved");
         }
     }
 }
