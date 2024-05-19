@@ -9,8 +9,10 @@ import jakarta.persistence.OneToOne;
 public class Manager extends User {
 
     public Manager() {
+        super();
     }
 
-    public Manager(String username, String name, String password) {
+    public Manager(Account account) {
+        super(account);
     }
 }

@@ -15,7 +15,10 @@ public class Employee extends User {
     @OneToMany
     private Collection<Availability> availabilities;
 
-    public Employee() {
+    public Employee() {}
+
+    public Employee(Account account) {
+        super(account);
     }
 
     public Short getMinHoursPerDay() {

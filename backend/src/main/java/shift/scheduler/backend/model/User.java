@@ -13,6 +13,12 @@ public abstract class User {
     @OneToOne(cascade = CascadeType.ALL)
     private Account account;
 
+    public User() {}
+
+    public User(Account account) {
+        this.setAccount(account);
+    }
+
     public Long getId() {
         return id;
     }

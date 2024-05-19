@@ -8,8 +8,6 @@ import shift.scheduler.backend.model.Account;
 import shift.scheduler.backend.model.Employee;
 import shift.scheduler.backend.model.Manager;
 import shift.scheduler.backend.model.User;
-import shift.scheduler.backend.repository.EmployeeRepository;
-import shift.scheduler.backend.repository.ManagerRepository;
 import shift.scheduler.backend.service.AccountService;
 import shift.scheduler.backend.service.EmployeeService;
 import shift.scheduler.backend.service.ManagerService;
