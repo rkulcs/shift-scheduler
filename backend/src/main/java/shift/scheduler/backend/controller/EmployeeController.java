@@ -27,7 +27,7 @@ public class EmployeeController {
     public ResponseEntity<String> newAvailabilities(@RequestBody Collection<Availability> availabilities,
                                                   @PathVariable String username) {
 
-        Employee employee = employeeRepository.findById(username).orElse(null);
+        Employee employee = employeeRepository.findByAccountUsername(username).orElse(null);
 
         if (employee == null)
             return ResponseEntity.badRequest().body("Employee does not exist");

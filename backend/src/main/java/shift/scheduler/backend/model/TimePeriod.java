@@ -1,12 +1,17 @@
 package shift.scheduler.backend.model;
 
 import jakarta.persistence.*;
+import shift.scheduler.backend.util.validator.Hour;
+import shift.scheduler.backend.util.validator.Interval;
 
 @MappedSuperclass
+@Interval
 public class TimePeriod {
 
+    @Hour
     private Short startHour;
 
+    @Hour
     private Short endHour;
 
     public TimePeriod() {}

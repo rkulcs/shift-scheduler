@@ -19,14 +19,12 @@ import shift.scheduler.backend.model.User;
 import shift.scheduler.backend.service.AccountService;
 import shift.scheduler.backend.service.EmployeeService;
 import shift.scheduler.backend.service.ManagerService;
-import shift.scheduler.backend.util.EntityValidationException;
+import shift.scheduler.backend.util.exception.EntityValidationException;
 import shift.scheduler.backend.util.Util;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;

@@ -1,10 +1,7 @@
 package shift.scheduler.backend.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import shift.scheduler.backend.model.Account;
 import shift.scheduler.backend.model.User;
-import shift.scheduler.backend.util.EntityValidationException;
+import shift.scheduler.backend.util.exception.EntityValidationException;
 
 public abstract class UserService {
 

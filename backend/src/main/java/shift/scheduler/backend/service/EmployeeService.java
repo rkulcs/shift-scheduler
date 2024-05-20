@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import shift.scheduler.backend.model.Employee;
 import shift.scheduler.backend.model.User;
 import shift.scheduler.backend.repository.EmployeeRepository;
-import shift.scheduler.backend.util.EntityValidationException;
+import shift.scheduler.backend.util.exception.EntityValidationException;
 
 @Service
 public class EmployeeService extends UserService  {

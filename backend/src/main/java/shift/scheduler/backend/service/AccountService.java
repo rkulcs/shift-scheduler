@@ -5,7 +5,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import shift.scheduler.backend.model.Account;
 import shift.scheduler.backend.model.User;
-import shift.scheduler.backend.util.EntityValidationException;
+import shift.scheduler.backend.util.exception.EntityValidationException;
 
 @Service
 public class AccountService {

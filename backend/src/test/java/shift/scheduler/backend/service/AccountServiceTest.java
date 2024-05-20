@@ -7,7 +7,7 @@ import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import shift.scheduler.backend.model.Account;
-import shift.scheduler.backend.util.EntityValidationException;
+import shift.scheduler.backend.util.exception.EntityValidationException;
 import shift.scheduler.backend.util.Util;
 
 import java.util.ArrayList;

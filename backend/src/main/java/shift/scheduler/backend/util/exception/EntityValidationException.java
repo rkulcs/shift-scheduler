@@ -1,4 +1,4 @@
-package shift.scheduler.backend.util;
+package shift.scheduler.backend.util.exception;
 
 public class EntityValidationException extends Exception {
 

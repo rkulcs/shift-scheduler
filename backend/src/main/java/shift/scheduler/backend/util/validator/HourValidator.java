@@ -3,14 +3,14 @@ package shift.scheduler.backend.util.validator;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
-public class MultipleOfFourValidator implements ConstraintValidator<MultipleOfFour, Short> {
+public class HourValidator implements ConstraintValidator<Hour, Short> {
     @Override
-    public void initialize(MultipleOfFour constraintAnnotation) {
+    public void initialize(Hour constraintAnnotation) {
         ConstraintValidator.super.initialize(constraintAnnotation);
     }
 
     @Override
     public boolean isValid(Short aShort, ConstraintValidatorContext constraintValidatorContext) {
-        return (aShort % 4 == 0);
+        return (0 <= aShort && aShort <= 24 && (aShort % 4 == 0));
     }
 }
