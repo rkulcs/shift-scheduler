@@ -21,6 +21,16 @@ public class Employee extends User {
         super(account);
     }
 
+    public Employee(Account account, Short minHoursPerDay, Short maxHoursPerDay,
+                    Short minHoursPerWeek, Short maxHoursPerWeek) {
+
+        super(account);
+        this.minHoursPerDay = minHoursPerDay;
+        this.maxHoursPerDay = maxHoursPerDay;
+        this.minHoursPerWeek = minHoursPerWeek;
+        this.maxHoursPerWeek = maxHoursPerWeek;
+    }
+
     public Short getMinHoursPerDay() {
         return minHoursPerDay;
     }

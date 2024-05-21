@@ -13,16 +13,11 @@ public class ManagerService extends UserService {
     @Autowired
     private ManagerRepository managerRepository;
 
-    @Autowired
-    private AccountService accountService;
-
     @Override
     public User save(User user) throws EntityValidationException {
 
         if (user.getAccount() == null)
             throw new EntityValidationException("Missing account details");
-
-        accountService.hashPassword(user.getAccount());
 
         Manager manager = (Manager) user;
 

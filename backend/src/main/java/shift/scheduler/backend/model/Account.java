@@ -29,12 +29,9 @@ public class Account implements UserDetails {
     @NotNull
     private String name;
 
-    @Transient
-    private String password;
-
     @NotBlank
     @NotNull
-    private String passwordHash;
+    private String password;
 
     public Account() {}
 
@@ -91,14 +88,6 @@ public class Account implements UserDetails {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public String getPasswordHash() {
-        return passwordHash;
-    }
-
-    public void setPasswordHash(String passwordHash) {
-        this.passwordHash = passwordHash;
     }
 
     public static boolean validatePassword(String password) {

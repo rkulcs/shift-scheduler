@@ -12,28 +12,9 @@ import shift.scheduler.backend.util.exception.EntityValidationException;
 public class AccountService {
 
     @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
     private AccountRepository accountRepository;
 
     public Account findByUsername(String username) {
         return accountRepository.findById(username).orElse(null);
-    }
-
-    public void hashPassword(Account account) throws EntityValidationException {
-
-        if (!Account.validatePassword(account.getPassword()))
-            throw new EntityValidationException("Invalid password");
-
-        account.setPasswordHash(passwordEncoder.encode(account.getPassword()));
-    }
-
-    public boolean validatePassword(Account credentials, User user) {
-
-        String password = credentials.getPassword();
-        String passwordHash = user.getPasswordHash();
-
-        return passwordEncoder.matches(password, passwordHash);
     }
 }

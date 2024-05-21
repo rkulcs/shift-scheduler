@@ -1,7 +1,6 @@
 package shift.scheduler.backend.model;
 
 import jakarta.persistence.*;
-import org.hibernate.annotations.Cascade;
 
 @MappedSuperclass
 public abstract class User {
@@ -37,9 +36,5 @@ public abstract class User {
 
     public String getUsername() {
         return account.getUsername();
-    }
-
-    public String getPasswordHash() {
-        return account.getPasswordHash();
     }
 }
