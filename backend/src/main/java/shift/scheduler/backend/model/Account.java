@@ -33,16 +33,40 @@ public class Account implements UserDetails {
     @NotNull
     private String password;
 
+    @NotNull
+    private Role role;
+
     public Account() {}
 
-    public Account(String username, String name, String password) {
+    public Account(String username, String name, String password, Role role) {
         this.username = username;
         this.name = name;
         this.password = password;
+        this.role = role;
     }
 
     public String getUsername() {
         return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     @Override
@@ -65,29 +89,10 @@ public class Account implements UserDetails {
         return true;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
+        return List.of(role);
     }
 
     public static boolean validatePassword(String password) {

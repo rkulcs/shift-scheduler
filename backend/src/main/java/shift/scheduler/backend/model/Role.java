@@ -1,6 +1,8 @@
 package shift.scheduler.backend.model;
 
-public enum Role {
+import org.springframework.security.core.GrantedAuthority;
+
+public enum Role implements GrantedAuthority {
     MANAGER("MANAGER"),
     EMPLOYEE("EMPLOYEE");
 
@@ -8,5 +10,10 @@ public enum Role {
 
     Role(final String text) {
         this.text = text;
+    }
+
+    @Override
+    public String getAuthority() {
+        return text;
     }
 }

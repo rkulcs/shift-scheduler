@@ -57,7 +57,8 @@ public class AuthenticationService {
         Account account = new Account(
                 request.getUsername(),
                 request.getName(),
-                passwordEncoder.encode(request.getPassword())
+                passwordEncoder.encode(request.getPassword()),
+                request.getRole()
         );
 
         if (request.getRole() == Role.EMPLOYEE) {
