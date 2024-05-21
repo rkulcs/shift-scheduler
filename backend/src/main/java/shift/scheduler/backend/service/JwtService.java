@@ -22,6 +22,9 @@ import java.util.function.Function;
 @Service
 public class JwtService {
 
+    // Assuming that the Authorization header value begins with "Bearer "
+    private static final int HEADER_JWT_START_INDEX = 7;
+
     @Value("${application.security.jwt.secret-key}")
     private String secretKey;
 
@@ -30,6 +33,10 @@ public class JwtService {
 
     @Value("${application.security.jwt.refresh-token}")
     private long refresh;
+
+    public String extractTokenFromHeader(String header) {
+        return header.substring(HEADER_JWT_START_INDEX);
+    }
 
     public String generateToken(UserDetails userDetails) {
         return buildToken(new HashMap<>(), userDetails);

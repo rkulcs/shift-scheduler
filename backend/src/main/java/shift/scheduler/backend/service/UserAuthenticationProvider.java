@@ -1,4 +1,4 @@
-package shift.scheduler.backend.config;
+package shift.scheduler.backend.service;
 
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
