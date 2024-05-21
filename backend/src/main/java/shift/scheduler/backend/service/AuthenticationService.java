@@ -35,7 +35,7 @@ public class AuthenticationService {
         String token;
         String error;
 
-        private AuthenticationResult(String token, String error) {
+        public AuthenticationResult(String token, String error) {
             this.token = token;
             this.error = error;
         }

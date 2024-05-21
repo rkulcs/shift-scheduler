@@ -39,6 +39,12 @@ public class Account implements UserDetails {
 
     public Account() {}
 
+    public Account(String username, String name, String password) {
+        this.username = username;
+        this.name = name;
+        this.password = password;
+    }
+
     public Account(String username, String name, String password, Role role) {
         this.username = username;
         this.name = name;
@@ -68,6 +74,14 @@ public class Account implements UserDetails {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public @NotNull Role getRole() {
+        return role;
+    }
+
+    public void setRole(@NotNull Role role) {
+        this.role = role;
     }
 
     @Override

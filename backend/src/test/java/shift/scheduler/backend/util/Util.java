@@ -6,6 +6,7 @@ import shift.scheduler.backend.model.Account;
 public final class Util {
 
     public static final String MOCK_HASH = "hash";
+    public static final String MOCK_JWT = "token";
 
     public static final Account[] validAccounts = {
             new Account("user", "Test User 1", "password"),
