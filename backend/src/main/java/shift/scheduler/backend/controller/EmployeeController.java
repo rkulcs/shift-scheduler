@@ -22,7 +22,6 @@ public class EmployeeController {
     @Autowired
     private AvailabilityRepository availabilityRepository;
 
-    // TODO: Perform authorization
     @PostMapping(value = "/{username}/availability", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> newAvailabilities(@RequestBody Collection<Availability> availabilities,
                                                   @PathVariable String username) {

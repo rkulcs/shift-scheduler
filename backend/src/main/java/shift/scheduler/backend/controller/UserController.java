@@ -8,10 +8,7 @@ import shift.scheduler.backend.model.Account;
 import shift.scheduler.backend.model.Employee;
 import shift.scheduler.backend.model.Manager;
 import shift.scheduler.backend.model.User;
-import shift.scheduler.backend.service.AccountService;
-import shift.scheduler.backend.service.EmployeeService;
-import shift.scheduler.backend.service.ManagerService;
-import shift.scheduler.backend.service.UserService;
+import shift.scheduler.backend.service.*;
 
 @RestController
 @RequestMapping("user")
@@ -25,6 +22,9 @@ public class UserController {
 
     @Autowired
     private AccountService accountService;
+
+    @Autowired
+    private JwtService jwtService;
 
     public ResponseEntity<String> register(User user, UserService service) {
 
@@ -61,9 +61,11 @@ public class UserController {
             return ResponseEntity.badRequest().body("User not found");
         }
 
+        String token = jwtService.generateToken(account);
+
         // TODO: Complete implementation
         if (isValid)
-            return ResponseEntity.ok("Successfully logged in");
+            return ResponseEntity.ok(token);
         else
             return ResponseEntity.badRequest().body("Invalid password");
     }
