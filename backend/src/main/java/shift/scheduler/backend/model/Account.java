@@ -6,6 +6,7 @@ import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
@@ -89,10 +90,9 @@ public class Account implements UserDetails {
         return true;
     }
 
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(role);
+        return List.of(new SimpleGrantedAuthority("ROLE_" + role.getAuthority()));
     }
 
     public static boolean validatePassword(String password) {

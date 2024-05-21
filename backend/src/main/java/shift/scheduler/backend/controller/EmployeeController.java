@@ -1,5 +1,6 @@
 package shift.scheduler.backend.controller;
 
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;

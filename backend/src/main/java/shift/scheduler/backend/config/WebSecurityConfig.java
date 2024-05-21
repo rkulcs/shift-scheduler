@@ -15,6 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import shift.scheduler.backend.config.filter.JwtAuthenticationFilter;
+import shift.scheduler.backend.model.Role;
 import shift.scheduler.backend.repository.AccountRepository;
 
 /**
@@ -57,6 +58,7 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(authorize -> {
                     authorize
                             .requestMatchers("/user/**").permitAll()
+                            .requestMatchers("/employee/**").hasRole(Role.EMPLOYEE.getAuthority())
                             .anyRequest().authenticated();
                 })
                 .authenticationProvider(authenticationProvider())
