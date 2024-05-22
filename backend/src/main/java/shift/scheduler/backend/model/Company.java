@@ -3,10 +3,12 @@ package shift.scheduler.backend.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import org.hibernate.annotations.Cascade;
 
 import java.util.Collection;
 
 @Entity
+@Table(name = "company")
 public class Company {
 
     @Id
@@ -21,13 +23,14 @@ public class Company {
     @NotBlank
     private String location;
 
-    @OneToMany
+    @OneToMany(mappedBy = "company")
+    @Cascade(org.hibernate.annotations.CascadeType.ALL)
     private Collection<HoursOfOperation> hoursOfOperation;
 
-    @OneToOne
+    @OneToOne(mappedBy = "company")
     private Manager manager;
 
-    @OneToMany
+    @OneToMany(mappedBy = "company")
     private Collection<Employee> employees;
 
     public Company() {}
@@ -68,6 +71,9 @@ public class Company {
 
     public void setHoursOfOperation(Collection<HoursOfOperation> hoursOfOperation) {
         this.hoursOfOperation = hoursOfOperation;
+
+        for (HoursOfOperation period : hoursOfOperation)
+            period.setCompany(this);
     }
 
     public Manager getManager() {

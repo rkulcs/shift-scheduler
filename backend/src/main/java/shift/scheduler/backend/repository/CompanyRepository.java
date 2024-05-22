@@ -7,4 +7,5 @@ import java.util.Optional;
 
 public interface CompanyRepository extends CrudRepository<Company, Long> {
     Optional<Company> findByNameAndLocation(String name, String location);
+    Optional<Company> findByManagerId(Long id);
 }
