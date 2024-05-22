@@ -1,17 +1,14 @@
 package shift.scheduler.backend.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import shift.scheduler.backend.config.WebSecurityConfig;
@@ -20,12 +17,7 @@ import shift.scheduler.backend.model.*;
 import shift.scheduler.backend.payload.LoginRequest;
 import shift.scheduler.backend.payload.RegistrationRequest;
 import shift.scheduler.backend.service.*;
-import shift.scheduler.backend.util.exception.EntityValidationException;
 import shift.scheduler.backend.util.Util;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.function.Supplier;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;

@@ -2,11 +2,8 @@ package shift.scheduler.backend.repository;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import shift.scheduler.backend.config.WebSecurityConfig;
 import shift.scheduler.backend.config.filter.JwtAuthenticationFilter;
 import shift.scheduler.backend.model.Account;
 import shift.scheduler.backend.model.Employee;
@@ -26,15 +23,19 @@ public class EmployeeRepositoryTest {
     JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Autowired
+    CompanyRepository companyRepository;
+
+    @Autowired
     EmployeeRepository employeeRepository;
 
     @Test
     public void validEmployeeCreationShouldSucceed() throws Exception {
 
+        companyRepository.save(Util.company);
+
         Account account = Util.validAccounts[0];
         account.setRole(Role.EMPLOYEE);
-
-        Employee employee = new Employee(account);
+        Employee employee = new Employee(account, Util.company, (short) 4, (short) 8, (short) 20, (short) 40);
         employeeRepository.save(employee);
 
         assertThat(employeeRepository.findByAccountUsername(account.getUsername())).isNotEmpty();
@@ -43,9 +44,11 @@ public class EmployeeRepositoryTest {
     @Test
     public void invalidEmployeeCreationShouldFail() throws Exception {
 
+        companyRepository.save(Util.company);
+
         for (Account account : Util.invalidAccounts) {
             account.setRole(Role.EMPLOYEE);
-            Employee employee = new Employee(account);
+            Employee employee = new Employee(account, Util.company, (short) 4, (short) 8, (short) 20, (short) 40);
             String username = employee.getUsername();
 
             try {

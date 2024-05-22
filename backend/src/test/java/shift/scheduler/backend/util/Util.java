@@ -2,6 +2,7 @@ package shift.scheduler.backend.util;
 
 import org.checkerframework.checker.units.qual.A;
 import shift.scheduler.backend.model.Account;
+import shift.scheduler.backend.model.Company;
 
 public final class Util {
 
@@ -19,4 +20,5 @@ public final class Util {
             new Account("username", "Test User", null)
     };
 
+    public static final Company company = new Company("Company", "City", null);
 }

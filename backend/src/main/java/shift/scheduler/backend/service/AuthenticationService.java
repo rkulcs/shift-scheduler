@@ -61,13 +61,16 @@ public class AuthenticationService {
                 request.getRole()
         );
 
-        Company company = request.getCompany();
+        Company companyDetails = request.getCompany();
 
-        if (company == null)
+        if (companyDetails == null)
             return new AuthenticationResult(null, "Company must be specified");
 
         if (request.getRole() == Role.EMPLOYEE) {
-            if (companyService.findByNameAndLocation(company.getName(), company.getLocation()) == null)
+
+            Company company = companyService.findByNameAndLocation(companyDetails.getName(), companyDetails.getLocation());
+
+            if (company == null)
                 return new AuthenticationResult(null, "Company does not exist");
 
             Employee employee = new Employee(
@@ -87,10 +90,10 @@ public class AuthenticationService {
         } else if (request.getRole() == Role.MANAGER) {
             Manager manager = new Manager(account);
 
-            if (companyService.findByNameAndLocation(company.getName(), company.getLocation()) != null)
+            if (companyService.findByNameAndLocation(companyDetails.getName(), companyDetails.getLocation()) != null)
                 return new AuthenticationResult(null, "Company already exists");
 
-            manager.setCompany(company);
+            manager.setCompany(companyDetails);
 
             try {
                 managerService.save(manager);
