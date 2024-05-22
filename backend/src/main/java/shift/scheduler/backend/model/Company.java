@@ -1,0 +1,88 @@
+package shift.scheduler.backend.model;
+
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
+import java.util.Collection;
+
+@Entity
+public class Company {
+
+    @Id
+    @GeneratedValue
+    private Long id;
+
+    @NotNull
+    @NotBlank
+    private String name;
+
+    @NotNull
+    @NotBlank
+    private String location;
+
+    @OneToMany
+    private Collection<HoursOfOperation> hoursOfOperation;
+
+    @OneToOne
+    private Manager manager;
+
+    @OneToMany
+    private Collection<Employee> employees;
+
+    public Company() {}
+
+    public Company(String name, String location, Collection<HoursOfOperation> hoursOfOperation) {
+        this.name = name;
+        this.location = location;
+        this.hoursOfOperation = hoursOfOperation;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public @NotNull @NotBlank String getName() {
+        return name;
+    }
+
+    public void setName(@NotNull @NotBlank String name) {
+        this.name = name;
+    }
+
+    public @NotNull @NotBlank String getLocation() {
+        return location;
+    }
+
+    public void setLocation(@NotNull @NotBlank String location) {
+        this.location = location;
+    }
+
+    public Collection<HoursOfOperation> getHoursOfOperation() {
+        return hoursOfOperation;
+    }
+
+    public void setHoursOfOperation(Collection<HoursOfOperation> hoursOfOperation) {
+        this.hoursOfOperation = hoursOfOperation;
+    }
+
+    public Manager getManager() {
+        return manager;
+    }
+
+    public void setManager(Manager manager) {
+        this.manager = manager;
+    }
+
+    public Collection<Employee> getEmployees() {
+        return employees;
+    }
+
+    public void setEmployees(Collection<Employee> employees) {
+        this.employees = employees;
+    }
+}

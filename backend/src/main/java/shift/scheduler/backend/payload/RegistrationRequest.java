@@ -1,5 +1,6 @@
 package shift.scheduler.backend.payload;
 
+import shift.scheduler.backend.model.Company;
 import shift.scheduler.backend.model.Role;
 
 public class RegistrationRequest {
@@ -9,6 +10,8 @@ public class RegistrationRequest {
     private String username;
     private String name;
     private String password;
+
+    private Company company;
 
     // Employee-specific fields
     private Short minHoursPerDay;
@@ -66,6 +69,14 @@ public class RegistrationRequest {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Company getCompany() {
+        return company;
+    }
+
+    public void setCompany(Company company) {
+        this.company = company;
     }
 
     public Short getMinHoursPerDay() {

@@ -7,23 +7,13 @@ import shift.scheduler.backend.model.id.AvailabilityId;
 @IdClass(AvailabilityId.class)
 public class Availability extends TimePeriod {
 
-    public enum Day {
-        MON,
-        TUE,
-        WED,
-        THU,
-        FRI,
-        SAT,
-        SUN
-    }
-
     @Id
     @ManyToOne
     private Employee employee;
 
     @Id
     @Enumerated(EnumType.ORDINAL)
-    private Availability.Day day;
+    private Day day;
 
     public Availability() {}
 

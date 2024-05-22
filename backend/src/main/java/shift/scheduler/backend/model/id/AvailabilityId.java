@@ -2,6 +2,7 @@ package shift.scheduler.backend.model.id;
 
 import shift.scheduler.backend.model.Availability;
 import shift.scheduler.backend.model.Employee;
+import shift.scheduler.backend.model.TimePeriod;
 
 import java.io.Serializable;
 
@@ -9,7 +10,7 @@ public class AvailabilityId implements Serializable {
 
     private Employee employee;
 
-    private Availability.Day day;
+    private TimePeriod.Day day;
 
     public AvailabilityId() {}
 

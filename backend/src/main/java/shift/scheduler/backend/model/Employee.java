@@ -1,11 +1,17 @@
 package shift.scheduler.backend.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.Collection;
 
 @Entity
 public class Employee extends User {
+
+    @NotNull
+    @ManyToOne
+    @JoinColumn(name = "company_id")
+    private Company company;
 
     private Short minHoursPerDay;
     private Short maxHoursPerDay;
@@ -21,14 +27,24 @@ public class Employee extends User {
         super(account);
     }
 
-    public Employee(Account account, Short minHoursPerDay, Short maxHoursPerDay,
+    public Employee(Account account, Company company,
+                    Short minHoursPerDay, Short maxHoursPerDay,
                     Short minHoursPerWeek, Short maxHoursPerWeek) {
 
         super(account);
+        this.company = company;
         this.minHoursPerDay = minHoursPerDay;
         this.maxHoursPerDay = maxHoursPerDay;
         this.minHoursPerWeek = minHoursPerWeek;
         this.maxHoursPerWeek = maxHoursPerWeek;
+    }
+
+    public @NotNull Company getCompany() {
+        return company;
+    }
+
+    public void setCompany(@NotNull Company company) {
+        this.company = company;
     }
 
     public Short getMinHoursPerDay() {
@@ -61,5 +77,13 @@ public class Employee extends User {
 
     public void setMaxHoursPerWeek(Short maxHoursPerWeek) {
         this.maxHoursPerWeek = maxHoursPerWeek;
+    }
+
+    public Collection<Availability> getAvailabilities() {
+        return availabilities;
+    }
+
+    public void setAvailabilities(Collection<Availability> availabilities) {
+        this.availabilities = availabilities;
     }
 }

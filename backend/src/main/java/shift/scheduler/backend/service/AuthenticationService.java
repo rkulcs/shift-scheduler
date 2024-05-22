@@ -4,10 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import shift.scheduler.backend.model.Account;
-import shift.scheduler.backend.model.Employee;
-import shift.scheduler.backend.model.Manager;
-import shift.scheduler.backend.model.Role;
+import shift.scheduler.backend.model.*;
 import shift.scheduler.backend.payload.LoginRequest;
 import shift.scheduler.backend.payload.RegistrationRequest;
 import shift.scheduler.backend.util.exception.EntityValidationException;
@@ -26,6 +23,9 @@ public class AuthenticationService {
 
     @Autowired
     private EmployeeService employeeService;
+
+    @Autowired
+    private CompanyService companyService;
 
     @Autowired
     private JwtService jwtService;
@@ -61,9 +61,18 @@ public class AuthenticationService {
                 request.getRole()
         );
 
+        Company company = request.getCompany();
+
+        if (company == null)
+            return new AuthenticationResult(null, "Company must be specified");
+
         if (request.getRole() == Role.EMPLOYEE) {
+            if (companyService.findByNameAndLocation(company.getName(), company.getLocation()) == null)
+                return new AuthenticationResult(null, "Company does not exist");
+
             Employee employee = new Employee(
                     account,
+                    company,
                     request.getMinHoursPerDay(),
                     request.getMaxHoursPerDay(),
                     request.getMinHoursPerWeek(),
@@ -77,6 +86,11 @@ public class AuthenticationService {
             }
         } else if (request.getRole() == Role.MANAGER) {
             Manager manager = new Manager(account);
+
+            if (companyService.findByNameAndLocation(company.getName(), company.getLocation()) != null)
+                return new AuthenticationResult(null, "Company already exists");
+
+            manager.setCompany(company);
 
             try {
                 managerService.save(manager);
