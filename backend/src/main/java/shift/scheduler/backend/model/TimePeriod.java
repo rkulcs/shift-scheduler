@@ -26,6 +26,11 @@ public class TimePeriod {
 
     public TimePeriod() {}
 
+    public TimePeriod(Short startHour, Short endHour) {
+        this.startHour = startHour;
+        this.endHour = endHour;
+    }
+
     public Short getStartHour() {
         return startHour;
     }

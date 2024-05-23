@@ -2,10 +2,12 @@ package shift.scheduler.backend.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import org.hibernate.annotations.Cascade;
 
 import java.util.Collection;
 
 @Entity
+@Table(name = "employee")
 public class Employee extends User {
 
     @NotNull
@@ -18,7 +20,8 @@ public class Employee extends User {
     private Short minHoursPerWeek;
     private Short maxHoursPerWeek;
 
-    @OneToMany
+    @OneToMany(mappedBy = "employee")
+    @Cascade(org.hibernate.annotations.CascadeType.ALL)
     private Collection<Availability> availabilities;
 
     public Employee() {}
@@ -84,6 +87,8 @@ public class Employee extends User {
     }
 
     public void setAvailabilities(Collection<Availability> availabilities) {
+
         this.availabilities = availabilities;
+        this.availabilities.forEach(availability -> availability.setEmployee(this));
     }
 }

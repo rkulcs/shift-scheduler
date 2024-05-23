@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import shift.scheduler.backend.model.id.AvailabilityId;
 
 @Entity
+@Table(name = "availability")
 @IdClass(AvailabilityId.class)
 public class Availability extends TimePeriod {
 
@@ -16,6 +17,11 @@ public class Availability extends TimePeriod {
     private Day day;
 
     public Availability() {}
+
+    public Availability(Short startHour, Short endHour, Day day) {
+        super(startHour, endHour);
+        this.day = day;
+    }
 
     public Employee getEmployee() {
         return employee;

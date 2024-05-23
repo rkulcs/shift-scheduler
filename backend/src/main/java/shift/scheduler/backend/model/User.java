@@ -1,7 +1,6 @@
 package shift.scheduler.backend.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 
 @MappedSuperclass
 public abstract class User {

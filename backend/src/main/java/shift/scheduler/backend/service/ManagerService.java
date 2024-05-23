@@ -25,7 +25,7 @@ public class ManagerService extends UserService {
             managerRepository.save(manager);
             return manager;
         } catch (Exception e) {
-            throw new EntityValidationException("Invalid user details");
+            throw new EntityValidationException(e.getMessage());
         }
     }
 

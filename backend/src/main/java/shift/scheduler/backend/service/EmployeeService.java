@@ -25,7 +25,7 @@ public class EmployeeService extends UserService  {
             employeeRepository.save(employee);
             return employee;
         } catch (Exception e) {
-            throw new EntityValidationException("Invalid user details");
+            throw new EntityValidationException(e.getMessage());
         }
     }
 
