@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.*;
 import shift.scheduler.backend.model.Company;
 import shift.scheduler.backend.model.HoursOfOperation;
 import shift.scheduler.backend.model.Manager;
-import shift.scheduler.backend.model.TimePeriod;
 import shift.scheduler.backend.payload.ScheduleGenerationRequest;
 import shift.scheduler.backend.service.CompanyService;
 import shift.scheduler.backend.service.JwtService;

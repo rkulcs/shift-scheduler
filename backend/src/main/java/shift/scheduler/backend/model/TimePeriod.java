@@ -8,16 +8,6 @@ import shift.scheduler.backend.util.validator.Interval;
 @Interval
 public class TimePeriod {
 
-    public enum Day {
-        MON,
-        TUE,
-        WED,
-        THU,
-        FRI,
-        SAT,
-        SUN
-    }
-
     @Hour
     private Short startHour;
 

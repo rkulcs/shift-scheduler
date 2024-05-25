@@ -1,6 +1,5 @@
 package shift.scheduler.backend.controller;
 
-import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -9,9 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import shift.scheduler.backend.model.Availability;
 import shift.scheduler.backend.model.Employee;
-import shift.scheduler.backend.model.Manager;
 import shift.scheduler.backend.repository.AvailabilityRepository;
-import shift.scheduler.backend.repository.EmployeeRepository;
 import shift.scheduler.backend.service.EmployeeService;
 import shift.scheduler.backend.service.JwtService;
 

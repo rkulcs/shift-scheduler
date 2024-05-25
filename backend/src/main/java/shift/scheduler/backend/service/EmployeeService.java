@@ -7,6 +7,9 @@ import shift.scheduler.backend.model.User;
 import shift.scheduler.backend.repository.EmployeeRepository;
 import shift.scheduler.backend.util.exception.EntityValidationException;
 
+import java.util.Collection;
+import java.util.Iterator;
+
 @Service
 public class EmployeeService extends UserService  {
 
@@ -37,5 +40,9 @@ public class EmployeeService extends UserService  {
     @Override
     public User findByUsername(String username) {
         return employeeRepository.findByAccountUsername(username).orElse(null);
+    }
+
+    public Iterable<Employee> findAll() {
+        return employeeRepository.findAll();
     }
 }

@@ -31,11 +31,11 @@ public class Availability extends TimePeriod {
         this.employee = employee;
     }
 
-    public Availability.Day getDay() {
+    public Day getDay() {
         return day;
     }
 
-    public void setDay(Availability.Day day) {
+    public void setDay(Day day) {
         this.day = day;
     }
 }
