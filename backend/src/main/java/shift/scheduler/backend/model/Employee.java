@@ -3,7 +3,9 @@ package shift.scheduler.backend.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.Cascade;
+import shift.scheduler.backend.util.Period;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 @Entity
@@ -90,5 +92,29 @@ public class Employee extends User {
 
         this.availabilities = availabilities;
         this.availabilities.forEach(availability -> availability.setEmployee(this));
+    }
+
+    /**
+     * Generates a list of all possible shifts that the employee could work during the given time period.
+     */
+    public Collection<Shift> generatePotentialShifts(HoursOfOperation period) {
+
+        Availability availability = availabilities
+                .stream()
+                .filter(a -> a.getDay().equals(period.getDay())).findFirst().orElse(null);
+
+        if (availability == null)
+            return null;
+
+        Collection<Shift> potentialShifts = new ArrayList<>();
+
+        for (short length = minHoursPerDay; length <= maxHoursPerDay; length += Period.HOURS) {
+            for (short time = period.getStartHour(); time < period.getEndHour(); time += Period.HOURS) {
+                if (time+length <= period.getEndHour())
+                    potentialShifts.add(new Shift(time, (short) (time+length), this));
+            }
+        }
+
+        return potentialShifts;
     }
 }

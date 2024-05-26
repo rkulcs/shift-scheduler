@@ -21,6 +21,19 @@ public class Shift extends TimePeriod {
         super();
     }
 
+    public Shift(Short startHour, Short endHour, Employee employee) {
+        super(startHour, endHour);
+        this.employee = employee;
+    }
+
+    public Employee getEmployee() {
+        return employee;
+    }
+
+    public void setEmployee(Employee employee) {
+        this.employee = employee;
+    }
+
     public Calendar getDate() {
         return date;
     }
