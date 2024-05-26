@@ -8,10 +8,12 @@ import org.springframework.web.bind.annotation.*;
 import shift.scheduler.backend.model.Company;
 import shift.scheduler.backend.model.HoursOfOperation;
 import shift.scheduler.backend.model.Manager;
+import shift.scheduler.backend.model.ScheduleForWeek;
 import shift.scheduler.backend.payload.ScheduleGenerationRequest;
 import shift.scheduler.backend.service.CompanyService;
 import shift.scheduler.backend.service.JwtService;
 import shift.scheduler.backend.service.ManagerService;
+import shift.scheduler.backend.service.ScheduleGenerationService;
 
 import java.util.Collection;
 
@@ -27,6 +29,9 @@ public class ManagerController {
 
     @Autowired
     private CompanyService companyService;
+
+    @Autowired
+    private ScheduleGenerationService scheduleGenerationService;
 
     @PostMapping(value = "/hours-of-operation", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> setHoursOfOperation(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
@@ -47,8 +52,22 @@ public class ManagerController {
     }
 
     @PostMapping(value = "/generate-schedules", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> generateSchedules(@RequestBody ScheduleGenerationRequest request) {
-        return null;
+    public ResponseEntity<Collection<ScheduleForWeek>> generateSchedules(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
+                                                                         @RequestBody ScheduleGenerationRequest request) {
+
+        Manager manager = getManager(authHeader);
+
+        if (manager == null)
+            return ResponseEntity.badRequest().body(null);
+
+        Company company = manager.getCompany();
+
+        Collection<ScheduleForWeek> schedules = scheduleGenerationService.generateSchedulesForWeek(request, company);
+
+        if (schedules.isEmpty())
+            return ResponseEntity.unprocessableEntity().body(schedules);
+        else
+            return ResponseEntity.ok(schedules);
     }
 
     private Manager getManager(String authHeader) {
