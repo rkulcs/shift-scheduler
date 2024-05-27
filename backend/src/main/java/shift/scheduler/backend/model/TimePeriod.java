@@ -36,4 +36,8 @@ public class TimePeriod {
     public void setEndHour(Short endHour) {
         this.endHour = endHour;
     }
+
+    public int getLength() {
+        return endHour-startHour;
+    }
 }

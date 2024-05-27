@@ -113,9 +113,16 @@ public class Employee extends User {
     /**
      * Determines if the employee is available to work during the specified time period.
      */
-    public boolean isAvailableDuring(Day day, int start, int end) {
+    public boolean isAvailableDuring(Day day, TimePeriod period) {
 
         Availability availability = getAvailabilityOn(day);
+
+        if (availability == null)
+            return false;
+
+        int start = period.getStartHour();
+        int end = period.getEndHour();
+
         return (start <= availability.getStartHour() && end <= availability.getEndHour());
     }
 

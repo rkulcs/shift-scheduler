@@ -99,6 +99,11 @@
 			<version>7.74.1.Final</version>
 		</dependency>
 
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>33.2.0-jre</version>
+		</dependency>
 	</dependencies>
 
 	<build>
