@@ -94,16 +94,37 @@ public class Employee extends User {
         this.availabilities.forEach(availability -> availability.setEmployee(this));
     }
 
+    public Availability getAvailabilityOn(Day day) {
+
+        Availability availability = availabilities
+                .stream()
+                .filter(a -> a.getDay().equals(day)).findFirst().orElse(null);
+
+        return availability;
+    }
+
+    /**
+     * Determines if the employee is available to work on the given day.
+     */
+    public boolean isAvailableOn(Day day) {
+        return (getAvailabilityOn(day) != null);
+    }
+
+    /**
+     * Determines if the employee is available to work during the specified time period.
+     */
+    public boolean isAvailableDuring(Day day, int start, int end) {
+
+        Availability availability = getAvailabilityOn(day);
+        return (start <= availability.getStartHour() && end <= availability.getEndHour());
+    }
+
     /**
      * Generates a list of all possible shifts that the employee could work during the given time period.
      */
     public Collection<Shift> generatePotentialShifts(HoursOfOperation period) {
 
-        Availability availability = availabilities
-                .stream()
-                .filter(a -> a.getDay().equals(period.getDay())).findFirst().orElse(null);
-
-        if (availability == null)
+        if (!isAvailableOn(period.getDay()))
             return null;
 
         Collection<Shift> potentialShifts = new ArrayList<>();

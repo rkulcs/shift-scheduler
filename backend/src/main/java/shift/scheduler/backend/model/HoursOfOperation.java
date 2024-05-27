@@ -2,6 +2,10 @@ package shift.scheduler.backend.model;
 
 import jakarta.persistence.*;
 import shift.scheduler.backend.model.id.HoursOfOperationId;
+import shift.scheduler.backend.util.Period;
+
+import java.util.ArrayList;
+import java.util.Collection;
 
 @Entity
 @IdClass(HoursOfOperationId.class)
@@ -38,5 +42,20 @@ public class HoursOfOperation extends TimePeriod {
 
     public void setDay(Day day) {
         this.day = day;
+    }
+
+    /**
+     * Get the time blocks that make up the hours of operation.
+     * For example, if the hours of operation are 4-16, and a time block is 4 hours,
+     * then this function will return the following periods: 4-8, 8-12, 12-16.
+     */
+    public Collection<TimePeriod> getTimeBlocks() {
+
+        Collection<TimePeriod> blocks = new ArrayList<>();
+
+        for (short time = getStartHour(); time < getEndHour(); time += Period.HOURS)
+            blocks.add(new TimePeriod(time, (short) (time+Period.HOURS)));
+
+        return blocks;
     }
 }
