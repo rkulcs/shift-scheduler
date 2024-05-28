@@ -123,7 +123,7 @@ public class Employee extends User {
         int start = period.getStartHour();
         int end = period.getEndHour();
 
-        return (start <= availability.getStartHour() && end <= availability.getEndHour());
+        return (availability.getStartHour() <= start && end <= availability.getEndHour());
     }
 
     /**
