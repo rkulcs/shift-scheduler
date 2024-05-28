@@ -15,6 +15,25 @@ import static com.google.common.collect.Sets.combinations;
 @Service
 public class ScheduleGenerationService {
 
+    private class DailyScheduleWorker implements Runnable {
+        private HoursOfOperation period;
+        private short numEmployeesPerHour;
+        private List<Employee> employees;
+        private Collection<Collection<ScheduleForDay>> candidateDailySchedules;
+
+        DailyScheduleWorker(HoursOfOperation period, short numEmployeesPerHour, List<Employee> employees, Collection<Collection<ScheduleForDay>> candidateDailySchedules) {
+            this.period = period;
+            this.numEmployeesPerHour = numEmployeesPerHour;
+            this.employees = employees;
+            this.candidateDailySchedules = candidateDailySchedules;
+        }
+
+        @Override
+        public void run() {
+            candidateDailySchedules.add(generateCandidateSchedulesForDay(period, numEmployeesPerHour, employees));
+        }
+    }
+
     @Autowired
     private EmployeeService employeeService;
 
@@ -34,14 +53,32 @@ public class ScheduleGenerationService {
 
         Collection<Collection<ScheduleForDay>> candidateDailySchedules = new ArrayList<>();
 
+        Collection<Thread> threads = new ArrayList<>();
+
         // Generate potential schedules for each day of the week
         for (var period : company.getHoursOfOperation()) {
-            candidateDailySchedules.add(
-                    generateCandidateSchedulesForDay(
-                            period, numEmployeesPerHour,
-                            employees.stream().filter(e -> e.isAvailableOn(period.getDay())).toList()
-                    )
+            DailyScheduleWorker g = new DailyScheduleWorker(
+                    period, numEmployeesPerHour,
+                    employees.stream().filter(e -> e.isAvailableOn(period.getDay())).toList(),
+                    candidateDailySchedules
             );
+            Thread t = new Thread(g);
+            threads.add(t);
+            t.start();
+//            candidateDailySchedules.add(
+//                    generateCandidateSchedulesForDay(
+//                            period, numEmployeesPerHour,
+//                            employees.stream().filter(e -> e.isAvailableOn(period.getDay())).toList()
+//                    )
+//            );
+        }
+
+        for (Thread thread : threads) {
+            try {
+                thread.join();
+            } catch (InterruptedException e) {
+                System.out.println(e);
+            }
         }
 
         // TODO: Find valid combinations of candidate daily schedules to create weekly schedules
@@ -76,11 +113,25 @@ public class ScheduleGenerationService {
 
         var products = Lists.cartesianProduct(employeeCombinations);
 
-        for (var product : products) {
-            ScheduleForDay schedule = createDailyScheduleIfValid(blocks, product);
+        Collection<Thread> threads = new ArrayList<>();
 
-            if (schedule != null)
-                candidateSchedules.add(schedule);
+        for (var product : products) {
+            Thread t = new Thread(() -> {
+                ScheduleForDay schedule = createDailyScheduleIfValid(blocks, product);
+
+                if (schedule != null)
+                    candidateSchedules.add(schedule);
+            });
+            threads.add(t);
+            t.start();
+        }
+
+        for (Thread thread : threads) {
+            try {
+                thread.join();
+            } catch (InterruptedException e) {
+                System.out.println(e);
+            }
         }
 
         return candidateSchedules;
