@@ -36,12 +36,12 @@ public class SampleDataLoader implements CommandLineRunner {
         Company company = new Company("Company", "City", null);
 
         Collection<HoursOfOperation> hoursOfOperation = new ArrayList<>();
-        hoursOfOperation.add(new HoursOfOperation((short) 8, (short) 20, null, Day.MON));
-        hoursOfOperation.add(new HoursOfOperation((short) 8, (short) 20, null, Day.TUE));
+        hoursOfOperation.add(new HoursOfOperation((short) 12, (short) 20, null, Day.MON));
+        hoursOfOperation.add(new HoursOfOperation((short) 12, (short) 20, null, Day.TUE));
         hoursOfOperation.add(new HoursOfOperation((short) 8, (short) 20, null, Day.WED));
         hoursOfOperation.add(new HoursOfOperation((short) 8, (short) 20, null, Day.THU));
-        hoursOfOperation.add(new HoursOfOperation((short) 8, (short) 24, null, Day.FRI));
-        hoursOfOperation.add(new HoursOfOperation((short) 8, (short) 24, null, Day.SAT));
+        hoursOfOperation.add(new HoursOfOperation((short) 8, (short) 20, null, Day.FRI));
+        hoursOfOperation.add(new HoursOfOperation((short) 8, (short) 16, null, Day.SAT));
         hoursOfOperation.add(new HoursOfOperation((short) 8, (short) 16, null, Day.SUN));
 
         company.setHoursOfOperation(hoursOfOperation);
@@ -64,7 +64,7 @@ public class SampleDataLoader implements CommandLineRunner {
         createEmployee(1, company, 8, 12, 32, 40, availabilities);
 
         availabilities = new ArrayList<>();
-        for (int i = 1; i < 7; i++)
+        for (int i = 0; i < 7; i++)
             availabilities.add(new Availability((short) 8, (short) 24, Day.values()[i]));
         createEmployee(2, company, 4, 12, 36, 48, availabilities);
 
@@ -89,7 +89,7 @@ public class SampleDataLoader implements CommandLineRunner {
         createEmployee(6, company, 4, 4, 8, 12, availabilities);
 
         availabilities = new ArrayList<>();
-        for (int i = 4; i < 7; i++)
+        for (int i = 0; i < 4; i++)
             availabilities.add(new Availability((short) 8, (short) 24, Day.values()[i]));
         createEmployee(7, company, 4, 8, 16, 24, availabilities);
 
@@ -118,11 +118,6 @@ public class SampleDataLoader implements CommandLineRunner {
         for (int i = 5; i < 7; i++)
             availabilities.add(new Availability((short) 0, (short) 24, Day.values()[i]));
         createEmployee(11, company, 8, 12, 24, 28, availabilities);
-
-        availabilities = new ArrayList<>();
-        for (int i = 0; i < 7; i++)
-            availabilities.add(new Availability((short) 0, (short) 24, Day.values()[i]));
-        createEmployee(12, company, 8, 16, 40, 48, availabilities);
     }
 
     private void createEmployee(
