@@ -6,9 +6,7 @@ import org.springframework.stereotype.Service;
 import shift.scheduler.backend.model.ScheduleForDay;
 import shift.scheduler.backend.model.ScheduleForWeek;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class GeneticAlgorithmService {
@@ -22,14 +20,40 @@ public class GeneticAlgorithmService {
     private static final double CROSSOVER_RATE = 0.8;
     private static final double MUTATION_RATE = 0.3;
 
-    public Collection<ScheduleForWeek> generateWeeklySchedules(List<Set<ScheduleForDay>> dailySchedules) {
+    private static final int MIN_ITERATIONS = 50;
+    private static final int MAX_ITERATIONS = Integer.MAX_VALUE;
+
+    private static final Random random = new Random();
+
+    public Collection<ScheduleForWeek> generateWeeklySchedules(List<List<ScheduleForDay>> dailySchedules) {
+
+        List<ScheduleForWeek> population = generateInitialPopulation(dailySchedules);
 
         return null;
     }
 
-    private List<ScheduleForWeek> generateInitialPopulation(List<Set<ScheduleForDay>> dailySchedules) {
+    /**
+     * Creates an initial population of weekly schedules by producing random combinations of daily schedules.
+     */
+    private List<ScheduleForWeek> generateInitialPopulation(List<List<ScheduleForDay>> dailySchedules) {
 
-        return null;
+        List<ScheduleForWeek> population = new ArrayList<>();
+
+        for (int i = 0; i < POPULATION_SIZE; i++) {
+            Collection<ScheduleForDay> days = new ArrayList<>();
+
+            for (var list : dailySchedules) {
+                int j = random.nextInt(list.size());
+                days.add(list.get(j));
+            }
+
+            ScheduleForWeek schedule = new ScheduleForWeek();
+            schedule.setDailySchedules(days);
+
+            population.add(schedule);
+        }
+
+        return population;
     }
 
     private ScheduleForWeek performTournament(List<ScheduleForWeek> schedules) {

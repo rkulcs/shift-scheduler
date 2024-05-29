@@ -1,7 +1,6 @@
 package shift.scheduler.backend.service;
 
 import com.google.common.collect.Lists;
-import org.kie.api.runtime.KieContainer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import shift.scheduler.backend.model.*;
@@ -10,7 +9,6 @@ import shift.scheduler.backend.payload.ScheduleGenerationRequest;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.google.common.collect.Sets.cartesianProduct;
 import static com.google.common.collect.Sets.combinations;
 
 @Service
@@ -20,9 +18,9 @@ public class ScheduleGenerationService {
         private HoursOfOperation period;
         private short numEmployeesPerHour;
         private List<Employee> employees;
-        private List<Set<ScheduleForDay>> candidateDailySchedules;
+        private List<List<ScheduleForDay>> candidateDailySchedules;
 
-        DailyScheduleWorker(HoursOfOperation period, short numEmployeesPerHour, List<Employee> employees, List<Set<ScheduleForDay>> candidateDailySchedules) {
+        DailyScheduleWorker(HoursOfOperation period, short numEmployeesPerHour, List<Employee> employees, List<List<ScheduleForDay>> candidateDailySchedules) {
             this.period = period;
             this.numEmployeesPerHour = numEmployeesPerHour;
             this.employees = employees;
@@ -38,6 +36,9 @@ public class ScheduleGenerationService {
     @Autowired
     private EmployeeService employeeService;
 
+    @Autowired
+    private GeneticAlgorithmService geneticAlgorithmService;
+
     public Collection<ScheduleForWeek> generateSchedulesForWeek(ScheduleGenerationRequest request, Company company) {
 
         if (company == null)
@@ -49,7 +50,7 @@ public class ScheduleGenerationService {
         if (employees.size() < numEmployeesPerHour)
             return null;
 
-        List<Set<ScheduleForDay>> candidateDailySchedules = new ArrayList<>();
+        List<List<ScheduleForDay>> candidateDailySchedules = new ArrayList<>();
 
         Collection<Thread> threads = new ArrayList<>();
 
@@ -73,16 +74,16 @@ public class ScheduleGenerationService {
             }
         }
 
-        // TODO: Find valid combinations of candidate daily schedules to create weekly schedules
+        Collection<ScheduleForWeek> schedules = geneticAlgorithmService.generateWeeklySchedules(candidateDailySchedules);
 
-        return null;
+        return schedules;
     }
 
-    private Set<ScheduleForDay> generateCandidateSchedulesForDay(HoursOfOperation period,
-                                                                  short numEmployeesPerHour,
-                                                                  Collection<Employee> employees) {
+    private List<ScheduleForDay> generateCandidateSchedulesForDay(HoursOfOperation period,
+                                                                 short numEmployeesPerHour,
+                                                                 Collection<Employee> employees) {
 
-        Set<ScheduleForDay> candidateSchedules = new HashSet<>();
+        List<ScheduleForDay> candidateSchedules = new ArrayList<>();
 
         // Get the 4-hour blocks that make up the day's hours of operation
         List<TimePeriod> blocks = (List<TimePeriod>) period.getTimeBlocks();
