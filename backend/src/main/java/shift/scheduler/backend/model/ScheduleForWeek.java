@@ -19,6 +19,10 @@ public class ScheduleForWeek {
 
     public ScheduleForWeek() {}
 
+    public ScheduleForWeek(Collection<ScheduleForDay> dailySchedules) {
+        this.dailySchedules = dailySchedules;
+    }
+
     public Long getId() {
         return id;
     }
