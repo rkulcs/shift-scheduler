@@ -10,6 +10,7 @@ import shift.scheduler.backend.payload.ScheduleGenerationRequest;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.google.common.collect.Sets.cartesianProduct;
 import static com.google.common.collect.Sets.combinations;
 
 @Service
@@ -19,9 +20,9 @@ public class ScheduleGenerationService {
         private HoursOfOperation period;
         private short numEmployeesPerHour;
         private List<Employee> employees;
-        private Collection<Collection<ScheduleForDay>> candidateDailySchedules;
+        private List<Set<ScheduleForDay>> candidateDailySchedules;
 
-        DailyScheduleWorker(HoursOfOperation period, short numEmployeesPerHour, List<Employee> employees, Collection<Collection<ScheduleForDay>> candidateDailySchedules) {
+        DailyScheduleWorker(HoursOfOperation period, short numEmployeesPerHour, List<Employee> employees, List<Set<ScheduleForDay>> candidateDailySchedules) {
             this.period = period;
             this.numEmployeesPerHour = numEmployeesPerHour;
             this.employees = employees;
@@ -37,9 +38,6 @@ public class ScheduleGenerationService {
     @Autowired
     private EmployeeService employeeService;
 
-    @Autowired
-    private KieContainer kieContainer;
-
     public Collection<ScheduleForWeek> generateSchedulesForWeek(ScheduleGenerationRequest request, Company company) {
 
         if (company == null)
@@ -51,7 +49,7 @@ public class ScheduleGenerationService {
         if (employees.size() < numEmployeesPerHour)
             return null;
 
-        Collection<Collection<ScheduleForDay>> candidateDailySchedules = new ArrayList<>();
+        List<Set<ScheduleForDay>> candidateDailySchedules = new ArrayList<>();
 
         Collection<Thread> threads = new ArrayList<>();
 
@@ -65,12 +63,6 @@ public class ScheduleGenerationService {
             Thread t = new Thread(g);
             threads.add(t);
             t.start();
-//            candidateDailySchedules.add(
-//                    generateCandidateSchedulesForDay(
-//                            period, numEmployeesPerHour,
-//                            employees.stream().filter(e -> e.isAvailableOn(period.getDay())).toList()
-//                    )
-//            );
         }
 
         for (Thread thread : threads) {
@@ -83,14 +75,14 @@ public class ScheduleGenerationService {
 
         // TODO: Find valid combinations of candidate daily schedules to create weekly schedules
 
-        return new ArrayList<>();
+        return null;
     }
 
-    private Collection<ScheduleForDay> generateCandidateSchedulesForDay(HoursOfOperation period,
-                                                                        short numEmployeesPerHour,
-                                                                        Collection<Employee> employees) {
+    private Set<ScheduleForDay> generateCandidateSchedulesForDay(HoursOfOperation period,
+                                                                  short numEmployeesPerHour,
+                                                                  Collection<Employee> employees) {
 
-        Collection<ScheduleForDay> candidateSchedules = new ArrayList<>();
+        Set<ScheduleForDay> candidateSchedules = new HashSet<>();
 
         // Get the 4-hour blocks that make up the day's hours of operation
         List<TimePeriod> blocks = (List<TimePeriod>) period.getTimeBlocks();
@@ -117,7 +109,7 @@ public class ScheduleGenerationService {
 
         for (var product : products) {
             Thread t = new Thread(() -> {
-                ScheduleForDay schedule = createDailyScheduleIfValid(blocks, product);
+                ScheduleForDay schedule = createDailyScheduleIfValid(period.getDay(), blocks, product);
 
                 if (schedule != null)
                     candidateSchedules.add(schedule);
@@ -137,7 +129,7 @@ public class ScheduleGenerationService {
         return candidateSchedules;
     }
 
-    private ScheduleForDay createDailyScheduleIfValid(List<TimePeriod> blocks, List<Set<Employee>> schedule) {
+    private ScheduleForDay createDailyScheduleIfValid(Day day, List<TimePeriod> blocks, List<Set<Employee>> schedule) {
 
         int numBlocks = schedule.size();
         Map<Employee, Boolean[]> worksDuringBlock = new HashMap<>();
@@ -180,6 +172,7 @@ public class ScheduleGenerationService {
         }
 
         ScheduleForDay scheduleForDay = new ScheduleForDay();
+        scheduleForDay.setDay(day);
         scheduleForDay.setShifts(shifts);
 
         return scheduleForDay;
