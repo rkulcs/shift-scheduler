@@ -10,7 +10,7 @@ import shift.scheduler.backend.util.GeneticAlgorithm;
 import java.util.*;
 
 @Service
-public class WeeklyScheduleGeneticAlgorithmService implements GeneticAlgorithm<ScheduleForWeek, ScheduleForDay> {
+public class WeeklyScheduleGenerationService implements GeneticAlgorithm<ScheduleForWeek, ScheduleForDay> {
 
     /**
      * Creates an initial population of weekly schedules by producing random combinations of daily schedules.
@@ -34,32 +34,6 @@ public class WeeklyScheduleGeneticAlgorithmService implements GeneticAlgorithm<S
         }
 
         return population;
-    }
-
-    public TournamentResult<ScheduleForWeek> performTournament(List<ScheduleForWeek> schedules) {
-
-        Set<ScheduleForWeek> participants = new HashSet<>();
-
-        while (participants.size() != TOURNAMENT_SIZE) {
-            int j = random.nextInt(schedules.size());
-            ScheduleForWeek schedule = schedules.get(j);
-
-            if (!participants.contains(schedule))
-                participants.add(schedule);
-        }
-
-        TournamentResult<ScheduleForWeek> result = new TournamentResult<>(null, Long.MAX_VALUE);
-
-        participants.forEach(participant -> {
-            long score = computeFitnessScore(participant);
-
-            if (score < result.getScore()) {
-                result.setParticipant(participant);
-                result.setScore(score);
-            }
-        });
-
-        return result;
     }
 
     /**

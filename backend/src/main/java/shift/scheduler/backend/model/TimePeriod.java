@@ -40,4 +40,8 @@ public class TimePeriod {
     public int getLength() {
         return endHour-startHour;
     }
+
+    public boolean contains(TimePeriod period) {
+        return (startHour <= period.getStartHour() && period.getEndHour() <= endHour);
+    }
 }

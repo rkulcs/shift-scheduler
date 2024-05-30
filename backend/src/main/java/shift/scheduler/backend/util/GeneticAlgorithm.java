@@ -2,14 +2,11 @@ package shift.scheduler.backend.util;
 
 import shift.scheduler.backend.model.ScheduleForWeek;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public interface GeneticAlgorithm<T, B> {
 
-    static final int POPULATION_SIZE = 30000;
+    static final int POPULATION_SIZE = 3000;
     static final int TOURNAMENT_SIZE = 50;
 
     static final double CROSSOVER_RATE = 0.8;
@@ -105,9 +102,34 @@ public interface GeneticAlgorithm<T, B> {
         return generatedSchedules;
     }
 
+    default TournamentResult<T> performTournament(List<T> schedules) {
+
+        Set<T> participants = new HashSet<>();
+
+        while (participants.size() != TOURNAMENT_SIZE) {
+            int j = random.nextInt(schedules.size());
+            T schedule = schedules.get(j);
+
+            if (!participants.contains(schedule))
+                participants.add(schedule);
+        }
+
+        TournamentResult<T> result = new TournamentResult<>(null, Long.MAX_VALUE);
+
+        participants.forEach(participant -> {
+            long score = computeFitnessScore(participant);
+
+            if (score < result.getScore()) {
+                result.setParticipant(participant);
+                result.setScore(score);
+            }
+        });
+
+        return result;
+    }
+
 //    public Collection<T> generateSchedules(List<List<B>> components);
     List<T> generateInitialPopulation(List<List<B>> components);
-    TournamentResult<T> performTournament(List<T> subset);
     long computeFitnessScore(T schedule);
     List<T> crossover(T a, T b);
     T mutate(List<List<B>> components, T schedule);

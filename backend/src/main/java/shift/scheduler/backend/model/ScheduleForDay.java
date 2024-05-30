@@ -19,6 +19,11 @@ public class ScheduleForDay {
 
     public ScheduleForDay() {}
 
+    public ScheduleForDay(Day day, Collection<Shift> shifts) {
+        this.day = day;
+        this.shifts = shifts;
+    }
+
     public Long getId() {
         return id;
     }
