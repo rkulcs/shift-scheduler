@@ -37,7 +37,7 @@ public class ScheduleGenerationService {
     private EmployeeService employeeService;
 
     @Autowired
-    private GeneticAlgorithmService geneticAlgorithmService;
+    private WeeklyScheduleGeneticAlgorithmService weeklyScheduleGeneticAlgorithmService;
 
     public Collection<ScheduleForWeek> generateSchedulesForWeek(ScheduleGenerationRequest request, Company company) {
 
@@ -74,7 +74,7 @@ public class ScheduleGenerationService {
             }
         }
 
-        Collection<ScheduleForWeek> schedules = geneticAlgorithmService.generateWeeklySchedules(candidateDailySchedules);
+        Collection<ScheduleForWeek> schedules = weeklyScheduleGeneticAlgorithmService.generateSchedules(candidateDailySchedules);
 
         return schedules;
     }

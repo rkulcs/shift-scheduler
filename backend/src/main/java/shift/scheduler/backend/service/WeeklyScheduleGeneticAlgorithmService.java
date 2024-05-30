@@ -1,103 +1,21 @@
 package shift.scheduler.backend.service;
 
-import org.kie.api.runtime.KieContainer;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import shift.scheduler.backend.model.Employee;
 import shift.scheduler.backend.model.ScheduleForDay;
 import shift.scheduler.backend.model.ScheduleForWeek;
 import shift.scheduler.backend.model.Day;
+import shift.scheduler.backend.util.GeneticAlgorithm;
 
 import java.util.*;
 
 @Service
-public class GeneticAlgorithmService {
-
-    private class TournamentResult {
-        ScheduleForWeek schedule;
-        long score;
-
-        TournamentResult(ScheduleForWeek schedule, long score) {
-            this.schedule = schedule;
-            this.score = score;
-        }
-    }
-
-    @Autowired
-    private KieContainer kieContainer;
-
-    private static final int POPULATION_SIZE = 30000;
-    private static final int TOURNAMENT_SIZE = 25;
-
-    private static final double CROSSOVER_RATE = 0.8;
-    private static final double MUTATION_RATE = 0.3;
-
-    private static final int MIN_ITERATIONS = 50;
-    private static final int MAX_ITERATIONS = Integer.MAX_VALUE;
-
-    private static final Random random = new Random();
-
-    public Collection<ScheduleForWeek> generateWeeklySchedules(List<List<ScheduleForDay>> dailySchedules) {
-
-        Collection<ScheduleForWeek> generatedSchedules = new ArrayList<>();
-        TournamentResult closestSuboptimalSolution = new TournamentResult(null, Long.MAX_VALUE);
-
-        List<ScheduleForWeek> population = generateInitialPopulation(dailySchedules);
-
-        // TODO: Change this depending on the number of daily schedules
-        int numIterations = MIN_ITERATIONS;
-
-        for (int i = 0; i < numIterations; i++) {
-            List<ScheduleForWeek> nextGeneration = new ArrayList<>();
-
-            while (nextGeneration.size() != POPULATION_SIZE) {
-                TournamentResult resultA = performTournament(population);
-                ScheduleForWeek a = resultA.schedule;
-
-                if (resultA.score == 0)
-                    generatedSchedules.add(a);
-
-                if (resultA.score < closestSuboptimalSolution.score)
-                    closestSuboptimalSolution = resultA;
-
-                TournamentResult resultB = performTournament(population);
-                ScheduleForWeek b = resultB.schedule;
-
-                if (resultB.score == 0)
-                    generatedSchedules.add(b);
-
-                if (resultB.score < closestSuboptimalSolution.score)
-                    closestSuboptimalSolution = resultB;
-
-                if (a == b)
-                    continue;
-
-                if (random.nextDouble() <= CROSSOVER_RATE) {
-                    List<ScheduleForWeek> offspring = crossover(a, b);
-
-                    offspring.forEach(o -> {
-                        if (random.nextDouble() <= MUTATION_RATE)
-                            o = mutate(dailySchedules, o);
-
-                        nextGeneration.add(o);
-                    });
-                }
-            }
-
-            population = nextGeneration;
-        }
-
-        if (generatedSchedules.isEmpty()) {
-            generatedSchedules.add(closestSuboptimalSolution.schedule);
-        }
-
-        return generatedSchedules;
-    }
+public class WeeklyScheduleGeneticAlgorithmService implements GeneticAlgorithm<ScheduleForWeek, ScheduleForDay> {
 
     /**
      * Creates an initial population of weekly schedules by producing random combinations of daily schedules.
      */
-    private List<ScheduleForWeek> generateInitialPopulation(List<List<ScheduleForDay>> dailySchedules) {
+    public List<ScheduleForWeek> generateInitialPopulation(List<List<ScheduleForDay>> dailySchedules) {
 
         List<ScheduleForWeek> population = new ArrayList<>();
 
@@ -118,7 +36,7 @@ public class GeneticAlgorithmService {
         return population;
     }
 
-    private TournamentResult performTournament(List<ScheduleForWeek> schedules) {
+    public TournamentResult<ScheduleForWeek> performTournament(List<ScheduleForWeek> schedules) {
 
         Set<ScheduleForWeek> participants = new HashSet<>();
 
@@ -130,14 +48,14 @@ public class GeneticAlgorithmService {
                 participants.add(schedule);
         }
 
-        TournamentResult result = new TournamentResult(null, Long.MAX_VALUE);
+        TournamentResult<ScheduleForWeek> result = new TournamentResult<>(null, Long.MAX_VALUE);
 
         participants.forEach(participant -> {
             long score = computeFitnessScore(participant);
 
-            if (score < result.score) {
-                result.schedule = participant;
-                result.score = score;
+            if (score < result.getScore()) {
+                result.setParticipant(participant);
+                result.setScore(score);
             }
         });
 
@@ -151,7 +69,7 @@ public class GeneticAlgorithmService {
      * employees work for a number of hours that is within their specified ranges of hours, then the schedule's
      * fitness score is 0.
      */
-    private long computeFitnessScore(ScheduleForWeek schedule) {
+    public long computeFitnessScore(ScheduleForWeek schedule) {
 
         Map<Employee, Integer> employeeHours = new HashMap<>();
 
@@ -185,7 +103,7 @@ public class GeneticAlgorithmService {
         return score;
     }
 
-    private List<ScheduleForWeek> crossover(ScheduleForWeek a, ScheduleForWeek b) {
+    public List<ScheduleForWeek> crossover(ScheduleForWeek a, ScheduleForWeek b) {
 
         List<ScheduleForDay> schedulesFromA = new ArrayList<>(a.getDailySchedules());
         List<ScheduleForDay> schedulesFromB = new ArrayList<>(b.getDailySchedules());
@@ -216,7 +134,7 @@ public class GeneticAlgorithmService {
         return offspring;
     }
 
-    private ScheduleForWeek mutate(List<List<ScheduleForDay>> dailySchedules, ScheduleForWeek schedule) {
+    public ScheduleForWeek mutate(List<List<ScheduleForDay>> dailySchedules, ScheduleForWeek schedule) {
 
         List<ScheduleForDay> components = (List<ScheduleForDay>) schedule.getDailySchedules();
 
