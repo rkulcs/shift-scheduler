@@ -4,7 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import shift.scheduler.backend.model.*;
 import shift.scheduler.backend.payload.ScheduleGenerationRequest;
-import shift.scheduler.backend.util.DailyScheduleGenerator;
+import shift.scheduler.backend.util.algorithm.DailyScheduleGenerator;
+import shift.scheduler.backend.util.algorithm.WeeklyScheduleGenerator;
 
 import java.util.*;
 
@@ -32,9 +33,6 @@ public class ScheduleGenerationService {
 
     @Autowired
     private EmployeeService employeeService;
-
-    @Autowired
-    private WeeklyScheduleGenerationService weeklyScheduleGenerationService;
 
     public Collection<ScheduleForWeek> generateSchedulesForWeek(ScheduleGenerationRequest request, Company company) {
 
@@ -71,7 +69,8 @@ public class ScheduleGenerationService {
             }
         }
 
-        Collection<ScheduleForWeek> schedules = weeklyScheduleGenerationService.generateSchedules(candidateDailySchedules);
+        WeeklyScheduleGenerator weeklyScheduleGenerator = new WeeklyScheduleGenerator();
+        Collection<ScheduleForWeek> schedules = weeklyScheduleGenerator.generateSchedules(candidateDailySchedules);
 
         return schedules;
     }

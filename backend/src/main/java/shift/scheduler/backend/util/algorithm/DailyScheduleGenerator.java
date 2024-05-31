@@ -1,10 +1,10 @@
-package shift.scheduler.backend.util;
+package shift.scheduler.backend.util.algorithm;
 
 import shift.scheduler.backend.model.*;
 
 import java.util.*;
 
-public class DailyScheduleGenerator implements GeneticAlgorithm<ScheduleForDay, Shift> {
+public class DailyScheduleGenerator extends GeneticAlgorithm<ScheduleForDay, Shift> {
 
     private HoursOfOperation period;
     private List<TimePeriod> blocks;

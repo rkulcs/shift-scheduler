@@ -1,16 +1,13 @@
-package shift.scheduler.backend.service;
+package shift.scheduler.backend.util.algorithm;
 
-import org.springframework.stereotype.Service;
 import shift.scheduler.backend.model.Employee;
 import shift.scheduler.backend.model.ScheduleForDay;
 import shift.scheduler.backend.model.ScheduleForWeek;
 import shift.scheduler.backend.model.Day;
-import shift.scheduler.backend.util.GeneticAlgorithm;
 
 import java.util.*;
 
-@Service
-public class WeeklyScheduleGenerationService implements GeneticAlgorithm<ScheduleForWeek, ScheduleForDay> {
+public class WeeklyScheduleGenerator extends GeneticAlgorithm<ScheduleForWeek, ScheduleForDay> {
 
     /**
      * Creates an initial population of weekly schedules by producing random combinations of daily schedules.

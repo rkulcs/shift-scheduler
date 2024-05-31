@@ -1,23 +1,21 @@
-package shift.scheduler.backend.util;
-
-import shift.scheduler.backend.model.ScheduleForWeek;
+package shift.scheduler.backend.util.algorithm;
 
 import java.util.*;
 
-public interface GeneticAlgorithm<T, B> {
+public abstract class GeneticAlgorithm<T, B> {
 
-    static final int POPULATION_SIZE = 3000;
-    static final int TOURNAMENT_SIZE = 50;
+    public int POPULATION_SIZE = 3000;
+    public int TOURNAMENT_SIZE = 50;
 
-    static final double CROSSOVER_RATE = 0.8;
-    static final double MUTATION_RATE = 0.3;
+    public double CROSSOVER_RATE = 0.8;
+    public double MUTATION_RATE = 0.3;
 
-    static final int MIN_ITERATIONS = 50;
-    static final int MAX_ITERATIONS = Integer.MAX_VALUE;
+    public int MIN_ITERATIONS = 50;
+    public int MAX_ITERATIONS = Integer.MAX_VALUE;
 
-    static final int MAX_NUM_GENERATED_SCHEDULES = 3;
+    public int MAX_NUM_GENERATED_SCHEDULES = 3;
 
-    static final Random random = new Random();
+    public Random random = new Random();
 
     public class TournamentResult<T> {
         private T participant;
@@ -45,7 +43,7 @@ public interface GeneticAlgorithm<T, B> {
         }
     }
 
-    default Collection<T> generateSchedules(List<List<B>> components) {
+    public Collection<T> generateSchedules(List<List<B>> components) {
 
         Collection<T> generatedSchedules = new ArrayList<>();
         TournamentResult<T> closestSuboptimalSolution = new TournamentResult<>(null, Long.MAX_VALUE);
@@ -102,7 +100,7 @@ public interface GeneticAlgorithm<T, B> {
         return generatedSchedules;
     }
 
-    default TournamentResult<T> performTournament(List<T> schedules) {
+    public TournamentResult<T> performTournament(List<T> schedules) {
 
         Set<T> participants = new HashSet<>();
 
@@ -128,9 +126,8 @@ public interface GeneticAlgorithm<T, B> {
         return result;
     }
 
-//    public Collection<T> generateSchedules(List<List<B>> components);
-    List<T> generateInitialPopulation(List<List<B>> components);
-    long computeFitnessScore(T schedule);
-    List<T> crossover(T a, T b);
-    T mutate(List<List<B>> components, T schedule);
+    abstract List<T> generateInitialPopulation(List<List<B>> components);
+    abstract long computeFitnessScore(T schedule);
+    abstract List<T> crossover(T a, T b);
+    abstract T mutate(List<List<B>> components, T schedule);
 }
