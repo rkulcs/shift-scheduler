@@ -85,7 +85,26 @@ public class DailyScheduleGenerator extends GeneticAlgorithm<ScheduleForDay, Shi
 
     @Override
     public ScheduleForDay mutate(List<List<Shift>> components, ScheduleForDay schedule) {
-        // TODO: Implement mutation
+
+        List<Shift> employeeShifts = components.get(random.nextInt(components.size()));
+        Shift randomShift = employeeShifts.get(random.nextInt(employeeShifts.size()));
+
+        boolean swappedShifts = false;
+        List<Shift> scheduleShifts = (List<Shift>) schedule.getShifts();
+
+        for (int i = 0; i < scheduleShifts.size(); i++) {
+            Shift shift = scheduleShifts.get(i);
+
+            if (shift.getEmployee() == randomShift.getEmployee()) {
+                scheduleShifts.set(i, randomShift);
+                swappedShifts = true;
+                break;
+            }
+        }
+
+        if (!swappedShifts)
+            scheduleShifts.set(random.nextInt(scheduleShifts.size()), randomShift);
+
         return schedule;
     }
 
