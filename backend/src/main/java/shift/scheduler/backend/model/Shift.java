@@ -1,5 +1,6 @@
 package shift.scheduler.backend.model;
 
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import shift.scheduler.backend.model.id.ShiftId;
 
@@ -11,6 +12,7 @@ public class Shift extends TimePeriod {
 
     @Id
     @ManyToOne
+    @JsonIncludeProperties("id")
     private Employee employee;
 
     @Id

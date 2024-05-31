@@ -82,9 +82,6 @@ public class ScheduleGenerationService {
         List<List<Shift>> potentialShifts = new ArrayList<>();
         employees.forEach(e -> potentialShifts.add((List<Shift>) e.generatePotentialShifts(period)));
 
-        // Get the 4-hour blocks that make up the day's hours of operation
-        List<TimePeriod> blocks = (List<TimePeriod>) period.getTimeBlocks();
-
         DailyScheduleGenerator generator = new DailyScheduleGenerator(period, numEmployeesPerHour);
         return (List<ScheduleForDay>) generator.generateSchedules(potentialShifts);
     }

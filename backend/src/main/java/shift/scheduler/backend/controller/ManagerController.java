@@ -1,14 +1,12 @@
 package shift.scheduler.backend.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import shift.scheduler.backend.model.Company;
-import shift.scheduler.backend.model.HoursOfOperation;
-import shift.scheduler.backend.model.Manager;
-import shift.scheduler.backend.model.ScheduleForWeek;
+import shift.scheduler.backend.model.*;
 import shift.scheduler.backend.payload.ScheduleGenerationRequest;
 import shift.scheduler.backend.service.CompanyService;
 import shift.scheduler.backend.service.JwtService;
@@ -51,9 +49,9 @@ public class ManagerController {
             return ResponseEntity.ok("Successfully updated hours of operation");
     }
 
-    @PostMapping(value = "/generate-schedules", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/generate-schedules", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Collection<ScheduleForWeek>> generateSchedules(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
-                                                                         @RequestBody ScheduleGenerationRequest request) {
+                                                                        @RequestBody ScheduleGenerationRequest request) {
 
         Manager manager = getManager(authHeader);
 
