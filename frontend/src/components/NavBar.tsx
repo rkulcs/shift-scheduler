@@ -40,8 +40,8 @@ export default function NavBar() {
   return (
     <AppBar position="static">
       <Container maxWidth="xl">
-        <Toolbar style={{ height: 10 }} variant="dense" disableGutters>
-          <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+        <Toolbar style={{ height: 0 }} variant="dense" disableGutters>
+          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'none' } }}>
             <IconButton
               size="large"
               aria-label="account of current user"

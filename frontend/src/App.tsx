@@ -1,20 +1,26 @@
-import { BrowserRouter, RouterProvider } from "react-router-dom"
+import { BrowserRouter, Routes, Route } from "react-router-dom"
 import NavBar from "./components/NavBar"
 import Home from "./pages/Home"
 import Login from "./pages/Login"
-import { Routes, Route } from "react-router-dom"
+import { Box, Container, Stack } from "@mui/material"
 
 function App() {
   return (
-    <>
-      <NavBar/>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Home/>}/>
-          <Route path="/login" element={<Login/>}/>
-        </Routes>
-      </BrowserRouter>
-    </>
+    <Stack>
+      <Box>
+        <NavBar />
+      </Box>
+      <Box mt={6}>
+        <Container>
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/login" element={<Login />} />
+            </Routes>
+          </BrowserRouter>
+        </Container>
+      </Box>
+    </Stack>
   )
 }
 
