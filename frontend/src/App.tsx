@@ -6,21 +6,21 @@ import { Box, Container, Stack } from "@mui/material"
 
 function App() {
   return (
-    <Stack>
-      <Box>
-        <NavBar />
-      </Box>
-      <Box mt={6}>
-        <Container>
-          <BrowserRouter>
+    <BrowserRouter>
+      <Stack>
+        <Box>
+          <NavBar />
+        </Box>
+        <Box mt={6}>
+          <Container>
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/login" element={<Login />} />
             </Routes>
-          </BrowserRouter>
-        </Container>
-      </Box>
-    </Stack>
+          </Container>
+        </Box>
+      </Stack>
+    </BrowserRouter>
   )
 }
 

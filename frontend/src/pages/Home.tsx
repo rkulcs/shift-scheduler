@@ -29,7 +29,7 @@ export default function Home() {
                 width: 140
               }}
             >
-              <Link style={{ color: 'inherit', textDecoration: 'none' }} to={button.route}>{button.label}</Link>
+              <Link to={button.route}>{button.label}</Link>
             </Button>
           </Grid>
         ))}

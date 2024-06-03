@@ -11,7 +11,23 @@ import Button from '@mui/material/Button'
 import Tooltip from '@mui/material/Tooltip'
 import MenuItem from '@mui/material/MenuItem'
 
-const pages = ['Availabilities', 'Schedules']
+import { Link } from 'react-router-dom'
+
+const pages = [
+  {
+    label: 'Home',
+    route: '/'
+  },
+  {
+    label: 'Availabilities',
+    route: '/availabilities'
+  },
+  {
+    label: 'Schedules',
+    route: '/schedules'
+  },
+]
+
 const settings = ['Account', 'Log Out']
 
 /**
@@ -70,8 +86,8 @@ export default function NavBar() {
               }}
             >
               {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">{page}</Typography>
+                <MenuItem key={page.label} onClick={handleCloseNavMenu}>
+                  <Typography textAlign="center">{page.label}</Typography>
                 </MenuItem>
               ))}
             </Menu>
@@ -79,11 +95,11 @@ export default function NavBar() {
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {pages.map((page) => (
               <Button
-                key={page}
+                key={page.label}
                 onClick={handleCloseNavMenu}
                 sx={{ my: 2, color: 'white', display: 'block' }}
               >
-                {page}
+                <Link to={page.route}>{page.label}</Link>
               </Button>
             ))}
           </Box>
