@@ -11,7 +11,6 @@ type CompanyRegistrationFormInput = {
 const userFields = {
   "username": "Username",
   "name": "Name",
-  "password": "Password",
 }
 
 const companyFields = {
@@ -27,7 +26,19 @@ export default function CompanyRegistration() {
     formState: { errors }
   } = useForm<CompanyRegistrationFormInput>()
 
-  const onSubmit: SubmitHandler<CompanyRegistrationFormInput> = data => console.log(data)
+  const onSubmit: SubmitHandler<CompanyRegistrationFormInput> = (data) => {
+    fetch(`${import.meta.env.VITE_API_URL}/user/register`,
+      {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: JSON.stringify({...data, role: "MANAGER"})
+      }
+    ).then(res => console.log(res))
+  }
 
   return (
     <Container fixed>
@@ -56,6 +67,22 @@ export default function CompanyRegistration() {
               />
             )
           })}
+              <Controller
+                name="password"
+                control={control}
+                render={({ field }) => {
+                  return (
+                    <TextField
+                      required
+                      label="Password"
+                      type="password" 
+                      {...field}
+                      sx={{ mb: 2, display: 'block' }}
+                      fullWidth
+                    />
+                  )
+                }}
+              />
         </Box>
 
         <Typography variant="subtitle1">Company Details</Typography>
