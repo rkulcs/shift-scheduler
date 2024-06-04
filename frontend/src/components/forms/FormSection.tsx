@@ -5,7 +5,7 @@ export default function FormSection({ title, children }: { title: string, childr
     <>
       <Typography variant="subtitle1">{title}</Typography>
       <Divider />
-      <Box mt={2}>
+      <Box mt={2} mb={2}>
         {children}
       </Box>
     </>

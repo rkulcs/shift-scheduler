@@ -20,7 +20,7 @@ public class CompanyController {
     @Autowired
     private CompanyService companyService;
 
-    @GetMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     @JsonView(CompanyViews.Public.class)
     public ResponseEntity<Collection<Company>> getAll() {
 
