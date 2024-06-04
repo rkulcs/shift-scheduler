@@ -6,11 +6,27 @@ import shift.scheduler.backend.model.Company;
 import shift.scheduler.backend.model.Manager;
 import shift.scheduler.backend.repository.CompanyRepository;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+
 @Service
 public class CompanyService {
 
     @Autowired
     private CompanyRepository companyRepository;
+
+    public Collection<Company> findAll() {
+
+        Collection<Company> companies = new ArrayList<>();
+
+        Iterator<Company> iterator = companyRepository.findAll().iterator();
+
+        while (iterator.hasNext())
+            companies.add(iterator.next());
+
+        return companies;
+    }
 
     public Company findByNameAndLocation(String name, String location) {
 

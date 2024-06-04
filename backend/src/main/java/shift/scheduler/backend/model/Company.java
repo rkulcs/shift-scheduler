@@ -1,9 +1,11 @@
 package shift.scheduler.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.Cascade;
+import shift.scheduler.backend.model.view.CompanyViews;
 
 import java.util.Collection;
 
@@ -13,14 +15,17 @@ public class Company {
 
     @Id
     @GeneratedValue
+    @JsonView(CompanyViews.Public.class)
     private Long id;
 
     @NotNull
     @NotBlank
+    @JsonView(CompanyViews.Public.class)
     private String name;
 
     @NotNull
     @NotBlank
+    @JsonView(CompanyViews.Public.class)
     private String location;
 
     @OneToMany(mappedBy = "company")

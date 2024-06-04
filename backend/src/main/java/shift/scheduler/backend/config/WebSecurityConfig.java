@@ -80,6 +80,7 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(authorize -> {
                     authorize
                             .requestMatchers("/user/**").permitAll()
+                            .requestMatchers("/company/**").permitAll()
                             .requestMatchers("/employee/**").hasRole(Role.EMPLOYEE.getAuthority())
                             .requestMatchers("/manager/**").hasRole(Role.MANAGER.getAuthority())
                             .anyRequest().authenticated();
