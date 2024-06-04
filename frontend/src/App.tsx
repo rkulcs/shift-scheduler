@@ -18,8 +18,8 @@ function App() {
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/login" element={<Login />} />
-              <Route path="/company-registration" element={<CompanyRegistration />} />
-              <Route path="/employee-registration" element={<EmployeeRegistration />} />
+              <Route path="/register-company" element={<CompanyRegistration />} />
+              <Route path="/register-employee" element={<EmployeeRegistration />} />
             </Routes>
           </Container>
         </Box>

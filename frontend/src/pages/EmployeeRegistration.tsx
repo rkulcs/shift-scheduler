@@ -6,7 +6,7 @@ import TextInputField from "../components/forms/TextInputField"
 import { useEffect, useState } from "react"
 
 export default function EmployeeRegistration() {
-  const [companies, setCompanies] = useState([{name: 'a', location: ''}])
+  const [companies, setCompanies] = useState<Company[]>([{name: 'a', location: ''}])
   const [selectedCompany, setSelectedCompany] = useState<number>(0)
 
   const {

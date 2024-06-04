@@ -8,11 +8,11 @@ const buttons = [
   },
   {
     label: 'Company Registration',
-    route: 'register'
+    route: 'register-company'
   },
   {
     label: 'Employee Registration',
-    route: 'register'
+    route: 'register-employee'
   }
 ]
 
