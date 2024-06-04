@@ -1,22 +1,8 @@
-import { Container, Divider, TextField, Typography, Box, Button } from "@mui/material"
-import { useForm, SubmitHandler, Controller } from "react-hook-form"
-
-type CompanyRegistrationFormInput = {
-  username: string,
-  name: string,
-  password: string,
-  company: Company
-}
-
-const userFields = {
-  "username": "Username",
-  "name": "Name",
-}
-
-const companyFields = {
-  "company.name": "Name",
-  "company.location": "Location"
-}
+import { Container, Button } from "@mui/material"
+import { useForm, SubmitHandler } from "react-hook-form"
+import UserRegistrationFormInput from "../types/UserRegistrationFormInput"
+import FormSection from "../components/forms/FormSection"
+import TextInputField from "../components/forms/TextInputField"
 
 export default function CompanyRegistration() {
   const {
@@ -24,9 +10,9 @@ export default function CompanyRegistration() {
     handleSubmit,
     watch,
     formState: { errors }
-  } = useForm<CompanyRegistrationFormInput>()
+  } = useForm<UserRegistrationFormInput>()
 
-  const onSubmit: SubmitHandler<CompanyRegistrationFormInput> = (data) => {
+  const onSubmit: SubmitHandler<UserRegistrationFormInput> = (data) => {
     fetch(`${import.meta.env.VITE_API_URL}/user/register`,
       {
         method: 'POST',
@@ -43,72 +29,16 @@ export default function CompanyRegistration() {
   return (
     <Container fixed>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <Typography variant="subtitle1">Manager Details</Typography>
-        <Divider />
-        <Box mt={2}>
-          {Object.keys(userFields).map((fieldName: any) => {
-            const fieldLabel: string = userFields[fieldName]
+        <FormSection title="Manager Details">
+          <TextInputField name="username" label="Username" control={control} />
+          <TextInputField name="name" label="Name" control={control} />
+          <TextInputField name="password" label="Password" control={control} password />
+        </FormSection>
 
-            return (
-              <Controller
-                name={fieldName}
-                control={control}
-                render={({ field }) => {
-                  return (
-                    <TextField
-                      required
-                      label={fieldLabel}
-                      {...field}
-                      sx={{ mb: 2, display: 'block' }}
-                      fullWidth
-                    />
-                  )
-                }}
-              />
-            )
-          })}
-              <Controller
-                name="password"
-                control={control}
-                render={({ field }) => {
-                  return (
-                    <TextField
-                      required
-                      label="Password"
-                      type="password" 
-                      {...field}
-                      sx={{ mb: 2, display: 'block' }}
-                      fullWidth
-                    />
-                  )
-                }}
-              />
-        </Box>
-
-        <Typography variant="subtitle1">Company Details</Typography>
-        <Divider />
-        <Box mt={2}>
-          {Object.keys(companyFields).map((fieldName: any) => {
-            const fieldLabel: string = companyFields[fieldName]
-
-            return (
-              <Controller
-                name={fieldName}
-                control={control}
-                render={({ field }) => {
-                  return (
-                    <TextField
-                      required
-                      label={fieldLabel}
-                      {...field} sx={{ mb: 2, display: 'block' }}
-                      fullWidth
-                    />
-                  )
-                }}
-              />
-            )
-          })}
-        </Box>
+        <FormSection title="Company Details">
+          <TextInputField name="company.name" label="Name" control={control} />
+          <TextInputField name="company.location" label="Location" control={control} />
+        </FormSection>
 
         <Button variant="contained" type="submit">Register</Button>
       </form>
