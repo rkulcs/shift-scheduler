@@ -1,10 +1,10 @@
 import { useForm, SubmitHandler } from "react-hook-form"
 import { Container, Button } from "@mui/material"
+import { useNavigate } from "react-router-dom"
 import LoginFormInput from "../types/LoginFormInput"
 import FormSection from "../components/forms/FormSection"
 import TextInputField from "../components/forms/TextInputField"
 import { storeJWT } from "../util/jwt"
-import { redirect, useNavigate } from "react-router-dom"
 
 export default function Login() {
   const navigate = useNavigate()
@@ -12,7 +12,6 @@ export default function Login() {
   const {
     control,
     handleSubmit,
-    watch,
     setError,
     formState: { errors }
   } = useForm<LoginFormInput>()
@@ -31,9 +30,7 @@ export default function Login() {
       if (res.ok) {
         res.json()
           .then(body => storeJWT(body.token))
-          .then(() => {
-            navigate('/')
-          })
+          .then(() => navigate('/'))
       } else {
         res.json().then(body => {
           const invalidField = (body.error.includes('password')) ?

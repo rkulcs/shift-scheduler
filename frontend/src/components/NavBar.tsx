@@ -10,8 +10,9 @@ import Avatar from '@mui/material/Avatar'
 import Button from '@mui/material/Button'
 import Tooltip from '@mui/material/Tooltip'
 import MenuItem from '@mui/material/MenuItem'
+import { Link, useNavigate } from 'react-router-dom'
 
-import { Link } from 'react-router-dom'
+import { removeJWT } from '../util/jwt'
 
 const pages = [
   {
@@ -28,29 +29,37 @@ const pages = [
   },
 ]
 
-const settings = ['Account', 'Log Out']
+const settings = ['Account']
 
 /**
  * Navbar component based on sample MUI code from https://codesandbox.io/p/sandbox/rough-morning-8hwp3y?file=%2Fsrc%2FDemo.tsx
  */
 export default function NavBar() {
+  const navigate = useNavigate()
+
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null)
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null)
 
-  const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
+  function handleOpenNavMenu(event: React.MouseEvent<HTMLElement>) {
     setAnchorElNav(event.currentTarget)
   }
 
-  const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
+  function handleOpenUserMenu(event: React.MouseEvent<HTMLElement>) {
     setAnchorElUser(event.currentTarget)
   }
 
-  const handleCloseNavMenu = () => {
-    setAnchorElNav(null);
+  function handleCloseNavMenu() {
+    setAnchorElNav(null)
   }
 
-  const handleCloseUserMenu = () => {
-    setAnchorElUser(null);
+  function handleCloseUserMenu() {
+    setAnchorElUser(null)
+  }
+
+  function handleLogout() {
+    removeJWT()
+    handleCloseUserMenu()
+    navigate('/')
   }
 
   return (
@@ -131,6 +140,9 @@ export default function NavBar() {
                   <Typography textAlign="center">{setting}</Typography>
                 </MenuItem>
               ))}
+                <MenuItem key="logout" onClick={handleLogout}>
+                  <Typography textAlign="center">Log Out</Typography>
+                </MenuItem>
             </Menu>
           </Box>
         </Toolbar>
