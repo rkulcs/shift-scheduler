@@ -6,9 +6,10 @@ type TextInputFieldProps = {
   control: Control<any, any>
   label: string,
   password?: boolean
+  error?: string
 }
 
-export default function TextInputField({ name, control, label, password }: TextInputFieldProps) {
+export default function TextInputField({ name, control, label, password, error }: TextInputFieldProps) {
   return (
     <Controller
       name={name}
@@ -17,6 +18,8 @@ export default function TextInputField({ name, control, label, password }: TextI
         return (
           <TextField
             required
+            error={error ? true : undefined}
+            helperText={error ? error : undefined}
             label={label}
             {...field}
             type={password ? "password" : "text"}
