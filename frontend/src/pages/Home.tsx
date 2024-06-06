@@ -22,15 +22,17 @@ export default function Home() {
       <Grid container justifyContent="center" spacing={2}>
         {buttons.map((button, i) => (
           <Grid key={i} item>
-            <Button
-              variant="contained"
-              sx={{
-                height: 140,
-                width: 140
-              }}
-            >
-              <Link to={button.route}>{button.label}</Link>
-            </Button>
+            <Link to={button.route}>
+              <Button
+                variant="contained"
+                sx={{
+                  height: 140,
+                  width: 140
+                }}
+              >
+                {button.label}
+              </Button>
+            </Link>
           </Grid>
         ))}
       </Grid>
