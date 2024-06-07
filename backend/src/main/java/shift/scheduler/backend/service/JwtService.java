@@ -7,6 +7,7 @@ import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import shift.scheduler.backend.model.Account;
 import shift.scheduler.backend.model.Manager;
 
 import javax.crypto.SecretKey;
@@ -39,7 +40,10 @@ public class JwtService {
     }
 
     public String generateToken(UserDetails userDetails) {
-        return buildToken(new HashMap<>(), userDetails);
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("role", ((Account) userDetails).getRole());
+
+        return buildToken(claims, userDetails);
     }
 
     public String extractUsername(String token) {
