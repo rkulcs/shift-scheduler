@@ -1,5 +1,8 @@
 package shift.scheduler.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+@JsonFormat(shape = JsonFormat.Shape.STRING)
 public enum Day {
     MON,
     TUE,
@@ -7,5 +10,7 @@ public enum Day {
     THU,
     FRI,
     SAT,
-    SUN
+    SUN;
+
+    private Day() {}
 }

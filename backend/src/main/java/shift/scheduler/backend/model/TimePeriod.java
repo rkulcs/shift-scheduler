@@ -1,6 +1,8 @@
 package shift.scheduler.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
+import shift.scheduler.backend.model.view.EntityViews;
 import shift.scheduler.backend.util.validator.Hour;
 import shift.scheduler.backend.util.validator.Interval;
 
@@ -9,9 +11,11 @@ import shift.scheduler.backend.util.validator.Interval;
 public class TimePeriod {
 
     @Hour
+    @JsonView(EntityViews.Associate.class)
     private Short startHour;
 
     @Hour
+    @JsonView(EntityViews.Associate.class)
     private Short endHour;
 
     public TimePeriod() {}

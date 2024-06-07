@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.Cascade;
-import shift.scheduler.backend.model.view.CompanyViews;
+import shift.scheduler.backend.model.view.EntityViews;
 
 import java.util.Collection;
 
@@ -15,21 +15,22 @@ public class Company {
 
     @Id
     @GeneratedValue
-    @JsonView(CompanyViews.Public.class)
+    @JsonView(EntityViews.Public.class)
     private Long id;
 
     @NotNull
     @NotBlank
-    @JsonView(CompanyViews.Public.class)
+    @JsonView(EntityViews.Public.class)
     private String name;
 
     @NotNull
     @NotBlank
-    @JsonView(CompanyViews.Public.class)
+    @JsonView(EntityViews.Public.class)
     private String location;
 
     @OneToMany(mappedBy = "company")
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
+    @JsonView(EntityViews.Associate.class)
     private Collection<HoursOfOperation> hoursOfOperation;
 
     @OneToOne(mappedBy = "company")
