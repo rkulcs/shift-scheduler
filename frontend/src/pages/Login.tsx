@@ -1,13 +1,19 @@
 import { useForm, SubmitHandler } from "react-hook-form"
 import { Container, Button } from "@mui/material"
 import { useNavigate } from "react-router-dom"
+import { JwtPayload, jwtDecode } from "jwt-decode"
 import LoginFormInput from "../types/LoginFormInput"
 import FormSection from "../components/forms/FormSection"
 import TextInputField from "../components/forms/TextInputField"
-import { storeJWT } from "../util/jwt"
+import { getJWT, storeJWT } from "../util/jwt"
+import User from "../model/User"
+import { useDispatch } from "react-redux"
+import { setUser } from "../redux/user"
+import { getUserRole } from "../redux/store"
 
 export default function Login() {
   const navigate = useNavigate()
+  const dispatch = useDispatch()
 
   const {
     control,
@@ -30,6 +36,12 @@ export default function Login() {
       if (res.ok) {
         res.json()
           .then(body => storeJWT(body.token))
+          .then(() => {
+            // Store username and role using Redux
+            const payload: JwtPayload = jwtDecode(getJWT() as string)
+            const user = User.new(payload.sub, payload.role)
+            dispatch(setUser(user))
+          })
           .then(() => navigate('/'))
       } else {
         res.json().then(body => {
