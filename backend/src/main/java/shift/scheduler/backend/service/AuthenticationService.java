@@ -118,4 +118,11 @@ public class AuthenticationService {
 
         return new AuthenticationResult(jwtService.generateToken(account), null);
     }
+
+    public User getUserFromHeader(String authHeader) {
+
+        String token = jwtService.extractTokenFromHeader(authHeader);
+        String username = jwtService.extractUsername(token);
+        return managerService.findByUsername(username);
+    }
 }

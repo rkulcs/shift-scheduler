@@ -37,4 +37,6 @@ public abstract class User {
     public String getUsername() {
         return account.getUsername();
     }
+
+    public abstract Company getCompany();
 }

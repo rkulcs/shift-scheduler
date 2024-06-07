@@ -1,6 +1,5 @@
 package shift.scheduler.backend.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -8,10 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import shift.scheduler.backend.model.*;
 import shift.scheduler.backend.payload.ScheduleGenerationRequest;
-import shift.scheduler.backend.service.CompanyService;
-import shift.scheduler.backend.service.JwtService;
-import shift.scheduler.backend.service.ManagerService;
-import shift.scheduler.backend.service.ScheduleGenerationService;
+import shift.scheduler.backend.service.*;
 
 import java.util.Collection;
 
@@ -21,6 +17,9 @@ public class ManagerController {
 
     @Autowired
     private JwtService jwtService;
+
+    @Autowired
+    private AuthenticationService authenticationService;
 
     @Autowired
     private ManagerService managerService;
@@ -35,7 +34,7 @@ public class ManagerController {
     public ResponseEntity<String> setHoursOfOperation(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
                                                       @RequestBody Collection<HoursOfOperation> timePeriods) {
 
-        Manager manager = getManager(authHeader);
+        Manager manager = (Manager) authenticationService.getUserFromHeader(authHeader);
 
         if (manager == null)
             return ResponseEntity.badRequest().body("Manager account does not exist");
@@ -51,9 +50,9 @@ public class ManagerController {
 
     @PostMapping(value = "/generate-schedules", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Collection<ScheduleForWeek>> generateSchedules(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
-                                                                        @RequestBody ScheduleGenerationRequest request) {
+                                                                         @RequestBody ScheduleGenerationRequest request) {
 
-        Manager manager = getManager(authHeader);
+        Manager manager = (Manager) authenticationService.getUserFromHeader(authHeader);
 
         if (manager == null)
             return ResponseEntity.badRequest().body(null);
@@ -66,12 +65,5 @@ public class ManagerController {
             return ResponseEntity.unprocessableEntity().body(schedules);
         else
             return ResponseEntity.ok(schedules);
-    }
-
-    private Manager getManager(String authHeader) {
-
-        String token = jwtService.extractTokenFromHeader(authHeader);
-        String username = jwtService.extractUsername(token);
-        return (Manager) managerService.findByUsername(username);
     }
 }
