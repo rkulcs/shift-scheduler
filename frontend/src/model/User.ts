@@ -1,8 +1,21 @@
+export type UserDetails = {
+  username: string
+  role: string
+}
+
 export default class User {
-  static new(username: string, role: string) {
+  username: string
+  role: string
+
+  constructor(username: string, role: string) {
+    this.username = username 
+    this.role = role
+  }
+
+  serialize() {
     return {
-      username: username,
-      role: role
+      username: this.username,
+      role: this.role
     }
   }
 }

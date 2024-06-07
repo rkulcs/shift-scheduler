@@ -9,7 +9,6 @@ import { getJWT, storeJWT } from "../util/jwt"
 import User from "../model/User"
 import { useDispatch } from "react-redux"
 import { setUser } from "../redux/user"
-import { getUserRole } from "../redux/store"
 
 export default function Login() {
   const navigate = useNavigate()
@@ -37,10 +36,12 @@ export default function Login() {
         res.json()
           .then(body => storeJWT(body.token))
           .then(() => {
-            // Store username and role using Redux
+            // Store username and role locally
             const payload: JwtPayload = jwtDecode(getJWT() as string)
-            const user = User.new(payload.sub, payload.role)
-            dispatch(setUser(user))
+            const user = new User(payload.sub as string, payload.role as string)
+            localStorage.setItem('username', user.username)
+            localStorage.setItem('role', user.role)
+            dispatch(setUser(user.serialize()))
           })
           .then(() => navigate('/'))
       } else {

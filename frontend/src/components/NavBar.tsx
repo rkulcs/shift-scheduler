@@ -1,4 +1,4 @@
-import * as React from 'react'
+import { useState, useEffect, MouseEvent } from 'react'
 import AppBar from '@mui/material/AppBar'
 import Box from '@mui/material/Box'
 import Toolbar from '@mui/material/Toolbar'
@@ -13,22 +13,41 @@ import MenuItem from '@mui/material/MenuItem'
 import { Link, useNavigate } from 'react-router-dom'
 
 import { removeJWT } from '../util/jwt'
-import { getUserRole, getUsername } from '../redux/store'
-import { setUser } from '../redux/user'
+import { UserDetails } from '../model/User'
+import { useDispatch, useStore } from 'react-redux'
+import { removeUser } from '../redux/user'
+import { getUser } from '../redux/store'
 
-const pages = [
+type PageMapping = {
+  label: string
+  route: string
+}
+
+const commonPages: PageMapping[] = [
   {
     label: 'Home',
     route: '/'
   },
+]
+
+const managerPages: PageMapping[] = [
+  ...commonPages,
   {
-    label: 'Availabilities',
-    route: '/availabilities'
+    label: 'Hours of Operation',
+    route: '/hours'
   },
   {
     label: 'Schedules',
     route: '/schedules'
   },
+]
+
+const employeePages: PageMapping[] = [
+  ...commonPages,
+  {
+    label: 'Availabilities',
+    route: '/availabilities'
+  }
 ]
 
 const settings = ['Account']
@@ -38,21 +57,39 @@ const settings = ['Account']
  */
 export default function NavBar() {  
   const navigate = useNavigate()
+  const dispatch = useDispatch()
+  const store = useStore()
 
-  const [username, setUsername] = React.useState<string>(getUsername())
+  const [userDetails, setUserDetails] = useState<UserDetails>(getUser())
+  const [pages, setPages]= useState<PageMapping[]>(commonPages)
 
-  const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null)
-  const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null)
+  const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null)
+  const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null)
 
-  React.useEffect(() => {
-    setUsername(getUsername())
-  }, [setUser])
+  store.subscribe(() => {
+    setUserDetails(getUser())
+  })
 
-  function handleOpenNavMenu(event: React.MouseEvent<HTMLElement>) {
+  useEffect(() => {
+    let newPages: PageMapping[] = commonPages 
+
+    switch (userDetails.role) {
+      case 'MANAGER':
+        newPages = managerPages
+        break
+      case 'EMPLOYEE':
+        newPages = employeePages 
+        break
+    }
+
+    setPages(newPages)
+  }, [userDetails])
+
+  function handleOpenNavMenu(event: MouseEvent<HTMLElement>) {
     setAnchorElNav(event.currentTarget)
   }
 
-  function handleOpenUserMenu(event: React.MouseEvent<HTMLElement>) {
+  function handleOpenUserMenu(event: MouseEvent<HTMLElement>) {
     setAnchorElUser(event.currentTarget)
   }
 
@@ -66,6 +103,9 @@ export default function NavBar() {
 
   function handleLogout() {
     removeJWT()
+    localStorage.removeItem('username')
+    localStorage.removeItem('role')
+    dispatch(removeUser())
     handleCloseUserMenu()
     navigate('/')
   }
@@ -123,7 +163,7 @@ export default function NavBar() {
           </Box>
 
           <Box sx={{ flexGrow: 0 }}>
-            <Tooltip title={username ? username : undefined}>
+            <Tooltip title={userDetails.username ? userDetails.username : undefined}>
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                 <Avatar alt="User Name" />
               </IconButton>
