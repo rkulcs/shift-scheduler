@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { Container, Card, Button, Typography, Paper, Checkbox, FormControlLabel, Grid, FormControl, InputLabel, Select, MenuItem, Box } from "@mui/material"
+import { Container, Card, Button, Typography, Paper, Checkbox, FormControlLabel, Grid, FormControl, InputLabel, Select, MenuItem, Box, Alert } from "@mui/material"
 import { useForm, SubmitHandler, Controller } from "react-hook-form"
 
 import Company from "../model/Company"
@@ -28,9 +28,33 @@ export default function HoursOfOperationForm() {
     }
   })
 
-  const [company, setCompany] = useState(new Company('', '', getValues().periods))
+  const [company, setCompany] = useState<Company>(new Company('', '', getValues().periods))
+  const [submissionStatus, setSubmissionStatus] = useState({ type: '', message: '' })
 
-  const onSubmit: SubmitHandler<HoursOfOperationFormInput> = (data) => console.log(data)
+  const onSubmit: SubmitHandler<HoursOfOperationFormInput> = (data) => {
+    const payload: TimePeriod[] = data.periods.filter(entry => entry.active)
+    console.log(payload)
+
+    fetch(`${import.meta.env.VITE_API_URL}/manager/hours-of-operation`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': localStorage.getItem('token') as string
+        },
+        body: JSON.stringify(payload)
+      }
+    ).then(res => {
+      if (res.ok) {
+        setSubmissionStatus({ type: 'success', message: 'Hours updated' })
+      } else {
+        setSubmissionStatus({ type: 'error', message: 'Failed to update hours of operation' })
+      }
+    }).catch(e => {
+      setSubmissionStatus({ type: 'error', message: 'Failed to update hours of operation' })
+    })
+  }
 
   useEffect(() => {
     fetch(`${import.meta.env.VITE_API_URL}/company`,
@@ -59,10 +83,18 @@ export default function HoursOfOperationForm() {
     .then(data => setCompany(data))
   }, [])
 
+  // Handle hour selections
+  useEffect(() => {
+    setValue('periods', [...(company.hoursOfOperation)])
+  }, [company])
+
   return (
     <Container fixed>
       <form onSubmit={handleSubmit(onSubmit)}>
         <FormSection title="Hours of Operation">
+          {submissionStatus.type && <Box mb={2}>
+            <Alert severity={submissionStatus.type}>{submissionStatus.message}</Alert>
+          </Box>}
           <Grid container spacing={1}>
             {Object.keys(Day).filter(key => !isNaN(Number(key))).map(key => Number(key)).map((i: number) => {
               return (
