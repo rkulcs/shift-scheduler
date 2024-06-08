@@ -1,6 +1,6 @@
 import { Typography, Divider, Box } from "@mui/material"
 
-export default function FormSection({ title, children }: { title: string, children: JSX.Element[] }) {
+export default function FormSection({ title, children }: { title: string, children: JSX.Element | JSX.Element[] }) {
   return (
     <>
       <Typography variant="subtitle1">{title}</Typography>

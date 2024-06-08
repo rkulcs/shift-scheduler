@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react"
-import { Container, Card, Button, Typography, Paper, Checkbox, FormControlLabel, Grid } from "@mui/material"
+import { Container, Card, Button, Typography, Paper, Checkbox, FormControlLabel, Grid, FormControl, InputLabel, Select, MenuItem, Box } from "@mui/material"
 import { useForm, SubmitHandler, Controller } from "react-hook-form"
 
 import Company from "../model/Company"
 import UserRegistrationFormInput from "../types/UserRegistrationFormInput"
 import { Day } from "../model/Day"
-import { TimePeriod } from "../model/TimePeriod"
+import { TimePeriod, VALID_HOURS } from "../model/TimePeriod"
 import TextInputField from "../components/forms/TextInputField"
+import FormSection from "../components/forms/FormSection"
 
 type HoursOfOperationFormInput = {
   periods: TimePeriod[]
@@ -27,7 +28,7 @@ export default function HoursOfOperationForm() {
     }
   })
 
-  const [company, setCompany] = useState(new Company('', ''))
+  const [company, setCompany] = useState(new Company('', '', getValues().periods))
 
   const onSubmit: SubmitHandler<HoursOfOperationFormInput> = (data) => console.log(data)
 
@@ -42,43 +43,85 @@ export default function HoursOfOperationForm() {
       }
     )
     .then(res => res.json())
+    .then(data => {
+      let updatedPeriods: TimePeriod[] = getValues().periods
+
+      data.hoursOfOperation?.forEach((entry: TimePeriod) => {
+        const index: number = Day[entry.day as keyof typeof Day]
+        updatedPeriods[index] = {...entry, active: true}
+      })
+
+      setValue('periods', updatedPeriods)
+      data.hoursOfOperation = updatedPeriods
+
+      return data
+    })
     .then(data => setCompany(data))
   }, [])
-
-  useEffect(() => {
-    company.hoursOfOperation?.forEach(entry => {
-      const index: number = Day[entry.day as keyof typeof Day]
-      setValue(`periods.${index}`, {...entry, active: true})
-    })
-  }, [company])
 
   return (
     <Container fixed>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <Grid container spacing={1}>
-        {Object.keys(Day).filter(key => !isNaN(Number(key))).map(i => {
-          return (
-          <Grid item xs={1.7}>
-            <Paper key={i}>
-              <Container>
-              <FormControlLabel
-                control={
-                  <Controller
-                    name={`periods.${i}.active`}
-                    control={control}
-                    render={({ field: { onChange, value } }) => <Checkbox checked={value} onChange={onChange} />}
-                  />
-                }
-                label={getValues().periods[i].day}
-              />
-              </Container>
-              <TextInputField name={`periods.${i}.startHour`} label="Start Hour" control={control} />
-              <TextInputField name={`periods.${i}.endHour`} label="End Hour" control={control} />
-            </Paper>
-            </Grid>
-          ) 
-        })}
-        </Grid>
+        <FormSection title="Hours of Operation">
+          <Grid container spacing={1}>
+            {Object.keys(Day).filter(key => !isNaN(Number(key))).map(key => Number(key)).map((i: number) => {
+              return (
+                <Grid item key={i} xs={1.7}>
+                  <Paper sx={{ padding: 0.5 }}>
+                    <Container>
+                      <FormControlLabel
+                        control={
+                          <Controller
+                            name={`periods.${i}.active`}
+                            control={control}
+                            render={({ field: { onChange, value } }) => <Checkbox checked={value} onChange={onChange} />}
+                          />
+                        }
+                        label={getValues().periods[i].day}
+                      />
+                    </Container>
+
+                    <Box mt={1} mb={1}>
+                      <FormControl fullWidth>
+                        <InputLabel id={`start-hour-label-${i}`}>Start Hour</InputLabel>
+                        <Select
+                          labelId={`start-hour-label-${i}`}
+                          label="Start Hour"
+                          value={company.hoursOfOperation[i].startHour}
+                          onChange={e => {
+                            let updatedHours: TimePeriod[] = company.hoursOfOperation
+                            updatedHours[i].startHour = e.target.value as number
+                            setCompany({ ...company, hoursOfOperation: updatedHours })
+                          }}
+                        >
+                          {VALID_HOURS.map(v => <MenuItem key={v} value={v}>{v}</MenuItem>)}
+                        </Select>
+                      </FormControl>
+                    </Box>
+
+                    <Box mt={2} mb={1}>
+                      <FormControl fullWidth>
+                        <InputLabel id={`end-hour-label-${i}`}>End Hour</InputLabel>
+                        <Select
+                          labelId={`end-hour-label-${i}`}
+                          label="End Hour"
+                          value={company.hoursOfOperation[i].endHour}
+                          onChange={e => {
+                            let updatedHours: TimePeriod[] = company.hoursOfOperation
+                            updatedHours[i].endHour = e.target.value as number
+                            setCompany({ ...company, hoursOfOperation: updatedHours })
+                          }}
+                        >
+                          {VALID_HOURS.map(v => <MenuItem key={v} value={v}>{v}</MenuItem>)}
+                        </Select>
+                      </FormControl>
+                    </Box>
+                  </Paper>
+                </Grid>
+              )
+            })}
+          </Grid>
+        </FormSection>
 
         <Button variant="contained" type="submit">Update</Button>
       </form>
