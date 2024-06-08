@@ -1,12 +1,13 @@
 import { useForm, SubmitHandler } from "react-hook-form"
 import UserRegistrationFormInput from "../types/UserRegistrationFormInput"
-import { Container, Button, Select, MenuItem, FormControl, InputLabel, FormHelperText } from "@mui/material"
+import { Container, Button, Select, MenuItem, FormControl, InputLabel } from "@mui/material"
 import FormSection from "../components/forms/FormSection"
 import TextInputField from "../components/forms/TextInputField"
 import { useEffect, useState } from "react"
+import Company from "../model/Company"
 
 export default function EmployeeRegistration() {
-  const [companies, setCompanies] = useState<Company[]>([{name: 'a', location: ''}])
+  const [companies, setCompanies] = useState<Company[]>([new Company('', '')])
   const [selectedCompany, setSelectedCompany] = useState<number>(0)
 
   const {
@@ -32,7 +33,7 @@ export default function EmployeeRegistration() {
 
   // Get the names and locations of all registered companies for the user to choose from
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_API_URL}/company`,
+    fetch(`${import.meta.env.VITE_API_URL}/company/all`,
       {
         method: 'GET',
         headers: {

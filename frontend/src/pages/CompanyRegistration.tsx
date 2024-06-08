@@ -8,7 +8,6 @@ export default function CompanyRegistration() {
   const {
     control,
     handleSubmit,
-    watch,
     formState: { errors }
   } = useForm<UserRegistrationFormInput>()
 
