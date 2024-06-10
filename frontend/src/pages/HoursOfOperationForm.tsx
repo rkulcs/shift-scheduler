@@ -8,6 +8,7 @@ import { Day } from "../model/Day"
 import { TimePeriod, VALID_HOURS } from "../model/TimePeriod"
 import TextInputField from "../components/forms/TextInputField"
 import FormSection from "../components/forms/FormSection"
+import HourSelect from "../components/forms/HourSelect"
 
 type HoursOfOperationFormInput = {
   periods: TimePeriod[]
@@ -113,41 +114,27 @@ export default function HoursOfOperationForm() {
                       />
                     </Container>
 
-                    <Box mt={1} mb={1}>
-                      <FormControl fullWidth>
-                        <InputLabel id={`start-hour-label-${i}`}>Start Hour</InputLabel>
-                        <Select
-                          labelId={`start-hour-label-${i}`}
-                          label="Start Hour"
-                          value={company.hoursOfOperation[i].startHour}
-                          onChange={e => {
-                            let updatedHours: TimePeriod[] = company.hoursOfOperation
-                            updatedHours[i].startHour = e.target.value as number
-                            setCompany({ ...company, hoursOfOperation: updatedHours })
-                          }}
-                        >
-                          {VALID_HOURS.map(v => <MenuItem key={v} value={v}>{v}</MenuItem>)}
-                        </Select>
-                      </FormControl>
-                    </Box>
+                    <HourSelect
+                      i={i}
+                      label="Start Hour"
+                      value={company.hoursOfOperation[i].startHour}
+                      onChange={e => {
+                        let updatedHours: TimePeriod[] = company.hoursOfOperation
+                        updatedHours[i].startHour = e.target.value as number
+                        setCompany({ ...company, hoursOfOperation: updatedHours })
+                      }}
+                    />
 
-                    <Box mt={2} mb={1}>
-                      <FormControl fullWidth>
-                        <InputLabel id={`end-hour-label-${i}`}>End Hour</InputLabel>
-                        <Select
-                          labelId={`end-hour-label-${i}`}
-                          label="End Hour"
-                          value={company.hoursOfOperation[i].endHour}
-                          onChange={e => {
-                            let updatedHours: TimePeriod[] = company.hoursOfOperation
-                            updatedHours[i].endHour = e.target.value as number
-                            setCompany({ ...company, hoursOfOperation: updatedHours })
-                          }}
-                        >
-                          {VALID_HOURS.map(v => <MenuItem key={v} value={v}>{v}</MenuItem>)}
-                        </Select>
-                      </FormControl>
-                    </Box>
+                    <HourSelect
+                      i={i}
+                      label="End Hour"
+                      value={company.hoursOfOperation[i].endHour}
+                      onChange={e => {
+                        let updatedHours: TimePeriod[] = company.hoursOfOperation
+                        updatedHours[i].endHour = e.target.value as number
+                        setCompany({ ...company, hoursOfOperation: updatedHours })
+                      }}
+                    />
                   </Paper>
                 </Grid>
               )
