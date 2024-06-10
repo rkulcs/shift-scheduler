@@ -9,6 +9,7 @@ import { TimePeriod, VALID_HOURS } from "../model/TimePeriod"
 import TextInputField from "../components/forms/TextInputField"
 import FormSection from "../components/forms/FormSection"
 import HourSelect from "../components/forms/HourSelect"
+import LabeledCheckbox from "../components/forms/LabeledCheckbox"
 
 type HoursOfOperationFormInput = {
   periods: TimePeriod[]
@@ -101,18 +102,11 @@ export default function HoursOfOperationForm() {
               return (
                 <Grid item key={i} xs={1.7}>
                   <Paper sx={{ padding: 0.5 }}>
-                    <Container>
-                      <FormControlLabel
-                        control={
-                          <Controller
-                            name={`periods.${i}.active`}
-                            control={control}
-                            render={({ field: { onChange, value } }) => <Checkbox checked={value} onChange={onChange} />}
-                          />
-                        }
-                        label={getValues().periods[i].day}
-                      />
-                    </Container>
+                    <LabeledCheckbox
+                      name={`periods.${i}.active`}
+                      label={getValues().periods[i].day}
+                      control={control}
+                    />
 
                     <HourSelect
                       i={i}
