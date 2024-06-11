@@ -6,6 +6,7 @@ import { Box, Container, Stack } from "@mui/material"
 import CompanyRegistration from "./pages/CompanyRegistration"
 import EmployeeRegistration from "./pages/EmployeeRegistration"
 import HoursOfOperationForm from "./pages/HoursOfOperationForm"
+import Availabilities from "./pages/Availabilities"
 
 function App() {
   return (
@@ -23,6 +24,8 @@ function App() {
               <Route path="/register-employee" element={<EmployeeRegistration />} />
 
               <Route path="/hours" element={<HoursOfOperationForm />} />
+
+              <Route path="/availabilities" element={<Availabilities />} />
             </Routes>
           </Container>
         </Box>

@@ -1,19 +1,14 @@
 import { useEffect, useState } from "react"
-import { Container, Card, Button, Typography, Paper, Checkbox, FormControlLabel, Grid, FormControl, InputLabel, Select, MenuItem, Box, Alert } from "@mui/material"
+import { Container, Button, Paper, Checkbox, FormControlLabel, Grid, FormControl, InputLabel, Select, MenuItem, Box, Alert } from "@mui/material"
 import { useForm, SubmitHandler, Controller } from "react-hook-form"
 
 import Company from "../model/Company"
-import UserRegistrationFormInput from "../types/UserRegistrationFormInput"
 import { Day } from "../model/Day"
 import { TimePeriod, VALID_HOURS } from "../model/TimePeriod"
-import TextInputField from "../components/forms/TextInputField"
+import { TimePeriodFormInput } from "../types/TimePeriodFormInput"
 import FormSection from "../components/forms/FormSection"
 import HourSelect from "../components/forms/HourSelect"
 import LabeledCheckbox from "../components/forms/LabeledCheckbox"
-
-type HoursOfOperationFormInput = {
-  periods: TimePeriod[]
-}
 
 export default function HoursOfOperationForm() {
   const {
@@ -22,7 +17,7 @@ export default function HoursOfOperationForm() {
     getValues,
     setValue,
     formState: { errors }
-  } = useForm<HoursOfOperationFormInput>({
+  } = useForm<TimePeriodFormInput>({
     defaultValues: {
       periods: Object.keys(Day).filter(key => isNaN(Number(key))).map(day => {
         return { day: day, startHour: 0, endHour: 0, active: false }
@@ -33,7 +28,7 @@ export default function HoursOfOperationForm() {
   const [company, setCompany] = useState<Company>(new Company('', '', getValues().periods))
   const [submissionStatus, setSubmissionStatus] = useState({ type: '', message: '' })
 
-  const onSubmit: SubmitHandler<HoursOfOperationFormInput> = (data) => {
+  const onSubmit: SubmitHandler<TimePeriodFormInput> = (data) => {
     const payload: TimePeriod[] = data.periods.filter(entry => entry.active)
     console.log(payload)
 
@@ -94,9 +89,10 @@ export default function HoursOfOperationForm() {
     <Container fixed>
       <form onSubmit={handleSubmit(onSubmit)}>
         <FormSection title="Hours of Operation">
-          {submissionStatus.type && <Box mb={2}>
-            <Alert severity={submissionStatus.type}>{submissionStatus.message}</Alert>
-          </Box>}
+          {submissionStatus.type &&
+            <Box mb={2}>
+              <Alert severity={submissionStatus.type}>{submissionStatus.message}</Alert>
+            </Box>}
           <Grid container spacing={1}>
             {Object.keys(Day).filter(key => !isNaN(Number(key))).map(key => Number(key)).map((i: number) => {
               return (
