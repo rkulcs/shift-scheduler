@@ -1,5 +1,6 @@
 package shift.scheduler.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import shift.scheduler.backend.model.id.AvailabilityId;
 
@@ -10,6 +11,7 @@ public class Availability extends TimePeriod {
 
     @Id
     @ManyToOne
+    @JsonIgnore
     private Employee employee;
 
     @Id

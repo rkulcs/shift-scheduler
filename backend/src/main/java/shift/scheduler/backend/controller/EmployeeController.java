@@ -27,6 +27,17 @@ public class EmployeeController {
     @Autowired
     private AvailabilityRepository availabilityRepository;
 
+    @GetMapping(value = "/availability", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Collection<Availability>> getAvailabilites(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
+
+        Employee employee = getEmployee(authHeader);
+
+        if (employee == null)
+            return ResponseEntity.badRequest().body(null);
+
+        return ResponseEntity.ok(employee.getAvailabilities());
+    }
+
     @PostMapping(value = "/availability", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> updateAvailabilities(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
                                                        @RequestBody Collection<Availability> availabilities) {

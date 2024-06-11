@@ -1,5 +1,6 @@
 package shift.scheduler.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
 import shift.scheduler.backend.model.view.EntityViews;
@@ -41,6 +42,7 @@ public class TimePeriod {
         this.endHour = endHour;
     }
 
+    @JsonIgnore
     public int getLength() {
         return endHour-startHour;
     }
