@@ -28,8 +28,8 @@ public class Company {
     @JsonView(EntityViews.Public.class)
     private String location;
 
-    @OneToMany(mappedBy = "company")
-    @Cascade(org.hibernate.annotations.CascadeType.ALL)
+    @OneToMany(mappedBy = "company", orphanRemoval = true)
+    @Cascade({org.hibernate.annotations.CascadeType.ALL})
     @JsonView(EntityViews.Associate.class)
     private Collection<HoursOfOperation> hoursOfOperation;
 
@@ -76,7 +76,12 @@ public class Company {
     }
 
     public void setHoursOfOperation(Collection<HoursOfOperation> hoursOfOperation) {
-        this.hoursOfOperation = hoursOfOperation;
+
+        /* Copy the references of the provided hours of operation, rather than the
+           reference to the provided collection to ensure that it can be updated in
+           the DB using Hibernate (https://stackoverflow.com/a/8835704) */
+        this.hoursOfOperation.clear();
+        this.hoursOfOperation.addAll(hoursOfOperation);
 
         for (HoursOfOperation period : hoursOfOperation)
             period.setCompany(this);
