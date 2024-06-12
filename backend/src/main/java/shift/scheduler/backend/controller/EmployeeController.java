@@ -47,10 +47,10 @@ public class EmployeeController {
         if (employee == null)
             return ResponseEntity.badRequest().body("Employee does not exist");
 
-        availabilities.forEach(availability -> availability.setEmployee(employee));
+        employee.setAvailabilities(availabilities);
 
         try {
-            availabilityRepository.saveAll(availabilities);
+            employeeService.save(employee);
         } catch (ConstraintViolationException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {

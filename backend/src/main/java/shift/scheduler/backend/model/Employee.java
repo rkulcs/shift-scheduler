@@ -22,7 +22,7 @@ public class Employee extends User {
     private Short minHoursPerWeek;
     private Short maxHoursPerWeek;
 
-    @OneToMany(mappedBy = "employee")
+    @OneToMany(mappedBy = "employee", orphanRemoval = true)
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
     private Collection<Availability> availabilities;
 
@@ -90,7 +90,14 @@ public class Employee extends User {
 
     public void setAvailabilities(Collection<Availability> availabilities) {
 
-        this.availabilities = availabilities;
+        if (this.availabilities == null) {
+            this.availabilities = availabilities;
+        } else {
+            this.availabilities.forEach(availability -> availability.setEmployee(null));
+            this.availabilities.clear();
+            this.availabilities.addAll(availabilities);
+        }
+
         this.availabilities.forEach(availability -> availability.setEmployee(this));
     }
 
