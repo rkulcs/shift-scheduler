@@ -30,7 +30,6 @@ export default function HoursOfOperationForm() {
 
   const onSubmit: SubmitHandler<TimePeriodFormInput> = (data) => {
     const payload: TimePeriod[] = data.periods.filter(entry => entry.active)
-    console.log(payload)
 
     fetch(`${import.meta.env.VITE_API_URL}/manager/hours-of-operation`,
       {

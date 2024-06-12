@@ -3,7 +3,7 @@ import { TimePeriodFormInput } from "../types/TimePeriodFormInput"
 import { Day } from "../model/Day"
 import { useEffect, useState } from "react"
 import { TimePeriod } from "../model/TimePeriod"
-import { Button, Container, Grid, Paper } from "@mui/material"
+import { Button, Container, Grid, Paper, Box, Alert } from "@mui/material"
 import FormSection from "../components/forms/FormSection"
 import LabeledCheckbox from "../components/forms/LabeledCheckbox"
 import HourSelect from "../components/forms/HourSelect"
@@ -23,9 +23,32 @@ export default function Availabilities() {
     }
   })
 
-  const onSubmit: SubmitHandler<TimePeriodFormInput> = (data) => console.log(data)
-
   const [availabilities, setAvailabilities] = useState<TimePeriod[]>(getValues().periods);
+  const [submissionStatus, setSubmissionStatus] = useState({ type: '', message: '' })
+
+  const onSubmit: SubmitHandler<TimePeriodFormInput> = (data) => {
+    const payload: TimePeriod[] = data.periods.filter(entry => entry.active)
+
+    fetch(`${import.meta.env.VITE_API_URL}/employee/availability`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': localStorage.getItem('token') as string
+        },
+        body: JSON.stringify(payload)
+      }
+    ).then(res => {
+      if (res.ok) {
+        setSubmissionStatus({ type: 'success', message: 'Hours updated' })
+      } else {
+        setSubmissionStatus({ type: 'error', message: 'Failed to update availabilities' })
+      }
+    }).catch(e => {
+      setSubmissionStatus({ type: 'error', message: 'Failed to update availabilities' })
+    })
+  }
 
   useEffect(() => {
     fetch(`${import.meta.env.VITE_API_URL}/employee/availability`,
@@ -61,6 +84,10 @@ export default function Availabilities() {
     <Container fixed>
       <form onSubmit={handleSubmit(onSubmit)}>
         <FormSection title="Availabilities">
+          {submissionStatus.type &&
+            <Box mb={2}>
+              <Alert severity={submissionStatus.type}>{submissionStatus.message}</Alert>
+            </Box>}
           <Grid container spacing={1}>
             {Object.keys(Day).filter(key => !isNaN(Number(key))).map(key => Number(key)).map((i: number) => {
               return (
@@ -77,7 +104,7 @@ export default function Availabilities() {
                       label="Start Hour"
                       value={availabilities[i].startHour}
                       onChange={e => {
-                        let updatedHours: TimePeriod[] = availabilities
+                        let updatedHours: TimePeriod[] = [...availabilities]
                         updatedHours[i].startHour = e.target.value as number
                         setAvailabilities(updatedHours)
                       }}
@@ -88,7 +115,7 @@ export default function Availabilities() {
                       label="End Hour"
                       value={availabilities[i].endHour}
                       onChange={e => {
-                        let updatedHours: TimePeriod[] = availabilities
+                        let updatedHours: TimePeriod[] = [...availabilities]
                         updatedHours[i].endHour = e.target.value as number
                         setAvailabilities(updatedHours)
                       }}
