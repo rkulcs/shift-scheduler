@@ -5,6 +5,7 @@ import FormSection from "../components/forms/FormSection"
 import TextInputField from "../components/forms/TextInputField"
 import { useEffect, useState } from "react"
 import Company from "../model/Company"
+import { getRequest, postRequest } from "../components/client/client"
 
 export default function EmployeeRegistration() {
   const [companies, setCompanies] = useState<Company[]>([new Company('', '')])
@@ -19,30 +20,15 @@ export default function EmployeeRegistration() {
   } = useForm<UserRegistrationFormInput>()
 
   const onSubmit: SubmitHandler<UserRegistrationFormInput> = (data) => {
-    fetch(`${import.meta.env.VITE_API_URL}/user/register`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-        body: JSON.stringify({...data, role: "EMPLOYEE"})
-      }
-    ).then(res => console.log(res))
+    postRequest('user/register', {...data, role: "EMPLOYEE"})
+      .then(res => console.log(res))
   }
 
   // Get the names and locations of all registered companies for the user to choose from
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_API_URL}/company/all`,
-      {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-        },
-      }
-    )
-    .then(res => res.json())
-    .then(data => setCompanies(data))
+    getRequest('company/all')
+      .then(res => res.json())
+      .then(data => setCompanies(data))
   }, [])
 
   // Select the first company by default once the companies are loaded

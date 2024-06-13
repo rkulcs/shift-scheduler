@@ -9,6 +9,7 @@ import { TimePeriodFormInput } from "../types/TimePeriodFormInput"
 import FormSection from "../components/forms/FormSection"
 import HourSelect from "../components/forms/HourSelect"
 import LabeledCheckbox from "../components/forms/LabeledCheckbox"
+import { getRequest, postRequest } from "../components/client/client"
 
 export default function HoursOfOperationForm() {
   const {
@@ -31,52 +32,35 @@ export default function HoursOfOperationForm() {
   const onSubmit: SubmitHandler<TimePeriodFormInput> = (data) => {
     const payload: TimePeriod[] = data.periods.filter(entry => entry.active)
 
-    fetch(`${import.meta.env.VITE_API_URL}/manager/hours-of-operation`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'Authorization': localStorage.getItem('token') as string
-        },
-        body: JSON.stringify(payload)
-      }
-    ).then(res => {
-      if (res.ok) {
-        setSubmissionStatus({ type: 'success', message: 'Hours updated' })
-      } else {
+    postRequest('manager/hours-of-operation', payload)
+      .then(res => {
+        if (res.ok) {
+          setSubmissionStatus({ type: 'success', message: 'Hours updated' })
+        } else {
+          setSubmissionStatus({ type: 'error', message: 'Failed to update hours of operation' })
+        }
+      }).catch(e => {
         setSubmissionStatus({ type: 'error', message: 'Failed to update hours of operation' })
-      }
-    }).catch(e => {
-      setSubmissionStatus({ type: 'error', message: 'Failed to update hours of operation' })
-    })
+      })
   }
 
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_API_URL}/company`,
-      {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-          'Authorization': localStorage.getItem('token') as string
-        },
-      }
-    )
-    .then(res => res.json())
-    .then(data => {
-      let updatedPeriods: TimePeriod[] = getValues().periods
+    getRequest('company')
+      .then(res => res.json())
+      .then(data => {
+        let updatedPeriods: TimePeriod[] = getValues().periods
 
-      data.hoursOfOperation?.forEach((entry: TimePeriod) => {
-        const index: number = Day[entry.day as keyof typeof Day]
-        updatedPeriods[index] = {...entry, active: true}
+        data.hoursOfOperation?.forEach((entry: TimePeriod) => {
+          const index: number = Day[entry.day as keyof typeof Day]
+          updatedPeriods[index] = {...entry, active: true}
+        })
+
+        setValue('periods', updatedPeriods)
+        data.hoursOfOperation = updatedPeriods
+
+        return data
       })
-
-      setValue('periods', updatedPeriods)
-      data.hoursOfOperation = updatedPeriods
-
-      return data
-    })
-    .then(data => setCompany(data))
+      .then(data => setCompany(data))
   }, [])
 
   // Handle hour selections

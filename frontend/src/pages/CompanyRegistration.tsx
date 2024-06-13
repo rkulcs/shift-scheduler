@@ -3,6 +3,7 @@ import { useForm, SubmitHandler } from "react-hook-form"
 import UserRegistrationFormInput from "../types/UserRegistrationFormInput"
 import FormSection from "../components/forms/FormSection"
 import TextInputField from "../components/forms/TextInputField"
+import { postRequest } from "../components/client/client"
 
 export default function CompanyRegistration() {
   const {
@@ -12,17 +13,8 @@ export default function CompanyRegistration() {
   } = useForm<UserRegistrationFormInput>()
 
   const onSubmit: SubmitHandler<UserRegistrationFormInput> = (data) => {
-    fetch(`${import.meta.env.VITE_API_URL}/user/register`,
-      {
-        method: 'POST',
-        mode: 'cors',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-        body: JSON.stringify({...data, role: "MANAGER"})
-      }
-    ).then(res => console.log(res))
+    postRequest('user/register', {...data, role: "MANAGER"})
+      .then(res => console.log(res))
   }
 
   return (

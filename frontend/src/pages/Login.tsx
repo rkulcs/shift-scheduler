@@ -9,6 +9,7 @@ import { getJWT, storeJWT } from "../util/jwt"
 import User from "../model/User"
 import { useDispatch } from "react-redux"
 import { setUser } from "../redux/user"
+import { postRequest } from "../components/client/client"
 
 export default function Login() {
   const navigate = useNavigate()
@@ -22,37 +23,29 @@ export default function Login() {
   } = useForm<LoginFormInput>()
 
   const onSubmit: SubmitHandler<LoginFormInput> = (data) => {
-    fetch(`${import.meta.env.VITE_API_URL}/user/login`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-        body: JSON.stringify({...data})
-      }
-    ).then(res => {
-      if (res.ok) {
-        res.json()
-          .then(body => storeJWT(body.token))
-          .then(() => {
-            // Store username and role locally
-            const payload: JwtPayload = jwtDecode(getJWT() as string)
-            const user = new User(payload.sub as string, payload.role as string)
-            localStorage.setItem('username', user.username)
-            localStorage.setItem('role', user.role)
-            dispatch(setUser(user.serialize()))
-          })
-          .then(() => navigate('/'))
-      } else {
-        res.json().then(body => {
-          const invalidField = (body.error.includes('password')) ?
-                                                      'password' : 'username'
+    postRequest('user/login', {...data})
+      .then(res => {
+        if (res.ok) {
+          res.json()
+            .then(body => storeJWT(body.token))
+            .then(() => {
+              // Store username and role locally
+              const payload: JwtPayload = jwtDecode(getJWT() as string)
+              const user = new User(payload.sub as string, payload.role as string)
+              localStorage.setItem('username', user.username)
+              localStorage.setItem('role', user.role)
+              dispatch(setUser(user.serialize()))
+            })
+            .then(() => navigate('/'))
+        } else {
+          res.json().then(body => {
+            const invalidField = (body.error.includes('password')) ?
+                                                        'password' : 'username'
 
-          setError(invalidField, { type: 'manual', message: body.error })
-        })
-      }
-    })
+            setError(invalidField, { type: 'manual', message: body.error })
+          })
+        }
+      })
   }
   
   return (
