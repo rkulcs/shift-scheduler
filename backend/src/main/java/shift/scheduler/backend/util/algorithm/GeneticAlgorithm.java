@@ -60,8 +60,12 @@ public abstract class GeneticAlgorithm<T, B> {
                 TournamentResult<T> resultA = performTournament(population);
                 T a = resultA.getParticipant();
 
-                if (resultA.getScore() == 0)
+                if (resultA.getScore() == 0) {
                     generatedSchedules.add(a);
+
+                    if (generatedSchedules.size() == MAX_NUM_GENERATED_SCHEDULES)
+                        return generatedSchedules;
+                }
 
                 if (resultA.getScore() < closestSuboptimalSolution.getScore())
                     closestSuboptimalSolution = resultA;
@@ -72,8 +76,12 @@ public abstract class GeneticAlgorithm<T, B> {
                 if (a == b)
                     continue;
 
-                if (resultB.getScore() == 0)
+                if (resultB.getScore() == 0) {
                     generatedSchedules.add(b);
+
+                    if (generatedSchedules.size() == MAX_NUM_GENERATED_SCHEDULES)
+                        return generatedSchedules;
+                }
 
                 if (resultB.getScore() < closestSuboptimalSolution.getScore())
                     closestSuboptimalSolution = resultB;

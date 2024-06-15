@@ -6,6 +6,8 @@ import java.util.*;
 
 public class DailyScheduleGenerator extends GeneticAlgorithm<ScheduleForDay, Shift> {
 
+    public int MAX_NUM_GENERATED_SCHEDULES = 1000;
+
     private HoursOfOperation period;
     private List<TimePeriod> blocks;
     private short numEmployeesPerHour;
