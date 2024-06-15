@@ -3,7 +3,7 @@ import { useForm, SubmitHandler } from "react-hook-form"
 import UserRegistrationFormInput from "../types/UserRegistrationFormInput"
 import FormSection from "../components/forms/FormSection"
 import TextInputField from "../components/forms/TextInputField"
-import { postRequest } from "../components/client/client"
+import { unauthenticatedPostRequest } from "../components/client/client"
 
 export default function CompanyRegistration() {
   const {
@@ -13,7 +13,7 @@ export default function CompanyRegistration() {
   } = useForm<UserRegistrationFormInput>()
 
   const onSubmit: SubmitHandler<UserRegistrationFormInput> = (data) => {
-    postRequest('user/register', {...data, role: "MANAGER"})
+    unauthenticatedPostRequest('user/register', {...data, role: "MANAGER"})
       .then(res => console.log(res))
   }
 

@@ -5,7 +5,7 @@ import FormSection from "../components/forms/FormSection"
 import TextInputField from "../components/forms/TextInputField"
 import { useEffect, useState } from "react"
 import Company from "../model/Company"
-import { getRequest, postRequest } from "../components/client/client"
+import { getRequest, unauthenticatedPostRequest } from "../components/client/client"
 
 export default function EmployeeRegistration() {
   const [companies, setCompanies] = useState<Company[]>([new Company('', '')])
@@ -20,7 +20,7 @@ export default function EmployeeRegistration() {
   } = useForm<UserRegistrationFormInput>()
 
   const onSubmit: SubmitHandler<UserRegistrationFormInput> = (data) => {
-    postRequest('user/register', {...data, role: "EMPLOYEE"})
+    unauthenticatedPostRequest('user/register', {...data, role: "EMPLOYEE"})
       .then(res => console.log(res))
   }
 

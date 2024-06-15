@@ -23,3 +23,16 @@ export function postRequest(endpoint: string, payload: any): Promise<Response> {
     }
   )
 }
+
+export function unauthenticatedPostRequest(endpoint: string, payload: any): Promise<Response> {
+  return fetch(`${import.meta.env.VITE_API_URL}/${endpoint}`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    }
+  )
+}

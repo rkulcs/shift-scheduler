@@ -9,7 +9,7 @@ import { getJWT, storeJWT } from "../util/jwt"
 import User from "../model/User"
 import { useDispatch } from "react-redux"
 import { setUser } from "../redux/user"
-import { postRequest } from "../components/client/client"
+import { unauthenticatedPostRequest } from "../components/client/client"
 
 export default function Login() {
   const navigate = useNavigate()
@@ -23,7 +23,7 @@ export default function Login() {
   } = useForm<LoginFormInput>()
 
   const onSubmit: SubmitHandler<LoginFormInput> = (data) => {
-    postRequest('user/login', {...data})
+    unauthenticatedPostRequest('user/login', {...data})
       .then(res => {
         if (res.ok) {
           res.json()

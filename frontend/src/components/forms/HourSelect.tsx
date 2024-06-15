@@ -14,10 +14,10 @@ export default function HourSelect({ i, label, value, onChange }: HourSelectProp
   return (
     <Box mt={1} mb={1}>
       <FormControl fullWidth>
-        <InputLabel id={`start-hour-label-${i}`}>{label}</InputLabel>
+        <InputLabel id={`hour-label-${i}`}>{label}</InputLabel>
         <Select
-          labelId={`start-hour-label-${i}`}
-          label="Start Hour"
+          labelId={`hour-label-${i}`}
+          label={label}
           value={value}
           onChange={onChange}
         >
