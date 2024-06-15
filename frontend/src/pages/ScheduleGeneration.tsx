@@ -1,8 +1,9 @@
-import { Button, Container, Grid, Input, Paper, TextField } from "@mui/material"
+import { Backdrop, Button, CircularProgress, Container, Grid, Input, Paper, TextField } from "@mui/material"
 import { FormEvent, useState } from "react"
-import { SubmitHandler, useForm } from "react-hook-form"
+import { Controller, SubmitHandler, useForm } from "react-hook-form"
 import FormSection from "../components/forms/FormSection"
 import HourSelect from "../components/forms/HourSelect"
+import { postRequest } from "../components/client/client"
 
 type ScheduleGenerationRequest = {
   numEmployeesPerHour: number
@@ -22,8 +23,15 @@ export default function ScheduleGeneration() {
   })
 
   const [hours, setHours] = useState(0)
+  const [showBackdrop, setShowBackdrop] = useState(false)
 
-  const onSubmit: SubmitHandler<ScheduleGenerationRequest> = (data) => console.log(data)
+  const onSubmit: SubmitHandler<ScheduleGenerationRequest> = (data) => {
+    postRequest('manager/generate-schedules', data)
+      .then(res => console.log(res))
+      .then(() => setShowBackdrop(false))
+    
+    setShowBackdrop(true)
+  }
 
   function handleInputChange(e: FormEvent<HTMLDivElement>) {
     let input: number = parseInt(e.target.value)
@@ -43,12 +51,19 @@ export default function ScheduleGeneration() {
           <Grid container spacing={1}>
             <Grid item xs={100}>
               <Paper sx={{ padding: 0.5 }}>
-                <TextField
-                  label="Number of Employees per Hour"
-                  type="number"
-                  defaultValue={0}
-                  onInput={e => handleInputChange(e)}
-                  fullWidth
+                <Controller
+                  name="numEmployeesPerHour"
+                  control={control}
+                  render={({ field }) => (
+                    <TextField
+                      label="Number of Employees per Hour"
+                      type="number"
+                      defaultValue={0}
+                      onInput={e => handleInputChange(e)}
+                      {...field}
+                      fullWidth
+                    />)
+                  }
                 />
               </Paper>
             </Grid>
@@ -57,6 +72,9 @@ export default function ScheduleGeneration() {
 
         <Button variant="contained" type="submit">Generate</Button>
       </form>
+      <Backdrop open={showBackdrop}>
+        <CircularProgress/>
+      </Backdrop>
     </Container>
   )
 }
