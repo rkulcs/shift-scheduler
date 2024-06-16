@@ -8,6 +8,7 @@ import EmployeeRegistration from "./pages/EmployeeRegistration"
 import HoursOfOperationForm from "./pages/HoursOfOperationForm"
 import Availabilities from "./pages/Availabilities"
 import ScheduleGeneration from "./pages/ScheduleGeneration"
+import ScheduleSelection from "./pages/ScheduleSelection"
 
 function App() {
   return (
@@ -25,7 +26,8 @@ function App() {
               <Route path="/register-employee" element={<EmployeeRegistration />} />
 
               <Route path="/hours" element={<HoursOfOperationForm />} />
-              <Route path="/schedules" element={<ScheduleGeneration />} />
+              <Route path="/generate-schedules" element={<ScheduleGeneration />} />
+              <Route path="/select-schedule" element={<ScheduleSelection />} />
 
               <Route path="/availabilities" element={<Availabilities />} />
             </Routes>

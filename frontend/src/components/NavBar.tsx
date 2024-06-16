@@ -38,7 +38,7 @@ const managerPages: PageMapping[] = [
   },
   {
     label: 'Schedules',
-    route: '/schedules'
+    route: '/generate-schedules'
   },
 ]
 

@@ -4,17 +4,18 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form"
 import FormSection from "../components/forms/FormSection"
 import HourSelect from "../components/forms/HourSelect"
 import { postRequest } from "../components/client/client"
+import { useNavigate } from "react-router-dom"
 
 type ScheduleGenerationRequest = {
   numEmployeesPerHour: number
 }
 
 export default function ScheduleGeneration() {
+  const navigate = useNavigate()
+
   const {
     control,
     handleSubmit,
-    getValues,
-    setValue,
     formState: { errors }
   } = useForm<ScheduleGenerationRequest>({
     defaultValues: {
@@ -27,8 +28,8 @@ export default function ScheduleGeneration() {
 
   const onSubmit: SubmitHandler<ScheduleGenerationRequest> = (data) => {
     postRequest('manager/generate-schedules', data)
-      .then(res => console.log(res))
-      .then(() => setShowBackdrop(false))
+      .then(res => res.json())
+      .then(schedules => navigate('/select-schedule', { state: schedules }))
     
     setShowBackdrop(true)
   }
