@@ -12,6 +12,11 @@ import java.util.*;
 @Service
 public class ScheduleGenerationService {
 
+    private static final int[] CALENDAR_DAYS = {
+            Calendar.MONDAY, Calendar.TUESDAY, Calendar.WEDNESDAY, Calendar.THURSDAY,
+            Calendar.FRIDAY, Calendar.SATURDAY, Calendar.SUNDAY
+    };
+
     private class DailyScheduleWorker implements Runnable {
         private HoursOfOperation period;
         private short numEmployeesPerHour;
@@ -72,6 +77,16 @@ public class ScheduleGenerationService {
         WeeklyScheduleGenerator weeklyScheduleGenerator = new WeeklyScheduleGenerator();
         Collection<ScheduleForWeek> schedules = weeklyScheduleGenerator.generateSchedules(candidateDailySchedules);
 
+        Map<Day, Date> dates = generateDateMap(request.getDate());
+
+        for (ScheduleForWeek schedule : schedules) {
+            for (ScheduleForDay dailySchedule : schedule.getDailySchedules()) {
+                for (Shift shift : dailySchedule.getShifts()) {
+                    shift.setDate(dates.get(dailySchedule.getDay()));
+                }
+            }
+        }
+
         return schedules;
     }
 
@@ -83,6 +98,34 @@ public class ScheduleGenerationService {
         employees.forEach(e -> potentialShifts.add((List<Shift>) e.generatePotentialShifts(period)));
 
         DailyScheduleGenerator generator = new DailyScheduleGenerator(period, numEmployeesPerHour);
-        return (List<ScheduleForDay>) generator.generateSchedules(potentialShifts);
+        List<ScheduleForDay> generatedSchedules = (List<ScheduleForDay>) generator.generateSchedules(potentialShifts);
+
+        generatedSchedules.forEach(schedule -> schedule.setDay(period.getDay()));
+
+        return generatedSchedules;
+    }
+
+    /**
+     * Creates a map in which a day can be used as the key to get a corresponding date.
+     *
+     * @param date The date of any day during the week
+     */
+    private Map<Day, Date> generateDateMap(Date date) {
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.clear();
+        calendar.set(date.getYear(), date.getMonth(), date.getDay());
+        Map<Day, Date> dates = new HashMap<>();
+
+        for (Day day : Day.values()) {
+            if (day.equals(Day.SUN))
+                calendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
+            else
+                calendar.set(Calendar.DAY_OF_WEEK, day.ordinal()+2);
+
+            dates.put(day, calendar.getTime());
+        }
+
+        return dates;
     }
 }
