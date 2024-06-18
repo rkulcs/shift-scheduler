@@ -124,13 +124,17 @@ public class DailyScheduleGenerator extends GeneticAlgorithm<ScheduleForDay, Shi
             List<Shift> employeeShifts = candidateShifts.remove(i);
 
             Shift shift = employeeShifts.get(random.nextInt(employeeShifts.size()));
+            boolean shiftToBeAddedToSchedule = false;
 
             for (var block : blocks) {
                 if (shift.contains(block)) {
                     map.get(block).add(shift);
-                    shifts.add(shift);
+                    shiftToBeAddedToSchedule = true;
                 }
             }
+
+            if (shiftToBeAddedToSchedule)
+                shifts.add(shift);
         }
 
         return new ScheduleForDay(period.getDay(), shifts);

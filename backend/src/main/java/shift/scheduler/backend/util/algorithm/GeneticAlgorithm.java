@@ -10,8 +10,8 @@ public abstract class GeneticAlgorithm<T, B> {
     public double CROSSOVER_RATE = 0.8;
     public double MUTATION_RATE = 0.3;
 
-    public int MIN_ITERATIONS = 50;
-    public int MAX_ITERATIONS = Integer.MAX_VALUE;
+    public int MIN_ITERATIONS = 25;
+    public int MAX_ITERATIONS = 500;
 
     public int MAX_NUM_GENERATED_SCHEDULES = 3;
 
@@ -50,8 +50,7 @@ public abstract class GeneticAlgorithm<T, B> {
 
         List<T> population = generateInitialPopulation(components);
 
-        // TODO: Change this depending on the number of daily schedules
-        int numIterations = MIN_ITERATIONS;
+        int numIterations = computeNumIterations(components);
 
         for (int i = 0; i < numIterations; i++) {
             List<T> nextGeneration = new ArrayList<>();
@@ -132,6 +131,27 @@ public abstract class GeneticAlgorithm<T, B> {
         });
 
         return result;
+    }
+
+    private int computeNumIterations(List<List<B>> components) {
+
+        // Compute the number of possible combinations of components
+        long numCombinations = 1;
+
+        for (var component : components) {
+            numCombinations *= component.size();
+
+            // Detect overflows
+            if (numCombinations < 0)
+                return MAX_ITERATIONS;
+        }
+
+        if (numCombinations < POPULATION_SIZE*MIN_ITERATIONS)
+            return MIN_ITERATIONS;
+        else if (numCombinations >= POPULATION_SIZE*MAX_ITERATIONS)
+            return MAX_ITERATIONS;
+
+        return (int) (numCombinations/POPULATION_SIZE + 3);
     }
 
     abstract List<T> generateInitialPopulation(List<List<B>> components);

@@ -8,6 +8,7 @@ import shift.scheduler.backend.util.Period;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 
 @Entity
 @Table(name = "employee")

@@ -1,11 +1,9 @@
 package shift.scheduler.backend.model;
 
-import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import shift.scheduler.backend.model.id.ShiftId;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 @Entity
 @IdClass(ShiftId.class)
