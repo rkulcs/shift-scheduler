@@ -1,21 +1,21 @@
 package shift.scheduler.backend.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import shift.scheduler.backend.model.*;
 import shift.scheduler.backend.payload.ScheduleGenerationRequest;
 import shift.scheduler.backend.util.algorithm.DailyScheduleGenerator;
 import shift.scheduler.backend.util.algorithm.WeeklyScheduleGenerator;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.*;
 
 @Service
 public class ScheduleGenerationService {
 
-    private static final int[] CALENDAR_DAYS = {
-            Calendar.MONDAY, Calendar.TUESDAY, Calendar.WEDNESDAY, Calendar.THURSDAY,
-            Calendar.FRIDAY, Calendar.SATURDAY, Calendar.SUNDAY
-    };
+    /* The difference between the integer representations of the Day enum and the
+       Calendar type's day enums */
+    private static final int DAY_TO_CALENDAR_DAY_SHIFT = 2;
 
     private class DailyScheduleWorker implements Runnable {
         private HoursOfOperation period;
@@ -35,9 +35,6 @@ public class ScheduleGenerationService {
             candidateDailySchedules.add(generateCandidateSchedulesForDay(period, numEmployeesPerHour, employees));
         }
     }
-
-    @Autowired
-    private EmployeeService employeeService;
 
     public Collection<ScheduleForWeek> generateSchedulesForWeek(ScheduleGenerationRequest request, Company company) {
 
@@ -77,7 +74,7 @@ public class ScheduleGenerationService {
         WeeklyScheduleGenerator weeklyScheduleGenerator = new WeeklyScheduleGenerator();
         Collection<ScheduleForWeek> schedules = weeklyScheduleGenerator.generateSchedules(candidateDailySchedules);
 
-        Map<Day, Date> dates = generateDateMap(request.getDate());
+        Map<Day, LocalDate> dates = generateDateMap(request.getDate());
 
         for (ScheduleForWeek schedule : schedules) {
             for (ScheduleForDay dailySchedule : schedule.getDailySchedules()) {
@@ -110,20 +107,19 @@ public class ScheduleGenerationService {
      *
      * @param date The date of any day during the week
      */
-    private Map<Day, Date> generateDateMap(Date date) {
-
+    private Map<Day, LocalDate> generateDateMap(LocalDate date) {
         Calendar calendar = Calendar.getInstance();
         calendar.clear();
-        calendar.set(date.getYear(), date.getMonth(), date.getDay());
-        Map<Day, Date> dates = new HashMap<>();
+        calendar.set(date.getYear(), date.getMonth().getValue()-1, date.getDayOfMonth());
+        Map<Day, LocalDate> dates = new HashMap<>();
 
         for (Day day : Day.values()) {
             if (day.equals(Day.SUN))
                 calendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
             else
-                calendar.set(Calendar.DAY_OF_WEEK, day.ordinal()+2);
+                calendar.set(Calendar.DAY_OF_WEEK, day.ordinal()+DAY_TO_CALENDAR_DAY_SHIFT);
 
-            dates.put(day, calendar.getTime());
+            dates.put(day, LocalDate.ofInstant(calendar.toInstant(), ZoneId.systemDefault()));
         }
 
         return dates;

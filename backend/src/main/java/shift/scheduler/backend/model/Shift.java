@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import shift.scheduler.backend.model.id.ShiftId;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
@@ -16,7 +17,7 @@ public class Shift extends TimePeriod {
 
     @Id
     @Temporal(TemporalType.DATE)
-    private Date date;
+    private LocalDate date;
 
     public Shift() {
         super();
@@ -35,11 +36,11 @@ public class Shift extends TimePeriod {
         this.employee = employee;
     }
 
-    public Date getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 }

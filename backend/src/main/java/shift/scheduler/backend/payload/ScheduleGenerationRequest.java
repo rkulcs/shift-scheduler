@@ -3,23 +3,23 @@ package shift.scheduler.backend.payload;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import shift.scheduler.backend.util.validator.Hour;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 public class ScheduleGenerationRequest {
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private Date date;
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate date;
 
     @Hour
     private Short numEmployeesPerHour;
 
     public ScheduleGenerationRequest() {}
 
-    public Date getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 

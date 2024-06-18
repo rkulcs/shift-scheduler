@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import shift.scheduler.backend.model.Account;
-import shift.scheduler.backend.model.Manager;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
