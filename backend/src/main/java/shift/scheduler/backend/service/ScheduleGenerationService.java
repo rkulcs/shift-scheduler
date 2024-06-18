@@ -77,11 +77,10 @@ public class ScheduleGenerationService {
         Map<Day, LocalDate> dates = generateDateMap(request.getDate());
 
         for (ScheduleForWeek schedule : schedules) {
-            for (ScheduleForDay dailySchedule : schedule.getDailySchedules()) {
-                for (Shift shift : dailySchedule.getShifts()) {
-                    shift.setDate(dates.get(dailySchedule.getDay()));
-                }
-            }
+            schedule.setFirstDay(dates.get(Day.MON));
+
+            for (ScheduleForDay dailySchedule : schedule.getDailySchedules())
+                dailySchedule.setDate(dates.get(dailySchedule.getDay()));
         }
 
         return schedules;

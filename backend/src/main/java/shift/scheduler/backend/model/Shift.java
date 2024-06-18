@@ -1,21 +1,19 @@
 package shift.scheduler.backend.model;
 
-import jakarta.persistence.*;
-import shift.scheduler.backend.model.id.ShiftId;
-
-import java.time.LocalDate;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 
 @Entity
-@IdClass(ShiftId.class)
 public class Shift extends TimePeriod {
 
     @Id
+    @GeneratedValue
+    private Long id;
+
     @ManyToOne
     private Employee employee;
-
-    @Id
-    @Temporal(TemporalType.DATE)
-    private LocalDate date;
 
     public Shift() {
         super();
@@ -26,19 +24,19 @@ public class Shift extends TimePeriod {
         this.employee = employee;
     }
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public Employee getEmployee() {
         return employee;
     }
 
     public void setEmployee(Employee employee) {
         this.employee = employee;
-    }
-
-    public LocalDate getDate() {
-        return date;
-    }
-
-    public void setDate(LocalDate date) {
-        this.date = date;
     }
 }
