@@ -4,6 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import org.hibernate.annotations.Cascade;
 
 import java.util.Collection;
 
@@ -14,7 +15,8 @@ public class ScheduleForWeek {
     @GeneratedValue
     private Long id;
 
-    @OneToMany
+    @OneToMany(orphanRemoval = true)
+    @Cascade(org.hibernate.annotations.CascadeType.ALL)
     private Collection<ScheduleForDay> dailySchedules;
 
     public ScheduleForWeek() {}

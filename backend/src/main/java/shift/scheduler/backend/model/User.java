@@ -1,5 +1,6 @@
 package shift.scheduler.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @MappedSuperclass

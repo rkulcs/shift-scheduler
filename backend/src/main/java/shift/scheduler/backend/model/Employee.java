@@ -1,5 +1,6 @@
 package shift.scheduler.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.Cascade;
@@ -15,6 +16,7 @@ public class Employee extends User {
     @NotNull
     @ManyToOne
     @JoinColumn(name = "company_id")
+    @JsonIgnore
     private Company company;
 
     private Short minHoursPerDay;

@@ -1,5 +1,6 @@
 package shift.scheduler.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Transient;
@@ -32,9 +33,11 @@ public class Account implements UserDetails {
 
     @NotBlank
     @NotNull
+    @JsonIgnore
     private String password;
 
     @NotNull
+    @JsonIgnore
     private Role role;
 
     public Account() {}
@@ -85,26 +88,31 @@ public class Account implements UserDetails {
     }
 
     @Override
+    @JsonIgnore
     public boolean isAccountNonExpired() {
         return true;
     }
 
     @Override
+    @JsonIgnore
     public boolean isAccountNonLocked() {
         return true;
     }
 
     @Override
+    @JsonIgnore
     public boolean isCredentialsNonExpired() {
         return true;
     }
 
     @Override
+    @JsonIgnore
     public boolean isEnabled() {
         return true;
     }
 
     @Override
+    @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("ROLE_" + role.getAuthority()));
     }

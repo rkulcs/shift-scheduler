@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import shift.scheduler.backend.model.id.ShiftId;
 
-import java.util.Calendar;
+import java.util.Date;
 
 @Entity
 @IdClass(ShiftId.class)
@@ -12,12 +12,11 @@ public class Shift extends TimePeriod {
 
     @Id
     @ManyToOne
-    @JsonIncludeProperties("id")
     private Employee employee;
 
     @Id
     @Temporal(TemporalType.DATE)
-    private Calendar date;
+    private Date date;
 
     public Shift() {
         super();
@@ -36,11 +35,11 @@ public class Shift extends TimePeriod {
         this.employee = employee;
     }
 
-    public Calendar getDate() {
+    public Date getDate() {
         return date;
     }
 
-    public void setDate(Calendar date) {
+    public void setDate(Date date) {
         this.date = date;
     }
 }

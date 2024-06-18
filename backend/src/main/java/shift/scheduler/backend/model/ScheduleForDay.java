@@ -1,6 +1,7 @@
 package shift.scheduler.backend.model;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.Cascade;
 
 import java.util.Collection;
 
@@ -14,7 +15,8 @@ public class ScheduleForDay {
     @Enumerated(EnumType.ORDINAL)
     private Day day;
 
-    @OneToMany
+    @OneToMany(orphanRemoval = true)
+    @Cascade(org.hibernate.annotations.CascadeType.ALL)
     private Collection<Shift> shifts;
 
     public ScheduleForDay() {}
