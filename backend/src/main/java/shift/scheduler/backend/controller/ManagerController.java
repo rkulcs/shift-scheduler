@@ -7,7 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import shift.scheduler.backend.model.*;
 import shift.scheduler.backend.payload.ScheduleGenerationRequest;
-import shift.scheduler.backend.repository.ScheduleForWeekRepository;
 import shift.scheduler.backend.service.*;
 
 import java.util.Collection;
@@ -26,16 +25,13 @@ public class ManagerController {
     private ManagerService managerService;
 
     @Autowired
-    private EmployeeService employeeService;
-
-    @Autowired
     private CompanyService companyService;
 
     @Autowired
     private ScheduleGenerationService scheduleGenerationService;
 
     @Autowired
-    private ScheduleForWeekRepository scheduleForWeekRepository;
+    private ScheduleService scheduleService;
 
     @PostMapping(value = "/hours-of-operation", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> setHoursOfOperation(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
@@ -77,11 +73,11 @@ public class ManagerController {
     @PostMapping(value = "/save-schedule", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> saveSchedule(@RequestBody ScheduleForWeek schedule) {
 
-        schedule.getDailySchedules().forEach(dailySchedule -> {
-            dailySchedule.getShifts().forEach(shift -> shift.setEmployee((Employee) employeeService.findByUsername(shift.getEmployee().getUsername())));
-        });
-
-        ScheduleForWeek savedSchedule = scheduleForWeekRepository.save(schedule);
-        return ResponseEntity.ok(null);
+        try {
+            ScheduleForWeek savedSchedule = scheduleService.save(schedule);
+            return ResponseEntity.ok("Schedule saved");
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
     }
 }
