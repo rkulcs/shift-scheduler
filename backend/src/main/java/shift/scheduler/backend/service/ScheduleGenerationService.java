@@ -78,6 +78,7 @@ public class ScheduleGenerationService {
 
         for (ScheduleForWeek schedule : schedules) {
             schedule.setFirstDay(dates.get(Day.MON));
+            schedule.setCompany(company);
 
             for (ScheduleForDay dailySchedule : schedule.getDailySchedules())
                 dailySchedule.setDate(dates.get(dailySchedule.getDay()));

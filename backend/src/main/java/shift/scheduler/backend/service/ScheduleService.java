@@ -5,7 +5,9 @@ import org.springframework.stereotype.Service;
 import shift.scheduler.backend.model.Employee;
 import shift.scheduler.backend.model.ScheduleForWeek;
 import shift.scheduler.backend.repository.ScheduleForWeekRepository;
-import shift.scheduler.backend.util.exception.EntityValidationException;
+import shift.scheduler.backend.util.DateTimeUtil;
+
+import java.time.LocalDate;
 
 @Service
 public class ScheduleService {
@@ -14,12 +16,27 @@ public class ScheduleService {
     private EmployeeService employeeService;
 
     @Autowired
+    private CompanyService companyService;
+
+    @Autowired
     private ScheduleForWeekRepository scheduleForWeekRepository;
 
     public ScheduleForWeek save(ScheduleForWeek schedule) throws Exception {
 
-        // TODO: Check if previous version of schedule needs to be updated
-        schedule.getFirstDay()
+        schedule.setCompany(companyService.findById(schedule.getCompany().getId()));
+
+        LocalDate firstDayOfWeek = DateTimeUtil.getFirstDayOfWeek(schedule.getFirstDay());
+        schedule.setFirstDay(firstDayOfWeek);
+
+        /* Check if a weekly schedule already exists for the given date, and if so, update that instead of
+           creating a new weekly schedule in the database */
+        ScheduleForWeek previousVersion = scheduleForWeekRepository
+                .findByCompanyAndFirstDay(schedule.getCompany(), schedule.getFirstDay()).orElse(null);
+
+        if (previousVersion != null) {
+            previousVersion.setDailySchedules(schedule.getDailySchedules());
+            schedule = previousVersion;
+        }
 
         schedule.getDailySchedules().forEach(dailySchedule -> {
             dailySchedule.getShifts().forEach(shift -> shift.setEmployee((Employee) employeeService.findByUsername(shift.getEmployee().getUsername())));

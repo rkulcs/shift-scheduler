@@ -28,6 +28,10 @@ public class CompanyService {
         return companies;
     }
 
+    public Company findById(Long id) {
+        return companyRepository.findById(id).orElse(null);
+    }
+
     public Company findByNameAndLocation(String name, String location) {
 
         if (name == null || location == null)

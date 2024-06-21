@@ -1,18 +1,23 @@
 package shift.scheduler.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 import jakarta.persistence.*;
 import org.hibernate.annotations.Cascade;
+import shift.scheduler.backend.model.id.ScheduleId;
 
 import java.time.LocalDate;
 import java.util.Collection;
 
 @Entity
+@IdClass(ScheduleId.class)
 public class ScheduleForWeek {
 
     @Id
-    @GeneratedValue
-    private Long id;
+    @ManyToOne
+    @JsonIncludeProperties("id")
+    private Company company;
 
+    @Id
     @Temporal(TemporalType.DATE)
     private LocalDate firstDay;
 
@@ -26,12 +31,12 @@ public class ScheduleForWeek {
         this.dailySchedules = dailySchedules;
     }
 
-    public Long getId() {
-        return id;
+    public Company getCompany() {
+        return company;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setCompany(Company company) {
+        this.company = company;
     }
 
     public LocalDate getFirstDay() {
@@ -47,6 +52,12 @@ public class ScheduleForWeek {
     }
 
     public void setDailySchedules(Collection<ScheduleForDay> dailySchedules) {
-        this.dailySchedules = dailySchedules;
+
+        if (this.dailySchedules == null) {
+            this.dailySchedules = dailySchedules;
+        } else {
+            this.dailySchedules.clear();
+            this.dailySchedules.addAll(dailySchedules);
+        }
     }
 }

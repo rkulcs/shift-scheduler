@@ -8,7 +8,6 @@ import shift.scheduler.backend.util.Period;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Objects;
 
 @Entity
 @Table(name = "employee")
@@ -118,22 +117,6 @@ public class Employee extends User {
      */
     public boolean isAvailableOn(Day day) {
         return (getAvailabilityOn(day) != null);
-    }
-
-    /**
-     * Determines if the employee is available to work during the specified time period.
-     */
-    public boolean isAvailableDuring(Day day, TimePeriod period) {
-
-        Availability availability = getAvailabilityOn(day);
-
-        if (availability == null)
-            return false;
-
-        int start = period.getStartHour();
-        int end = period.getEndHour();
-
-        return (availability.getStartHour() <= start && end <= availability.getEndHour());
     }
 
     /**
