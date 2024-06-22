@@ -5,8 +5,12 @@ import FormSection from "../components/forms/FormSection"
 import HourSelect from "../components/forms/HourSelect"
 import { postRequest } from "../components/client/client"
 import { useNavigate } from "react-router-dom"
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers"
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import dayjs, { Dayjs } from "dayjs"
 
 type ScheduleGenerationRequest = {
+  week: Dayjs 
   numEmployeesPerHour: number
 }
 
@@ -19,6 +23,7 @@ export default function ScheduleGeneration() {
     formState: { errors }
   } = useForm<ScheduleGenerationRequest>({
     defaultValues: {
+      week: dayjs(),
       numEmployeesPerHour: 0
     }
   })
@@ -27,7 +32,12 @@ export default function ScheduleGeneration() {
   const [showBackdrop, setShowBackdrop] = useState(false)
 
   const onSubmit: SubmitHandler<ScheduleGenerationRequest> = (data) => {
-    postRequest('manager/generate-schedules', data)
+    const payload = {
+      date: data.week.toDate().toISOString().split('T')[0],
+      numEmployeesPerHour: data.numEmployeesPerHour
+    }
+
+    postRequest('manager/generate-schedules', payload)
       .then(res => res.json())
       .then(schedules => navigate('/select-schedule', { state: schedules }))
     
@@ -47,34 +57,52 @@ export default function ScheduleGeneration() {
 
   return (
     <Container fixed>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <FormSection title="Schedule Generation">
-          <Grid container spacing={1}>
-            <Grid item xs={100}>
-              <Paper sx={{ padding: 0.5 }}>
-                <Controller
-                  name="numEmployeesPerHour"
-                  control={control}
-                  render={({ field }) => (
-                    <TextField
-                      label="Number of Employees per Hour"
-                      type="number"
-                      defaultValue={0}
-                      onInput={e => handleInputChange(e)}
-                      {...field}
-                      fullWidth
-                    />)
-                  }
-                />
-              </Paper>
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <FormSection title="Schedule Generation">
+            <Grid container spacing={1}>
+              <Grid item xs={100}>
+                <Paper sx={{ padding: 0.5 }}>
+                  <Grid container spacing={2}>
+                    <Grid item xs={100} mt={1}>
+                      <Controller
+                        name="week"
+                        control={control}
+                        render={({ field }) => <DatePicker
+                          label="Week"
+                          value={field.value}
+                          inputRef={field.ref}
+                          onChange={date => field.onChange(date)} />
+                        }
+                      />
+                    </Grid>
+                    <Grid item xs={100}>
+                      <Controller
+                        name="numEmployeesPerHour"
+                        control={control}
+                        render={({ field }) => (
+                          <TextField
+                            label="Number of Employees per Hour"
+                            type="number"
+                            defaultValue={0}
+                            onInput={e => handleInputChange(e)}
+                            {...field}
+                            fullWidth
+                          />)
+                        }
+                      />
+                    </Grid>
+                  </Grid>
+                </Paper>
+              </Grid>
             </Grid>
-          </Grid>
-        </FormSection>
+          </FormSection>
 
-        <Button variant="contained" type="submit">Generate</Button>
-      </form>
+          <Button variant="contained" type="submit">Generate</Button>
+        </form>
+      </LocalizationProvider>
       <Backdrop open={showBackdrop}>
-        <CircularProgress/>
+        <CircularProgress />
       </Backdrop>
     </Container>
   )
