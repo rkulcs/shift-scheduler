@@ -4,7 +4,6 @@ import { Day } from "../model/Day";
 import { VALID_HOURS } from "../model/TimePeriod";
 
 export default function Schedule({ schedule }: { schedule: WeeklySchedule }) {
-
   // Store each shift in a map for easier access
   const blocks = new Object()
   Object.keys(Day).filter(key => isNaN(key)).map((day: string) => blocks[day] = new Object())
@@ -36,13 +35,16 @@ export default function Schedule({ schedule }: { schedule: WeeklySchedule }) {
                   const shifts = blocks[day][hour]
 
                   return (
-                    <TableCell 
-                      sx={{ 
-                        backgroundColor: shifts.length === 0 ? '#8ca18c' : '#6fbf73' 
+                    <TableCell
+                      size="small"
+                      padding="none"
+                      align="center"
+                      sx={{
+                        border: 1,
+                        backgroundColor: shifts.length === 0 ? '#8ca18c' : '#6fbf73'
                       }}
                     >
-                      {shifts.length}
-                      {/* {shifts && <p>{shifts.map((shift: Shift) => shift.employee.id).join('\n')}</p>} */}
+                      {shifts && shifts.map((shift: Shift) => <p>{shift.employee.account.name}</p>)}
                     </TableCell>
                   )
                 })}
