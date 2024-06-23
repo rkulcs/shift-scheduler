@@ -17,6 +17,7 @@ import { UserDetails } from '../model/User'
 import { useDispatch, useStore } from 'react-redux'
 import { removeUser } from '../redux/user'
 import { getUser } from '../redux/store'
+import { logout } from '../util/session'
 
 type PageMapping = {
   label: string
@@ -102,9 +103,7 @@ export default function NavBar() {
   }
 
   function handleLogout() {
-    removeJWT()
-    localStorage.removeItem('username')
-    localStorage.removeItem('role')
+    logout()
     dispatch(removeUser())
     handleCloseUserMenu()
     navigate('/')
