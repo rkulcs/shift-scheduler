@@ -83,6 +83,7 @@ public class WebSecurityConfig {
                             .requestMatchers("/company/**").permitAll()
                             .requestMatchers("/employee/**").hasRole(Role.EMPLOYEE.getAuthority())
                             .requestMatchers("/manager/**").hasRole(Role.MANAGER.getAuthority())
+                            .requestMatchers("/schedule/**").hasAnyRole(Role.EMPLOYEE.getAuthority(), Role.MANAGER.getAuthority())
                             .anyRequest().authenticated();
                 })
                 .authenticationProvider(authenticationProvider())

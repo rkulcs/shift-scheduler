@@ -2,12 +2,14 @@ package shift.scheduler.backend.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import shift.scheduler.backend.model.Company;
 import shift.scheduler.backend.model.Employee;
 import shift.scheduler.backend.model.ScheduleForWeek;
 import shift.scheduler.backend.repository.ScheduleForWeekRepository;
 import shift.scheduler.backend.util.DateTimeUtil;
 
 import java.time.LocalDate;
+import java.util.Date;
 
 @Service
 public class ScheduleService {
@@ -20,6 +22,16 @@ public class ScheduleService {
 
     @Autowired
     private ScheduleForWeekRepository scheduleForWeekRepository;
+
+    public ScheduleForWeek findByCompanyAndDate(Company company, LocalDate date) {
+
+        if (company == null || date == null)
+            return null;
+
+        LocalDate firstDayOfWeek = DateTimeUtil.getFirstDayOfWeek(date);
+
+        return scheduleForWeekRepository.findByCompanyAndFirstDay(company, firstDayOfWeek).orElse(null);
+    }
 
     public ScheduleForWeek save(ScheduleForWeek schedule) throws Exception {
 
