@@ -123,6 +123,12 @@ public class AuthenticationService {
 
         String token = jwtService.extractTokenFromHeader(authHeader);
         String username = jwtService.extractUsername(token);
-        return managerService.findByUsername(username);
+
+        Account account = accountService.findByUsername(username);
+
+        return switch (account.getRole()) {
+            case MANAGER -> managerService.findByUsername(username);
+            case EMPLOYEE -> employeeService.findByUsername(username);
+        };
     }
 }
