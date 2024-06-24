@@ -1,8 +1,8 @@
 package shift.scheduler.backend.util;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.Calendar;
+import java.time.temporal.TemporalAdjusters;
 
 public final class DateTimeUtil {
 
@@ -11,12 +11,10 @@ public final class DateTimeUtil {
      */
     public static LocalDate getFirstDayOfWeek(LocalDate date) {
 
-        Calendar calendar = Calendar.getInstance();
-        calendar.clear();
-        calendar.set(date.getYear(), date.getMonth().getValue()-1, date.getDayOfMonth());
-        calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+        if (date.getDayOfWeek() == DayOfWeek.MONDAY)
+            return date;
 
-        return LocalDate.ofInstant(calendar.toInstant(), ZoneId.systemDefault());
+        return date.with(TemporalAdjusters.previous(DayOfWeek.MONDAY));
     }
 
     public static LocalDate parseLocalDate(String dateString) {
