@@ -9,6 +9,7 @@ import HoursOfOperationForm from "./pages/HoursOfOperationForm"
 import Availabilities from "./pages/Availabilities"
 import ScheduleGeneration from "./pages/ScheduleGeneration"
 import ScheduleSelection from "./pages/ScheduleSelection"
+import ScheduleBrowser from "./pages/ScheduleBrowser"
 
 function App() {
   return (
@@ -30,6 +31,8 @@ function App() {
               <Route path="/select-schedule" element={<ScheduleSelection />} />
 
               <Route path="/availabilities" element={<Availabilities />} />
+
+              <Route path="/schedules" element={<ScheduleBrowser/>} />
             </Routes>
           </Container>
         </Box>

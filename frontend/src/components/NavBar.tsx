@@ -16,7 +16,7 @@ import { removeJWT } from '../util/jwt'
 import { UserDetails } from '../model/User'
 import { useDispatch, useStore } from 'react-redux'
 import { removeUser } from '../redux/user'
-import { getUser } from '../redux/store'
+import { getUser, getUsername } from '../redux/store'
 import { logout } from '../util/session'
 
 type PageMapping = {
@@ -31,6 +31,13 @@ const commonPages: PageMapping[] = [
   },
 ]
 
+const staffPages: PageMapping[] = [
+  {
+    label: 'View Schedules',
+    route: '/schedules'
+  }
+]
+
 const managerPages: PageMapping[] = [
   ...commonPages,
   {
@@ -38,9 +45,10 @@ const managerPages: PageMapping[] = [
     route: '/hours'
   },
   {
-    label: 'Schedules',
+    label: 'New Schedules',
     route: '/generate-schedules'
   },
+  ...staffPages
 ]
 
 const employeePages: PageMapping[] = [
@@ -48,7 +56,8 @@ const employeePages: PageMapping[] = [
   {
     label: 'Availabilities',
     route: '/availabilities'
-  }
+  },
+  ...staffPages
 ]
 
 const settings = ['Account']
@@ -161,7 +170,7 @@ export default function NavBar() {
             ))}
           </Box>
 
-          <Box sx={{ flexGrow: 0 }}>
+          {getUsername() && <Box sx={{ flexGrow: 0 }}>
             <Tooltip title={userDetails.username ? userDetails.username : undefined}>
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                 <Avatar alt="User Name" />
@@ -192,7 +201,7 @@ export default function NavBar() {
                   <Typography textAlign="center">Log Out</Typography>
                 </MenuItem>
             </Menu>
-          </Box>
+          </Box>}
         </Toolbar>
       </Container>
     </AppBar>
