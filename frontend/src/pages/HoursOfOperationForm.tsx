@@ -32,7 +32,7 @@ export default function HoursOfOperationForm() {
   const onSubmit: SubmitHandler<TimePeriodFormInput> = (data) => {
     const payload: TimePeriod[] = data.periods.filter(entry => entry.active)
 
-    postRequest('manager/hours-of-operation', payload)
+    postRequest('company/hours', payload)
       .then(res => {
         if (res.ok) {
           setSubmissionStatus({ type: 'success', message: 'Hours updated' })

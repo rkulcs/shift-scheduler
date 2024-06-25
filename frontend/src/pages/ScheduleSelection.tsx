@@ -13,7 +13,7 @@ export default function ScheduleSelection() {
   const [submissionStatus, setSubmissionStatus] = useState({ type: '', message: '' })
 
   function saveSchedule(schedule: WeeklySchedule) {
-    postRequest('manager/save-schedule', schedule)
+    postRequest('schedule', schedule)
       .then(res => {
         if (res.ok) {
           // TODO: Redirect to view schedules

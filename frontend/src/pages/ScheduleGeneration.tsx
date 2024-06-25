@@ -36,7 +36,7 @@ export default function ScheduleGeneration() {
       numEmployeesPerHour: data.numEmployeesPerHour
     }
 
-    postRequest('manager/generate-schedules', payload)
+    postRequest('schedule/generate', payload)
       .then(res => res.json())
       .then(schedules => navigate('/select-schedule', { state: schedules }))
     
