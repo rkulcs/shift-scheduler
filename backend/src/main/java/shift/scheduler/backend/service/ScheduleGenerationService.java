@@ -3,6 +3,7 @@ package shift.scheduler.backend.service;
 import org.springframework.stereotype.Service;
 import shift.scheduler.backend.model.*;
 import shift.scheduler.backend.payload.ScheduleGenerationRequest;
+import shift.scheduler.backend.util.DateTimeUtil;
 import shift.scheduler.backend.util.algorithm.DailyScheduleGenerator;
 import shift.scheduler.backend.util.algorithm.WeeklyScheduleGenerator;
 
@@ -74,14 +75,11 @@ public class ScheduleGenerationService {
         WeeklyScheduleGenerator weeklyScheduleGenerator = new WeeklyScheduleGenerator();
         Collection<ScheduleForWeek> schedules = weeklyScheduleGenerator.generateSchedules(candidateDailySchedules);
 
-        Map<Day, LocalDate> dates = generateDateMap(request.getDate());
+        LocalDate firstDay = DateTimeUtil.getFirstDayOfWeek(request.getDate());
 
         for (ScheduleForWeek schedule : schedules) {
-            schedule.setFirstDay(dates.get(Day.MON));
+            schedule.setFirstDay(firstDay);
             schedule.setCompany(company);
-
-            for (ScheduleForDay dailySchedule : schedule.getDailySchedules())
-                dailySchedule.setDate(dates.get(dailySchedule.getDay()));
         }
 
         return schedules;
@@ -100,28 +98,5 @@ public class ScheduleGenerationService {
         generatedSchedules.forEach(schedule -> schedule.setDay(period.getDay()));
 
         return generatedSchedules;
-    }
-
-    /**
-     * Creates a map in which a day can be used as the key to get a corresponding date.
-     *
-     * @param date The date of any day during the week
-     */
-    private Map<Day, LocalDate> generateDateMap(LocalDate date) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.clear();
-        calendar.set(date.getYear(), date.getMonth().getValue()-1, date.getDayOfMonth());
-        Map<Day, LocalDate> dates = new HashMap<>();
-
-        for (Day day : Day.values()) {
-            if (day.equals(Day.SUN))
-                calendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
-            else
-                calendar.set(Calendar.DAY_OF_WEEK, day.ordinal()+DAY_TO_CALENDAR_DAY_SHIFT);
-
-            dates.put(day, LocalDate.ofInstant(calendar.toInstant(), ZoneId.systemDefault()));
-        }
-
-        return dates;
     }
 }

@@ -3,7 +3,6 @@ package shift.scheduler.backend.model;
 import jakarta.persistence.*;
 import org.hibernate.annotations.Cascade;
 
-import java.time.LocalDate;
 import java.util.Collection;
 
 @Entity
@@ -15,9 +14,6 @@ public class ScheduleForDay {
 
     @Enumerated(EnumType.ORDINAL)
     private Day day;
-
-    @Temporal(TemporalType.DATE)
-    private LocalDate date;
 
     @OneToMany(orphanRemoval = true)
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
@@ -44,14 +40,6 @@ public class ScheduleForDay {
 
     public void setDay(Day day) {
         this.day = day;
-    }
-
-    public LocalDate getDate() {
-        return date;
-    }
-
-    public void setDate(LocalDate date) {
-        this.date = date;
     }
 
     public Collection<Shift> getShifts() {
