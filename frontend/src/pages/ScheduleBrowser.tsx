@@ -6,9 +6,13 @@ import { useEffect, useState } from "react"
 import { getRequest } from "../components/client/client"
 import { WeeklySchedule } from "../model/WeeklySchedule"
 import Schedule from "../components/Schedule"
+import { useLocation } from "react-router-dom"
 
 export default function ScheduleBrowser() {
-  const [date, setDate] = useState<Dayjs | null>(dayjs())
+  // Get the selected date if the page is reached through a redirect
+  const { state } = useLocation()
+
+  const [date, setDate] = useState<Dayjs | null>(state ? dayjs(state) : dayjs())
   const [schedule, setSchedule] = useState<WeeklySchedule | null>(null)
 
   useEffect(() => {

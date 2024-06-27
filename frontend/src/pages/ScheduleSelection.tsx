@@ -1,4 +1,4 @@
-import { json, useLocation } from "react-router-dom"
+import { json, useLocation, useNavigate } from "react-router-dom"
 import { WeeklySchedule } from "../model/WeeklySchedule"
 import Schedule from "../components/Schedule"
 import FormSection from "../components/forms/FormSection"
@@ -8,6 +8,7 @@ import { useState } from "react"
 
 export default function ScheduleSelection() {
   const { state } = useLocation()
+  const navigate = useNavigate()
   const schedules: WeeklySchedule[] = state
 
   const [submissionStatus, setSubmissionStatus] = useState({ type: '', message: '' })
@@ -16,8 +17,10 @@ export default function ScheduleSelection() {
     postRequest('schedule', schedule)
       .then(res => {
         if (res.ok) {
-          // TODO: Redirect to view schedules
           setSubmissionStatus({ type: 'success', message: 'Successfully saved the selected schedule' })
+
+          // Redirect to schedule browser
+          navigate('/schedules', { state: schedule.firstDay })
         } else {
           setSubmissionStatus({ type: 'error', message: 'Failed to save the selected schedule' })
         }
