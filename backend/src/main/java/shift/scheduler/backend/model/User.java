@@ -39,5 +39,9 @@ public abstract class User {
         return account.getUsername();
     }
 
+    public String getName() {
+        return account.getName();
+    }
+
     public abstract Company getCompany();
 }
