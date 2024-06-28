@@ -32,29 +32,16 @@ public class DailyScheduleGenerator extends GeneticAlgorithm<ScheduleForDay, Shi
     @Override
     public long computeFitnessScore(ScheduleForDay schedule) {
 
-        Map<Employee, Integer> numHoursPerEmployee = new HashMap<>();
-
-        for (var shift : schedule.getShifts()) {
-            Employee employee = shift.getEmployee();
-            int length = shift.getLength();
-
-            if (numHoursPerEmployee.containsKey(employee))
-                numHoursPerEmployee.put(employee, numHoursPerEmployee.get(employee)+length);
-            else
-                numHoursPerEmployee.put(employee, length);
-        }
+        boolean isValid = schedule.validate(blocks, numEmployeesPerHour);
 
         long score = 0;
 
-        for (var entry : numHoursPerEmployee.entrySet()) {
-            Employee employee = entry.getKey();
-            int hours = entry.getValue();
+        if (isValid)
+            return score;
 
-            if (hours < employee.getMinHoursPerDay())
-                score += (employee.getMaxHoursPerDay() - hours);
-            else if (hours > employee.getMaxHoursPerDay())
-                score += (hours - employee.getMaxHoursPerDay());
-        }
+        score = schedule.getConstraintViolations()
+                .stream()
+                .reduce(0, (subtotal, constraint) -> subtotal + Math.abs(constraint.getDifference()), Integer::sum);
 
         return score;
     }

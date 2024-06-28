@@ -4,9 +4,14 @@ import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 import jakarta.persistence.*;
 import org.hibernate.annotations.Cascade;
 import shift.scheduler.backend.model.id.ScheduleId;
+import shift.scheduler.backend.model.violation.ScheduleConstraintViolation;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Entity
 @IdClass(ScheduleId.class)
@@ -59,5 +64,14 @@ public class ScheduleForWeek {
             this.dailySchedules.clear();
             this.dailySchedules.addAll(dailySchedules);
         }
+    }
+
+    public List<ScheduleConstraintViolation> getConstraintViolations() {
+
+        return Stream.of(this.dailySchedules)
+                .flatMap(Collection::stream)
+                .map(ScheduleForDay::getConstraintViolations)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 }

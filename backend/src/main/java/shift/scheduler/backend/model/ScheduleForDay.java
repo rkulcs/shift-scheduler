@@ -81,8 +81,6 @@ public class ScheduleForDay {
      */
     public boolean validate(List<TimePeriod> blocks, int numEmployeesPerHour) {
 
-        /* TODO: May need to be removed, as the current schedule generation algorithm already ensures
-           employees' daily hour constraints are respected */
         computeEmployeeHours();
         computeNumEmployeesPerPeriod(blocks, numEmployeesPerHour);
 
