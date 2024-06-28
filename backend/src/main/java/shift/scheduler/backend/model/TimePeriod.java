@@ -7,6 +7,8 @@ import shift.scheduler.backend.model.view.EntityViews;
 import shift.scheduler.backend.util.validator.Hour;
 import shift.scheduler.backend.util.validator.Interval;
 
+import java.util.Objects;
+
 @MappedSuperclass
 @Interval
 public class TimePeriod {
@@ -49,5 +51,18 @@ public class TimePeriod {
 
     public boolean contains(TimePeriod period) {
         return (startHour <= period.getStartHour() && period.getEndHour() <= endHour);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TimePeriod that = (TimePeriod) o;
+        return Objects.equals(startHour, that.startHour) && Objects.equals(endHour, that.endHour);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(startHour, endHour);
     }
 }
