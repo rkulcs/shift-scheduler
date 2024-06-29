@@ -14,6 +14,8 @@ export default function ScheduleSelection() {
   const [submissionStatus, setSubmissionStatus] = useState({ type: '', message: '' })
 
   function saveSchedule(schedule: WeeklySchedule) {
+    delete schedule.constraintViolations
+
     postRequest('schedule', schedule)
       .then(res => {
         if (res.ok) {

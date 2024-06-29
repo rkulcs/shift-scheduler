@@ -1,4 +1,4 @@
-import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
+import { Alert, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import { WeeklySchedule } from "../model/WeeklySchedule";
 import { Day } from "../model/Day";
 import { VALID_HOURS } from "../model/TimePeriod";
@@ -17,7 +17,22 @@ export default function Schedule({ schedule }: { schedule: WeeklySchedule }) {
     })
   })
 
+  function hasConstraintViolations(schedule: WeeklySchedule): boolean {
+    return (schedule.constraintViolations && schedule.constraintViolations.length > 0) as boolean
+  }
+
+  console.log(schedule.constraintViolations)
+
   return (
+    <>
+    {hasConstraintViolations(schedule) && <Alert severity="warning">
+      The following issues were detected with this schedule:
+      <ul>
+        {schedule.constraintViolations.map(violation => {
+          return <li>{violation.description}</li>
+        })}
+      </ul>
+    </Alert>}
     <TableContainer component={Paper}>
       <Table>
         <TableHead>
@@ -54,5 +69,6 @@ export default function Schedule({ schedule }: { schedule: WeeklySchedule }) {
         </TableBody>
       </Table>
     </TableContainer>
+    </>
   )
 }
