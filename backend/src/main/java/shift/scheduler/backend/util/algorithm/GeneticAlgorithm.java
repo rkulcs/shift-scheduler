@@ -1,8 +1,10 @@
 package shift.scheduler.backend.util.algorithm;
 
+import shift.scheduler.backend.model.schedule.Schedule;
+
 import java.util.*;
 
-public abstract class GeneticAlgorithm<T, B> {
+public abstract class GeneticAlgorithm<B> {
 
     public int POPULATION_SIZE = 3000;
     public int TOURNAMENT_SIZE = 50;
@@ -17,20 +19,20 @@ public abstract class GeneticAlgorithm<T, B> {
 
     public Random random = new Random();
 
-    public class TournamentResult<T> {
-        private T participant;
+    public class TournamentResult {
+        private Schedule participant;
         private long score;
 
-        public TournamentResult(T participant, long score) {
+        public TournamentResult(Schedule participant, long score) {
             this.participant = participant;
             this.score = score;
         }
 
-        public T getParticipant() {
+        public Schedule getParticipant() {
             return participant;
         }
 
-        public void setParticipant(T participant) {
+        public void setParticipant(Schedule participant) {
             this.participant = participant;
         }
 
@@ -43,21 +45,21 @@ public abstract class GeneticAlgorithm<T, B> {
         }
     }
 
-    public Collection<T> generateSchedules(List<List<B>> components) {
+    public Collection<Schedule> generateSchedules(List<List<B>> components) {
 
-        Collection<T> generatedSchedules = new ArrayList<>();
-        TournamentResult<T> closestSuboptimalSolution = new TournamentResult<>(null, Long.MAX_VALUE);
+        Collection<Schedule> generatedSchedules = new ArrayList<>();
+        TournamentResult closestSuboptimalSolution = new TournamentResult(null, Long.MAX_VALUE);
 
-        List<T> population = generateInitialPopulation(components);
+        List<Schedule> population = generateInitialPopulation(components);
 
         int numIterations = computeNumIterations(components);
 
         for (int i = 0; i < numIterations; i++) {
-            List<T> nextGeneration = new ArrayList<>();
+            List<Schedule> nextGeneration = new ArrayList<>();
 
             while (nextGeneration.size() != POPULATION_SIZE) {
-                TournamentResult<T> resultA = performTournament(population);
-                T a = resultA.getParticipant();
+                TournamentResult resultA = performTournament(population);
+                Schedule a = resultA.getParticipant();
 
                 if (resultA.getScore() == 0) {
                     generatedSchedules.add(a);
@@ -69,8 +71,8 @@ public abstract class GeneticAlgorithm<T, B> {
                 if (resultA.getScore() < closestSuboptimalSolution.getScore())
                     closestSuboptimalSolution = resultA;
 
-                TournamentResult<T> resultB = performTournament(population);
-                T b = resultB.getParticipant();
+                TournamentResult resultB = performTournament(population);
+                Schedule b = resultB.getParticipant();
 
                 if (a == b)
                     continue;
@@ -86,7 +88,7 @@ public abstract class GeneticAlgorithm<T, B> {
                     closestSuboptimalSolution = resultB;
 
                 if (random.nextDouble() <= CROSSOVER_RATE) {
-                    List<T> offspring = crossover(a, b);
+                    List<Schedule> offspring = crossover(a, b);
 
                     offspring.forEach(o -> {
                         if (random.nextDouble() <= MUTATION_RATE)
@@ -107,19 +109,19 @@ public abstract class GeneticAlgorithm<T, B> {
         return generatedSchedules;
     }
 
-    public TournamentResult<T> performTournament(List<T> schedules) {
+    public TournamentResult performTournament(List<Schedule> schedules) {
 
-        Set<T> participants = new HashSet<>();
+        Set<Schedule> participants = new HashSet<>();
 
         while (participants.size() != TOURNAMENT_SIZE) {
             int j = random.nextInt(schedules.size());
-            T schedule = schedules.get(j);
+            Schedule schedule = schedules.get(j);
 
             if (!participants.contains(schedule))
                 participants.add(schedule);
         }
 
-        TournamentResult<T> result = new TournamentResult<>(null, Long.MAX_VALUE);
+        TournamentResult result = new TournamentResult(null, Long.MAX_VALUE);
 
         participants.forEach(participant -> {
             long score = computeFitnessScore(participant);
@@ -131,6 +133,22 @@ public abstract class GeneticAlgorithm<T, B> {
         });
 
         return result;
+    }
+
+    private long computeFitnessScore(Schedule schedule) {
+
+        boolean isValid = schedule.validate();
+
+        long score = 0;
+
+        if (isValid)
+            return score;
+
+        score = schedule.getConstraintViolations()
+                .stream()
+                .reduce(0, (subtotal, constraint) -> subtotal + Math.abs(constraint.getDifference()), Integer::sum);
+
+        return score;
     }
 
     private int computeNumIterations(List<List<B>> components) {
@@ -154,8 +172,7 @@ public abstract class GeneticAlgorithm<T, B> {
         return (int) (numCombinations/POPULATION_SIZE + 3);
     }
 
-    abstract List<T> generateInitialPopulation(List<List<B>> components);
-    abstract long computeFitnessScore(T schedule);
-    abstract List<T> crossover(T a, T b);
-    abstract T mutate(List<List<B>> components, T schedule);
+    abstract List<Schedule> generateInitialPopulation(List<List<B>> components);
+    abstract List<Schedule> crossover(Schedule schedA, Schedule schedB);
+    abstract Schedule mutate(List<List<B>> components, Schedule schedule);
 }

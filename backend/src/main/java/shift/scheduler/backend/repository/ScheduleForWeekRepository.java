@@ -2,7 +2,7 @@ package shift.scheduler.backend.repository;
 
 import org.springframework.data.repository.CrudRepository;
 import shift.scheduler.backend.model.Company;
-import shift.scheduler.backend.model.ScheduleForWeek;
+import shift.scheduler.backend.model.schedule.ScheduleForWeek;
 
 import java.time.LocalDate;
 import java.util.Optional;

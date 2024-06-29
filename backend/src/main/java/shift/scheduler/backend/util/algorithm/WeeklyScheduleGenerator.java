@@ -1,20 +1,20 @@
 package shift.scheduler.backend.util.algorithm;
 
-import shift.scheduler.backend.model.Employee;
-import shift.scheduler.backend.model.ScheduleForDay;
-import shift.scheduler.backend.model.ScheduleForWeek;
+import shift.scheduler.backend.model.schedule.Schedule;
+import shift.scheduler.backend.model.schedule.ScheduleForDay;
+import shift.scheduler.backend.model.schedule.ScheduleForWeek;
 import shift.scheduler.backend.model.Day;
 
 import java.util.*;
 
-public class WeeklyScheduleGenerator extends GeneticAlgorithm<ScheduleForWeek, ScheduleForDay> {
+public class WeeklyScheduleGenerator extends GeneticAlgorithm<ScheduleForDay> {
 
     /**
      * Creates an initial population of weekly schedules by producing random combinations of daily schedules.
      */
-    public List<ScheduleForWeek> generateInitialPopulation(List<List<ScheduleForDay>> dailySchedules) {
+    public List<Schedule> generateInitialPopulation(List<List<ScheduleForDay>> dailySchedules) {
 
-        List<ScheduleForWeek> population = new ArrayList<>();
+        List<Schedule> population = new ArrayList<>();
 
         for (int i = 0; i < POPULATION_SIZE; i++) {
             Collection<ScheduleForDay> days = new ArrayList<>();
@@ -56,7 +56,10 @@ public class WeeklyScheduleGenerator extends GeneticAlgorithm<ScheduleForWeek, S
         return score;
     }
 
-    public List<ScheduleForWeek> crossover(ScheduleForWeek a, ScheduleForWeek b) {
+    public List<Schedule> crossover(Schedule schedA, Schedule schedB) {
+
+        ScheduleForWeek a = (ScheduleForWeek) schedA;
+        ScheduleForWeek b = (ScheduleForWeek) schedB;
 
         List<ScheduleForDay> schedulesFromA = new ArrayList<>(a.getDailySchedules());
         List<ScheduleForDay> schedulesFromB = new ArrayList<>(b.getDailySchedules());
@@ -80,16 +83,18 @@ public class WeeklyScheduleGenerator extends GeneticAlgorithm<ScheduleForWeek, S
         schedulesFromA.set(x, schedulesFromB.get(y));
         schedulesFromB.set(y, tmp);
 
-        List<ScheduleForWeek> offspring = new ArrayList<>();
+        List<Schedule> offspring = new ArrayList<>();
         offspring.add(new ScheduleForWeek(schedulesFromA));
         offspring.add(new ScheduleForWeek(schedulesFromB));
 
         return offspring;
     }
 
-    public ScheduleForWeek mutate(List<List<ScheduleForDay>> dailySchedules, ScheduleForWeek schedule) {
+    public Schedule mutate(List<List<ScheduleForDay>> dailySchedules, Schedule schedule) {
 
-        List<ScheduleForDay> components = (List<ScheduleForDay>) schedule.getDailySchedules();
+        ScheduleForWeek weeklySchedule = (ScheduleForWeek) schedule;
+
+        List<ScheduleForDay> components = (List<ScheduleForDay>) weeklySchedule.getDailySchedules();
 
         int i = random.nextInt(components.size());
         Day dayToReplace = components.get(i).getDay();

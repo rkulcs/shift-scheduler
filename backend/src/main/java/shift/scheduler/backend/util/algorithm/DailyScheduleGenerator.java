@@ -1,10 +1,12 @@
 package shift.scheduler.backend.util.algorithm;
 
 import shift.scheduler.backend.model.*;
+import shift.scheduler.backend.model.schedule.Schedule;
+import shift.scheduler.backend.model.schedule.ScheduleForDay;
 
 import java.util.*;
 
-public class DailyScheduleGenerator extends GeneticAlgorithm<ScheduleForDay, Shift> {
+public class DailyScheduleGenerator extends GeneticAlgorithm<Shift> {
 
     public int MAX_NUM_GENERATED_SCHEDULES = 1000;
 
@@ -19,9 +21,9 @@ public class DailyScheduleGenerator extends GeneticAlgorithm<ScheduleForDay, Shi
     }
 
     @Override
-    public List<ScheduleForDay> generateInitialPopulation(List<List<Shift>> components) {
+    public List<Schedule> generateInitialPopulation(List<List<Shift>> components) {
 
-        List<ScheduleForDay> population = new ArrayList<>();
+        List<Schedule> population = new ArrayList<>();
 
         for (int i = 0; i < POPULATION_SIZE; i++)
             population.add(generateRandomSchedule(components));
@@ -29,25 +31,12 @@ public class DailyScheduleGenerator extends GeneticAlgorithm<ScheduleForDay, Shi
         return population;
     }
 
-    @Override
-    public long computeFitnessScore(ScheduleForDay schedule) {
-
-        boolean isValid = schedule.validate(blocks, numEmployeesPerHour);
-
-        long score = 0;
-
-        if (isValid)
-            return score;
-
-        score = schedule.getConstraintViolations()
-                .stream()
-                .reduce(0, (subtotal, constraint) -> subtotal + Math.abs(constraint.getDifference()), Integer::sum);
-
-        return score;
-    }
 
     @Override
-    public List<ScheduleForDay> crossover(ScheduleForDay a, ScheduleForDay b) {
+    public List<Schedule> crossover(Schedule schedA, Schedule schedB) {
+
+        ScheduleForDay a = (ScheduleForDay) schedA;
+        ScheduleForDay b = (ScheduleForDay) schedB;
 
         List<Shift> shiftsFromA = new ArrayList<>(a.getShifts());
         List<Shift> shiftsFromB = new ArrayList<>(b.getShifts());
@@ -65,21 +54,23 @@ public class DailyScheduleGenerator extends GeneticAlgorithm<ScheduleForDay, Shi
         shiftsFromA.add(shiftB);
         shiftsFromB.add(shiftA);
 
-        List<ScheduleForDay> offspring = new ArrayList<>();
-        offspring.add(new ScheduleForDay(a.getDay(), shiftsFromA));
-        offspring.add(new ScheduleForDay(b.getDay(), shiftsFromB));
+        List<Schedule> offspring = new ArrayList<>();
+        offspring.add(new ScheduleForDay(a.getDay(), shiftsFromA, blocks, numEmployeesPerHour));
+        offspring.add(new ScheduleForDay(b.getDay(), shiftsFromB, blocks, numEmployeesPerHour));
 
         return offspring;
     }
 
     @Override
-    public ScheduleForDay mutate(List<List<Shift>> components, ScheduleForDay schedule) {
+    public Schedule mutate(List<List<Shift>> components, Schedule schedule) {
+
+        ScheduleForDay dailySchedule = (ScheduleForDay) schedule;
 
         List<Shift> employeeShifts = components.get(random.nextInt(components.size()));
         Shift randomShift = employeeShifts.get(random.nextInt(employeeShifts.size()));
 
         boolean swappedShifts = false;
-        List<Shift> scheduleShifts = (List<Shift>) schedule.getShifts();
+        List<Shift> scheduleShifts = (List<Shift>) dailySchedule.getShifts();
 
         for (int i = 0; i < scheduleShifts.size(); i++) {
             Shift shift = scheduleShifts.get(i);
@@ -94,7 +85,7 @@ public class DailyScheduleGenerator extends GeneticAlgorithm<ScheduleForDay, Shi
         if (!swappedShifts)
             scheduleShifts.set(random.nextInt(scheduleShifts.size()), randomShift);
 
-        return schedule;
+        return dailySchedule;
     }
 
     private ScheduleForDay generateRandomSchedule(List<List<Shift>> components) {
@@ -124,6 +115,6 @@ public class DailyScheduleGenerator extends GeneticAlgorithm<ScheduleForDay, Shi
                 shifts.add(shift);
         }
 
-        return new ScheduleForDay(period.getDay(), shifts);
+        return new ScheduleForDay(period.getDay(), shifts, blocks, numEmployeesPerHour);
     }
 }

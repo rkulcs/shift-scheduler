@@ -1,21 +1,21 @@
-package shift.scheduler.backend.model;
+package shift.scheduler.backend.model.schedule;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 import jakarta.persistence.*;
 import org.hibernate.annotations.Cascade;
+import shift.scheduler.backend.model.Company;
+import shift.scheduler.backend.model.Employee;
 import shift.scheduler.backend.model.id.ScheduleId;
 import shift.scheduler.backend.model.violation.EmployeeConstraintViolation;
 import shift.scheduler.backend.model.violation.ScheduleConstraintViolation;
 
 import java.time.LocalDate;
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Entity
 @IdClass(ScheduleId.class)
-public class ScheduleForWeek {
+public class ScheduleForWeek extends Schedule {
 
     @Id
     @ManyToOne
@@ -29,9 +29,6 @@ public class ScheduleForWeek {
     @OneToMany(orphanRemoval = true)
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
     private Collection<ScheduleForDay> dailySchedules;
-
-    @Transient
-    private Collection<ScheduleConstraintViolation> constraintViolations;
 
     public ScheduleForWeek() {}
 
@@ -69,7 +66,7 @@ public class ScheduleForWeek {
         }
     }
 
-    public List<ScheduleConstraintViolation> getConstraintViolations() {
+    public Collection<ScheduleConstraintViolation> getConstraintViolations() {
 
         Stream<ScheduleConstraintViolation> dailyScheduleViolations = Stream.of(this.dailySchedules)
                 .flatMap(Collection::stream)

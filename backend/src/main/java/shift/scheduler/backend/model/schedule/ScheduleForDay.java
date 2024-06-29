@@ -1,8 +1,12 @@
-package shift.scheduler.backend.model;
+package shift.scheduler.backend.model.schedule;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import org.hibernate.annotations.Cascade;
+import shift.scheduler.backend.model.Day;
+import shift.scheduler.backend.model.Employee;
+import shift.scheduler.backend.model.Shift;
+import shift.scheduler.backend.model.TimePeriod;
 import shift.scheduler.backend.model.violation.CompanyConstraintViolation;
 import shift.scheduler.backend.model.violation.EmployeeConstraintViolation;
 import shift.scheduler.backend.model.violation.ScheduleConstraintViolation;
@@ -11,7 +15,7 @@ import shift.scheduler.backend.util.Period;
 import java.util.*;
 
 @Entity
-public class ScheduleForDay {
+public class ScheduleForDay extends Schedule {
 
     @Id
     @GeneratedValue
@@ -25,9 +29,6 @@ public class ScheduleForDay {
     private Collection<Shift> shifts;
 
     @Transient
-    private Collection<ScheduleConstraintViolation> constraintViolations;
-
-    @Transient
     @JsonIgnore
     private Map<Employee, Integer> employeeHours;
 
@@ -35,11 +36,21 @@ public class ScheduleForDay {
     @JsonIgnore
     private Map<TimePeriod, Integer> numEmployeesPerPeriod;
 
+    @Transient
+    private int numEmployeesPerHour;
+
     public ScheduleForDay() {}
 
     public ScheduleForDay(Day day, Collection<Shift> shifts) {
         this.day = day;
         this.shifts = shifts;
+        this.computeEmployeeHours();
+    }
+
+    public ScheduleForDay(Day day, Collection<Shift> shifts, List<TimePeriod> blocks, int numEmployeesPerHour) {
+        this(day, shifts);
+        this.numEmployeesPerHour = numEmployeesPerHour;
+        this.computeNumEmployeesPerPeriod(blocks);
     }
 
     public Long getId() {
@@ -82,15 +93,9 @@ public class ScheduleForDay {
      * Checks if the schedule meets all constraints, and stores all constraint violations in
      * a list.
      *
-     * @param blocks The list of time periods of the day during which employees need to work
-     * @param numEmployeesPerHour The number of employees who must work during each hour
-     *
      * @return True if no constraints are violated, false otherwise
      */
-    public boolean validate(List<TimePeriod> blocks, int numEmployeesPerHour) {
-
-        computeEmployeeHours();
-        computeNumEmployeesPerPeriod(blocks, numEmployeesPerHour);
+    public boolean validate() {
 
         constraintViolations = new ArrayList<>();
 
@@ -154,9 +159,8 @@ public class ScheduleForDay {
      *
      * @param blocks The time periods that the operational day consists of (e.g., 4-8, 8-12, 12-16 if the hours of
      *               operation are 4-16, and a period consists of four hours)
-     * @param numEmployeesPerHour The required number of employees per hour
      */
-    private void computeNumEmployeesPerPeriod(List<TimePeriod> blocks, int numEmployeesPerHour) {
+    private void computeNumEmployeesPerPeriod(List<TimePeriod> blocks) {
 
         numEmployeesPerPeriod = new HashMap<>();
 

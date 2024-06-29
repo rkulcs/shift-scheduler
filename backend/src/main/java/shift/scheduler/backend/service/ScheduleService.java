@@ -4,12 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import shift.scheduler.backend.model.Company;
 import shift.scheduler.backend.model.Employee;
-import shift.scheduler.backend.model.ScheduleForWeek;
+import shift.scheduler.backend.model.schedule.ScheduleForWeek;
 import shift.scheduler.backend.repository.ScheduleForWeekRepository;
 import shift.scheduler.backend.util.DateTimeUtil;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 @Service
 public class ScheduleService {

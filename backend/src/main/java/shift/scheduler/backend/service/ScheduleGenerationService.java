@@ -2,14 +2,17 @@ package shift.scheduler.backend.service;
 
 import org.springframework.stereotype.Service;
 import shift.scheduler.backend.model.*;
+import shift.scheduler.backend.model.schedule.Schedule;
+import shift.scheduler.backend.model.schedule.ScheduleForDay;
+import shift.scheduler.backend.model.schedule.ScheduleForWeek;
 import shift.scheduler.backend.payload.ScheduleGenerationRequest;
 import shift.scheduler.backend.util.DateTimeUtil;
 import shift.scheduler.backend.util.algorithm.DailyScheduleGenerator;
 import shift.scheduler.backend.util.algorithm.WeeklyScheduleGenerator;
 
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class ScheduleGenerationService {
@@ -22,9 +25,9 @@ public class ScheduleGenerationService {
         private HoursOfOperation period;
         private short numEmployeesPerHour;
         private List<Employee> employees;
-        private List<List<ScheduleForDay>> candidateDailySchedules;
+        private List<List<Schedule>> candidateDailySchedules;
 
-        DailyScheduleWorker(HoursOfOperation period, short numEmployeesPerHour, List<Employee> employees, List<List<ScheduleForDay>> candidateDailySchedules) {
+        DailyScheduleWorker(HoursOfOperation period, short numEmployeesPerHour, List<Employee> employees, List<List<Schedule>> candidateDailySchedules) {
             this.period = period;
             this.numEmployeesPerHour = numEmployeesPerHour;
             this.employees = employees;
@@ -48,7 +51,7 @@ public class ScheduleGenerationService {
         if (employees.size() < numEmployeesPerHour)
             return null;
 
-        List<List<ScheduleForDay>> candidateDailySchedules = new ArrayList<>();
+        List<List<Schedule>> candidateDailySchedules = new ArrayList<>();
 
         Collection<Thread> threads = new ArrayList<>();
 
@@ -73,19 +76,21 @@ public class ScheduleGenerationService {
         }
 
         WeeklyScheduleGenerator weeklyScheduleGenerator = new WeeklyScheduleGenerator();
-        Collection<ScheduleForWeek> schedules = weeklyScheduleGenerator.generateSchedules(candidateDailySchedules);
+        Collection<Schedule> schedules = weeklyScheduleGenerator.generateSchedules((List<List<ScheduleForDay>>) (Object) candidateDailySchedules);
 
         LocalDate firstDay = DateTimeUtil.getFirstDayOfWeek(request.getDate());
 
-        for (ScheduleForWeek schedule : schedules) {
+        Collection<ScheduleForWeek> weeklySchedules = schedules.stream().map(schedule -> (ScheduleForWeek) schedule).toList();
+
+        weeklySchedules.forEach(schedule -> {
             schedule.setFirstDay(firstDay);
             schedule.setCompany(company);
-        }
+        });
 
-        return schedules;
+        return weeklySchedules;
     }
 
-    private List<ScheduleForDay> generateCandidateSchedulesForDay(HoursOfOperation period,
+    private List<Schedule> generateCandidateSchedulesForDay(HoursOfOperation period,
                                                                  short numEmployeesPerHour,
                                                                  Collection<Employee> employees) {
 
@@ -93,10 +98,10 @@ public class ScheduleGenerationService {
         employees.forEach(e -> potentialShifts.add((List<Shift>) e.generatePotentialShifts(period)));
 
         DailyScheduleGenerator generator = new DailyScheduleGenerator(period, numEmployeesPerHour);
-        List<ScheduleForDay> generatedSchedules = (List<ScheduleForDay>) generator.generateSchedules(potentialShifts);
+        Collection<Schedule> generatedSchedules = generator.generateSchedules(potentialShifts);
 
-        generatedSchedules.forEach(schedule -> schedule.setDay(period.getDay()));
+        generatedSchedules.forEach(schedule -> ((ScheduleForDay) schedule).setDay(period.getDay()));
 
-        return generatedSchedules;
+        return (List<Schedule>) generatedSchedules;
     }
 }
