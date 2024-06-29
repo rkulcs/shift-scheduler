@@ -33,29 +33,6 @@ public class WeeklyScheduleGenerator extends GeneticAlgorithm<ScheduleForDay> {
         return population;
     }
 
-    /**
-     * Computes a weekly schedule's fitness score based on how many hours each employee works during the given
-     * week. The score increases if an employee's number of hours is either below the minimum number of hours
-     * that they would like to work per week, or above the maximum number of hours that they can work. If all
-     * employees work for a number of hours that is within their specified ranges of hours, then the schedule's
-     * fitness score is 0.
-     */
-    public long computeFitnessScore(ScheduleForWeek schedule) {
-
-        boolean isValid = schedule.validate();
-
-        long score = 0;
-
-        if (isValid)
-            return score;
-
-        score = schedule.getConstraintViolations()
-                .stream()
-                .reduce(0, (subtotal, constraint) -> subtotal + Math.abs(constraint.getDifference()), Integer::sum);
-
-        return score;
-    }
-
     public List<Schedule> crossover(Schedule schedA, Schedule schedB) {
 
         ScheduleForWeek a = (ScheduleForWeek) schedA;

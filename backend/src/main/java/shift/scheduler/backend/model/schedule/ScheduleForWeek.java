@@ -86,7 +86,7 @@ public class ScheduleForWeek extends Schedule {
                 if (employeeWeeklyHours.containsKey(employee))
                     employeeWeeklyHours.put(employee, employeeWeeklyHours.get(employee)+hours);
                 else
-                    employeeWeeklyHours.put(employee, 0);
+                    employeeWeeklyHours.put(employee, hours);
             });
         }
 
@@ -96,7 +96,7 @@ public class ScheduleForWeek extends Schedule {
             if (employee.getMaxHoursPerWeek() < hours)
                 difference = hours - employee.getMaxHoursPerWeek();
             else if (hours < employee.getMinHoursPerWeek())
-                difference = employee.getMinHoursPerWeek() - hours;
+                difference = hours - employee.getMinHoursPerWeek();
 
             if (difference != 0) {
                 constraintViolations.add(new EmployeeConstraintViolation(
