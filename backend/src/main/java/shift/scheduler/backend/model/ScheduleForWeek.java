@@ -1,15 +1,15 @@
 package shift.scheduler.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 import jakarta.persistence.*;
 import org.hibernate.annotations.Cascade;
 import shift.scheduler.backend.model.id.ScheduleId;
+import shift.scheduler.backend.model.violation.EmployeeConstraintViolation;
 import shift.scheduler.backend.model.violation.ScheduleConstraintViolation;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -29,6 +29,9 @@ public class ScheduleForWeek {
     @OneToMany(orphanRemoval = true)
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
     private Collection<ScheduleForDay> dailySchedules;
+
+    @Transient
+    private Collection<ScheduleConstraintViolation> constraintViolations;
 
     public ScheduleForWeek() {}
 
@@ -68,10 +71,43 @@ public class ScheduleForWeek {
 
     public List<ScheduleConstraintViolation> getConstraintViolations() {
 
-        return Stream.of(this.dailySchedules)
+        Stream<ScheduleConstraintViolation> dailyScheduleViolations = Stream.of(this.dailySchedules)
                 .flatMap(Collection::stream)
                 .map(ScheduleForDay::getConstraintViolations)
-                .flatMap(Collection::stream)
-                .collect(Collectors.toCollection(ArrayList::new));
+                .flatMap(Collection::stream);
+
+        return Stream.concat(this.constraintViolations.stream(), dailyScheduleViolations).toList();
+    }
+
+    public boolean validate() {
+
+        constraintViolations = new ArrayList<>();
+        Map<Employee, Integer> employeeWeeklyHours = new HashMap<>();
+
+        for (var dailySchedule : dailySchedules) {
+            dailySchedule.getEmployeeHours().forEach((employee, hours) -> {
+                if (employeeWeeklyHours.containsKey(employee))
+                    employeeWeeklyHours.put(employee, employeeWeeklyHours.get(employee)+hours);
+                else
+                    employeeWeeklyHours.put(employee, 0);
+            });
+        }
+
+        employeeWeeklyHours.forEach((employee, hours) -> {
+            int difference = 0;
+
+            if (employee.getMaxHoursPerWeek() < hours)
+                difference = hours - employee.getMaxHoursPerWeek();
+            else if (hours < employee.getMinHoursPerWeek())
+                difference = employee.getMinHoursPerWeek() - hours;
+
+            if (difference != 0) {
+                constraintViolations.add(new EmployeeConstraintViolation(
+                        employee, EmployeeConstraintViolation.Type.WEEKLY_HOURS, difference
+                ));
+            }
+        });
+
+        return getConstraintViolations().isEmpty();
     }
 }

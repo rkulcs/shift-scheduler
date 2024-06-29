@@ -70,6 +70,14 @@ public class ScheduleForDay {
         return constraintViolations;
     }
 
+    public Map<Employee, Integer> getEmployeeHours() {
+        return employeeHours;
+    }
+
+    public Map<TimePeriod, Integer> getNumEmployeesPerPeriod() {
+        return numEmployeesPerPeriod;
+    }
+
     /**
      * Checks if the schedule meets all constraints, and stores all constraint violations in
      * a list.

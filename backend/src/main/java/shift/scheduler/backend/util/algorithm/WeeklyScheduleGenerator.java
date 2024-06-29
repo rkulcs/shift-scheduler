@@ -42,34 +42,16 @@ public class WeeklyScheduleGenerator extends GeneticAlgorithm<ScheduleForWeek, S
      */
     public long computeFitnessScore(ScheduleForWeek schedule) {
 
-        Map<Employee, Integer> employeeHours = new HashMap<>();
+        boolean isValid = schedule.validate();
 
-        for (var dailySchedule : schedule.getDailySchedules()) {
-            for (var shift : dailySchedule.getShifts()) {
-                Employee employee = shift.getEmployee();
-                int hours = shift.getLength();
+        long score = 0;
 
-                if (employeeHours.containsKey(employee))
-                    employeeHours.put(employee, employeeHours.get(employee)+hours);
-                else
-                    employeeHours.put(employee, hours);
-            }
-        }
+        if (isValid)
+            return score;
 
-        long score = 0L;
-
-        for (var entry : employeeHours.entrySet()) {
-            Employee employee = entry.getKey();
-            int hours = entry.getValue();
-
-            int min = employee.getMinHoursPerWeek();
-            int max = employee.getMaxHoursPerWeek();
-
-            if (hours < min)
-                score += (min - hours);
-            else if (hours > max)
-                score += (hours - max);
-        }
+        score = schedule.getConstraintViolations()
+                .stream()
+                .reduce(0, (subtotal, constraint) -> subtotal + Math.abs(constraint.getDifference()), Integer::sum);
 
         return score;
     }
