@@ -1,9 +1,11 @@
 package shift.scheduler.backend.model.violation;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import shift.scheduler.backend.model.TimePeriod;
 
 public class CompanyConstraintViolation extends ScheduleConstraintViolation {
 
+    @JsonIgnore
     private TimePeriod period;
 
     public CompanyConstraintViolation(TimePeriod period, int difference) {

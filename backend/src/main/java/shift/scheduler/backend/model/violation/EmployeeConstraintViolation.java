@@ -1,5 +1,6 @@
 package shift.scheduler.backend.model.violation;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import shift.scheduler.backend.model.Employee;
 
 public class EmployeeConstraintViolation extends ScheduleConstraintViolation {
@@ -9,7 +10,10 @@ public class EmployeeConstraintViolation extends ScheduleConstraintViolation {
         WEEKLY_HOURS
     }
 
+    @JsonIgnore
     private Employee employee;
+
+    @JsonIgnore
     private Type type;
 
     public EmployeeConstraintViolation(Employee employee, Type type, int difference) {
