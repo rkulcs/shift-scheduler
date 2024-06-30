@@ -35,10 +35,12 @@ public abstract class User {
         this.account = account;
     }
 
+    @JsonIgnore
     public String getUsername() {
         return account.getUsername();
     }
 
+    @JsonIgnore
     public String getName() {
         return account.getName();
     }

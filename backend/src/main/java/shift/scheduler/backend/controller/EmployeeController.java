@@ -27,6 +27,40 @@ public class EmployeeController {
     @Autowired
     private AvailabilityRepository availabilityRepository;
 
+    @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Employee> get(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
+
+        Employee employee = getEmployee(authHeader);
+
+        if (employee == null)
+            return ResponseEntity.badRequest().body(null);
+        else
+            return ResponseEntity.ok(employee);
+    }
+
+    @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> post(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
+                                         @RequestBody Employee newEmployeeDetails) {
+
+        Employee employee = getEmployee(authHeader);
+
+        employee.setAvailabilities(newEmployeeDetails.getAvailabilities());
+        employee.setMinHoursPerDay(newEmployeeDetails.getMinHoursPerDay());
+        employee.setMaxHoursPerDay(newEmployeeDetails.getMaxHoursPerDay());
+        employee.setMinHoursPerWeek(newEmployeeDetails.getMinHoursPerWeek());
+        employee.setMaxHoursPerWeek(newEmployeeDetails.getMaxHoursPerWeek());
+
+        try {
+            employeeService.save(employee);
+        } catch (ConstraintViolationException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Internal server error");
+        }
+
+        return ResponseEntity.ok("Employee details updated");
+    }
+
     @GetMapping(value = "/availability", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Collection<Availability>> getAvailabilites(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
 
