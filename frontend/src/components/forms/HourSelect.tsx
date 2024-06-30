@@ -6,10 +6,25 @@ type HourSelectProps = {
   i: number
   label: string
   value: number
+  min?: number,
+  max?: number,
   onChange: SelectInputProps['onChange']
 }
 
-export default function HourSelect({ i, label, value, onChange }: HourSelectProps) {
+export default function HourSelect({ i, label, value, min, max, onChange }: HourSelectProps) {
+
+  function generateOptions() {
+    if (min !== undefined && max !== undefined) {
+      const options: MenuItem[] = []
+
+      for (let v = min; v <= max; v += 4)
+        options.push(<MenuItem key={v} value={v}>{v}</MenuItem>)
+
+      return options
+    } else {
+      return VALID_HOURS.map(v => <MenuItem key={v} value={v}>{v}</MenuItem>)
+    }
+  }
 
   return (
     <Box mt={1} mb={1}>
@@ -21,7 +36,7 @@ export default function HourSelect({ i, label, value, onChange }: HourSelectProp
           value={value}
           onChange={onChange}
         >
-          {VALID_HOURS.map(v => <MenuItem key={v} value={v}>{v}</MenuItem>)}
+          {generateOptions()}
         </Select>
       </FormControl>
     </Box>
