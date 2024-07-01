@@ -1,5 +1,4 @@
 import { SubmitHandler, useForm } from "react-hook-form"
-import { TimePeriodFormInput } from "../types/TimePeriodFormInput"
 import { Day } from "../model/Day"
 import { useEffect, useState } from "react"
 import { TimePeriod } from "../model/TimePeriod"
@@ -113,8 +112,8 @@ export default function Availabilities() {
           <HourSelect
             label="Minimum"
             value={employee.minHoursPerWeek}
-            min={0}
-            max={72}
+            min={MIN_WEEKLY_HOURS}
+            max={MAX_WEEKLY_HOURS}
             onChange={e => {
               setEmployee({...employee, minHoursPerWeek: e.target.value})
               return
@@ -124,8 +123,8 @@ export default function Availabilities() {
           <HourSelect
             label="Maximum"
             value={employee.maxHoursPerWeek}
-            min={0}
-            max={72}
+            min={MIN_WEEKLY_HOURS}
+            max={MAX_WEEKLY_HOURS}
             onChange={e => {
               setEmployee({...employee, maxHoursPerWeek: e.target.value})
               return

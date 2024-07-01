@@ -13,7 +13,7 @@ export function removeJWT() {
     localStorage.removeItem('token')
 }
 
-export function isValidJWTStored() {
+export function isValidJWTStored(): boolean {
     const token = localStorage.getItem('token')
 
     if (token === null)
