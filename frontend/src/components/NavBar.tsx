@@ -60,8 +60,6 @@ const employeePages: PageMapping[] = [
   ...staffPages
 ]
 
-const settings = ['Account']
-
 /**
  * Navbar component based on sample MUI code from https://codesandbox.io/p/sandbox/rough-morning-8hwp3y?file=%2Fsrc%2FDemo.tsx
  */
@@ -192,14 +190,9 @@ export default function NavBar() {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
-              {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
-                </MenuItem>
-              ))}
-                <MenuItem key="logout" onClick={handleLogout}>
-                  <Typography textAlign="center">Log Out</Typography>
-                </MenuItem>
+              <MenuItem key="logout" onClick={handleLogout}>
+                <Typography textAlign="center">Log Out</Typography>
+              </MenuItem>
             </Menu>
           </Box>}
         </Toolbar>
