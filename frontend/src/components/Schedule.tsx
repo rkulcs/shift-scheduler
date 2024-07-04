@@ -1,7 +1,9 @@
-import { Alert, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
-import { WeeklySchedule } from "../model/WeeklySchedule";
-import { Day } from "../model/Day";
-import { VALID_HOURS } from "../model/TimePeriod";
+import { Alert, List, ListItem, ListItemAvatar, ListItemIcon, ListItemText, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material"
+import { WeeklySchedule } from "../model/WeeklySchedule"
+import { Day } from "../model/Day"
+import { VALID_HOURS } from "../model/TimePeriod"
+import { Shift } from "../model/Shift"
+import PersonIcon from '@mui/icons-material/Person'
 
 export default function Schedule({ schedule }: { schedule: WeeklySchedule }) {
   // Store each shift in a map for easier access
@@ -21,7 +23,20 @@ export default function Schedule({ schedule }: { schedule: WeeklySchedule }) {
     return (schedule.constraintViolations && schedule.constraintViolations.length > 0) as boolean
   }
 
-  console.log(schedule.constraintViolations)
+  function getCellColour(shifts: Shift[]) {
+    if (shifts.length === 0)
+      return '#8ca18c'
+
+    const username = localStorage.getItem('username')
+
+    // Use a different colour for blocks in which the user is scheduled to work
+    for (let shift of shifts) {
+      if (shift.employee.account.username === username)
+        return '#35baf6'
+    }
+    
+    return '#6fbf73'
+  }
 
   return (
     <>
@@ -38,28 +53,38 @@ export default function Schedule({ schedule }: { schedule: WeeklySchedule }) {
         <TableHead>
           <TableRow>
             <TableCell>Time</TableCell>
-            {Object.keys(Day).filter(key => isNaN(key)).map(day => <TableCell>{day}</TableCell>)}
+            {Object.keys(Day).filter(key => isNaN(key)).map(day => <TableCell key={day}>{day}</TableCell>)}
           </TableRow>
         </TableHead>
         <TableBody>
           {VALID_HOURS.slice(0, -1).map(hour => {
             return (
-              <TableRow>
+              <TableRow key={hour}>
                 <TableCell>{`${hour}:00`}</TableCell>
                 {Object.keys(Day).filter(key => isNaN(key)).map(day => {
                   const shifts = blocks[day][hour]
 
                   return (
                     <TableCell
+                      key={day}
                       size="small"
                       padding="none"
                       align="center"
                       sx={{
                         border: 1,
-                        backgroundColor: shifts.length === 0 ? '#8ca18c' : '#6fbf73'
+                        backgroundColor: getCellColour(shifts) 
                       }}
                     >
-                      {shifts && shifts.map((shift: Shift) => <p>{shift.employee.account.name}</p>)}
+                      <List sx={{ padding: 0.5 }} dense={true}>
+                        {shifts && shifts.map((shift: Shift, i: number) => {
+                          return (
+                            <ListItem key={i} sx={{ padding: 0 }}>
+                              <ListItemAvatar sx={{ width: '20%', minWidth: 0 }}><PersonIcon fontSize="5%"/></ListItemAvatar>
+                              <ListItemText primaryTypographyProps={{ fontSize: '80%' }} primary={shift.employee.account.name}/>
+                            </ListItem>
+                          )
+                        })}
+                      </List>
                     </TableCell>
                   )
                 })}
