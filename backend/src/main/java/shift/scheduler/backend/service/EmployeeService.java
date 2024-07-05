@@ -3,6 +3,7 @@ package shift.scheduler.backend.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import shift.scheduler.backend.model.Employee;
+import shift.scheduler.backend.model.EmployeeDashboardData;
 import shift.scheduler.backend.model.User;
 import shift.scheduler.backend.repository.EmployeeRepository;
 import shift.scheduler.backend.util.exception.EntityValidationException;
@@ -15,6 +16,9 @@ public class EmployeeService extends UserService  {
 
     @Autowired
     private EmployeeRepository employeeRepository;
+
+    @Autowired
+    private JwtService jwtService;
 
     @Override
     public User save(User user) throws EntityValidationException {
@@ -40,6 +44,13 @@ public class EmployeeService extends UserService  {
     @Override
     public User findByUsername(String username) {
         return employeeRepository.findByAccountUsername(username).orElse(null);
+    }
+
+    public Employee findByAuthHeader(String authHeader) {
+
+        String token = jwtService.extractTokenFromHeader(authHeader);
+        String username = jwtService.extractUsername(token);
+        return (Employee) this.findByUsername(username);
     }
 
     public Iterable<Employee> findAll() {
