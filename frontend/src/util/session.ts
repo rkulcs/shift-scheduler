@@ -9,3 +9,7 @@ export function logout() {
 export function isUserEmployee() {
   return localStorage.getItem('role') === 'EMPLOYEE'
 }
+
+export function isUserManager() {
+  return localStorage.getItem('role') === 'MANAGER'
+}
