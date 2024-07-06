@@ -17,7 +17,9 @@ import shift.scheduler.backend.service.EmployeeService;
 import shift.scheduler.backend.service.JwtService;
 import shift.scheduler.backend.service.ScheduleService;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -87,7 +89,7 @@ public class EmployeeController {
             return ResponseEntity.noContent().build();
 
         List<Shift> shifts = new ArrayList<>();
-        Shift nextShift = null;
+        EmployeeDashboardData.DetailedShiftData nextShift = null;
 
         for (ScheduleForDay dailySchedule : schedule.getDailySchedules()) {
             Shift shift = dailySchedule.getShifts().stream().filter(s -> s.getEmployee().equals(employee)).findFirst().orElse(null);
@@ -99,8 +101,10 @@ public class EmployeeController {
 
             int day = (dailySchedule.getDay().ordinal() + 1) % 7;
 
-            if (nextShift == null && day >= today)
-                nextShift = shift;
+            if (nextShift == null && day >= today) {
+                LocalDate shiftDate = date.with(TemporalAdjusters.nextOrSame(DayOfWeek.of(day)));
+                nextShift = new EmployeeDashboardData.DetailedShiftData(shift, shiftDate);
+            }
         }
 
         int numHours = shifts.stream().reduce(0, (subtotal, shift) -> subtotal + shift.getLength(), Integer::sum);

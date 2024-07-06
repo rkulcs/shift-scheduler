@@ -1,26 +1,7 @@
 package shift.scheduler.backend.model;
 
-public class EmployeeDashboardData {
+import java.time.LocalDate;
 
-    private Shift nextShift;
-    private int numShifts;
-    private int numHours;
-
-    public EmployeeDashboardData(Shift nextShift, int numShifts, int numHours) {
-        this.nextShift = nextShift;
-        this.numShifts = numShifts;
-        this.numHours = numHours;
-    }
-
-    public Shift getNextShift() {
-        return nextShift;
-    }
-
-    public int getNumShifts() {
-        return numShifts;
-    }
-
-    public int getNumHours() {
-        return numHours;
-    }
+public record EmployeeDashboardData(DetailedShiftData shift, int numShifts, int numHours) {
+    public record DetailedShiftData(Shift shift, LocalDate date) {}
 }
