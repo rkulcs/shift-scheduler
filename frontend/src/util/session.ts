@@ -5,3 +5,7 @@ export function logout() {
   localStorage.removeItem('username')
   localStorage.removeItem('role')
 }
+
+export function isUserEmployee() {
+  return localStorage.getItem('role') === 'EMPLOYEE'
+}
