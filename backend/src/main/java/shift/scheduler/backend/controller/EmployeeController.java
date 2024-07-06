@@ -6,7 +6,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import shift.scheduler.backend.model.Availability;
 import shift.scheduler.backend.model.Employee;
 import shift.scheduler.backend.model.EmployeeDashboardData;
 import shift.scheduler.backend.model.Shift;
@@ -21,7 +20,6 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 @RestController
