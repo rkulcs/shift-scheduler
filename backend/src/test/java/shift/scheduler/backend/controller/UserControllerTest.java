@@ -46,7 +46,7 @@ public class UserControllerTest {
 
     private MockMvc mockMvc;
 
-    private static ObjectMapper objectMapper = new ObjectMapper();
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
     @BeforeEach
     public void setup() {

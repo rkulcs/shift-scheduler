@@ -36,10 +36,13 @@ public class ScheduleController {
 
         User user = authenticationService.getUserFromHeader(authHeader);
 
-        if (user.getCompany() == null)
+        if (user == null || user.getCompany() == null)
             return ResponseEntity.badRequest().body(null);
 
         LocalDate parsedDate = DateTimeUtil.parseLocalDate(date);
+
+        if (parsedDate == null)
+            return ResponseEntity.badRequest().body(null);
 
         return ResponseEntity.ok(scheduleService.findByCompanyAndDate(user.getCompany(), parsedDate));
     }
