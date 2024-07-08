@@ -5,6 +5,9 @@ import { isUserEmployee, isUserManager } from "../util/session";
 import { useEffect, useState } from "react";
 import { Shift } from "../model/Shift";
 import { getRequest } from "../components/client/client";
+import { useStore } from "react-redux";
+import { UserDetails } from "../model/User";
+import { getUser, getUserRole } from "../redux/store";
 
 type EmployeeDashboardData = {
   nextShift: Shift,
@@ -38,11 +41,19 @@ const buttons = [
 ]
 
 export default function Home() {
+  const store = useStore()
+
+  const [role, setRole] = useState<string>(getUserRole())
+
+  store.subscribe(() => {
+    setRole(getUserRole())
+  })
+
   return (
     <>
-      {!isValidJWTStored() && <AuthenticationOptions/>}
-      {isValidJWTStored() && isUserEmployee() && <EmployeeDashboard/>}
-      {isValidJWTStored() && isUserManager() && <CompanyDashboard/>}
+      {!role && <AuthenticationOptions/>}
+      {role === 'EMPLOYEE' && <EmployeeDashboard/>}
+      {role === 'MANAGER' && <CompanyDashboard/>}
     </>
   )
 }
