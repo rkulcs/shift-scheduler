@@ -1,22 +1,11 @@
 package shift.scheduler.backend.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
-import shift.scheduler.backend.config.WebSecurityConfig;
-import shift.scheduler.backend.config.filter.JwtAuthenticationFilter;
 import shift.scheduler.backend.model.*;
-import shift.scheduler.backend.model.schedule.ScheduleForWeek;
 import shift.scheduler.backend.payload.ScheduleGenerationRequest;
 import shift.scheduler.backend.service.AuthenticationService;
-import shift.scheduler.backend.service.JwtService;
 import shift.scheduler.backend.service.ScheduleGenerationService;
 import shift.scheduler.backend.service.ScheduleService;
 import shift.scheduler.backend.util.Util;
@@ -31,19 +20,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
-public class ScheduleControllerTest {
-
-    @MockBean
-    JwtService jwtService;
-
-    @MockBean
-    JwtAuthenticationFilter jwtAuthenticationFilter;
-
-    @InjectMocks
-    WebSecurityConfig webSecurityConfig;
-
-    @Autowired
-    WebApplicationContext webApplicationContext;
+public class ScheduleControllerTest extends ControllerTest {
 
     @MockBean
     AuthenticationService authenticationService;
@@ -53,15 +30,6 @@ public class ScheduleControllerTest {
 
     @MockBean
     ScheduleGenerationService scheduleGenerationService;
-
-    private MockMvc mockMvc;
-
-    private static final ObjectMapper objectMapper = new ObjectMapper();
-
-    @BeforeEach
-    public void setup() {
-        mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
-    }
 
     @Test
     void getScheduleShouldReturnBadRequestWithInvalidUser() throws Exception {
@@ -116,7 +84,7 @@ public class ScheduleControllerTest {
         mockMvc.perform(
                 post("/schedule/generate")
                         .contentType("application/json")
-                        .content(objectMapper.writeValueAsString(new ScheduleGenerationRequest()))
+                        .content(stringify(new ScheduleGenerationRequest()))
         ).andExpect(status().isBadRequest());
     }
 
@@ -134,7 +102,7 @@ public class ScheduleControllerTest {
                 post("/schedule/generate")
                         .header("Authorization", "")
                         .contentType("application/json")
-                        .content(objectMapper.writeValueAsString(new ScheduleGenerationRequest()))
+                        .content(stringify(new ScheduleGenerationRequest()))
         ).andExpect(status().isOk());
     }
 
@@ -149,10 +117,8 @@ public class ScheduleControllerTest {
                 .thenReturn(new ArrayList<>());
 
         mockMvc.perform(
-                post("/schedule/generate")
+                postJson("/schedule/generate", stringify(new ScheduleGenerationRequest()))
                         .header("Authorization", "")
-                        .contentType("application/json")
-                        .content(objectMapper.writeValueAsString(new ScheduleGenerationRequest()))
         ).andExpect(status().isUnprocessableEntity());
     }
 
@@ -168,7 +134,7 @@ public class ScheduleControllerTest {
                 post("/schedule")
                         .header("Authorization", "")
                         .contentType("application/json")
-                        .content(objectMapper.writeValueAsString(null))
+                        .content(stringify(null))
         ).andExpect(status().isBadRequest());
     }
 
@@ -184,7 +150,7 @@ public class ScheduleControllerTest {
                 post("/schedule")
                         .header("Authorization", "")
                         .contentType("application/json")
-                        .content(objectMapper.writeValueAsString(Util.createValidScheduleForWeek()))
+                        .content(stringify(Util.createValidScheduleForWeek()))
         ).andExpect(status().isOk());
     }
 
