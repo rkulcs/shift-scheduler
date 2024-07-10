@@ -74,7 +74,7 @@ public class CompanyController {
         Company company = companyService.save(manager.getCompany());
 
         if (company == null)
-            return ResponseEntity.badRequest().body("No company is associated with this manager");
+            return ResponseEntity.badRequest().body("Failed to update hours of operation");
         else
             return ResponseEntity.ok("Successfully updated hours of operation");
     }
