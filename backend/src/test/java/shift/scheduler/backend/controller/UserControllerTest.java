@@ -2,11 +2,9 @@ package shift.scheduler.backend.controller;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import shift.scheduler.backend.model.*;
 import shift.scheduler.backend.payload.LoginRequest;
 import shift.scheduler.backend.payload.RegistrationRequest;
-import shift.scheduler.backend.service.*;
 import shift.scheduler.backend.util.Util;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -17,9 +15,6 @@ import static shift.scheduler.backend.service.AuthenticationService.Authenticati
 
 @SpringBootTest
 public class UserControllerTest extends ControllerTest {
-
-    @MockBean
-    AuthenticationService authenticationService;
 
     @Test
     void registrationShouldFailWithInvalidDetails() throws Exception {

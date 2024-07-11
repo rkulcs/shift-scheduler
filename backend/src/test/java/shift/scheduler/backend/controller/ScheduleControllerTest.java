@@ -5,7 +5,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import shift.scheduler.backend.model.*;
 import shift.scheduler.backend.payload.ScheduleGenerationRequest;
-import shift.scheduler.backend.service.AuthenticationService;
 import shift.scheduler.backend.service.ScheduleGenerationService;
 import shift.scheduler.backend.service.ScheduleService;
 import shift.scheduler.backend.util.Util;
@@ -23,9 +22,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class ScheduleControllerTest extends ControllerTest {
 
     @MockBean
-    AuthenticationService authenticationService;
-
-    @MockBean
     ScheduleService scheduleService;
 
     @MockBean
@@ -34,7 +30,7 @@ public class ScheduleControllerTest extends ControllerTest {
     @Test
     void getScheduleShouldReturnBadRequestWithInvalidUser() throws Exception {
 
-        when(authenticationService.getUserFromHeader(any())).thenReturn(null);
+        mockInvalidAuthHeader();
 
         mockMvc.perform(
                 get("/schedule/2024-06-30").header("Authorization", "Bearer jwt")

@@ -13,9 +13,18 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import shift.scheduler.backend.config.WebSecurityConfig;
 import shift.scheduler.backend.config.filter.JwtAuthenticationFilter;
+import shift.scheduler.backend.model.User;
+import shift.scheduler.backend.service.AuthenticationService;
 import shift.scheduler.backend.service.JwtService;
 
+import java.util.function.Function;
+import java.util.function.Supplier;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public abstract class ControllerTest {
 
@@ -24,6 +33,9 @@ public abstract class ControllerTest {
 
     @MockBean
     JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    @MockBean
+    AuthenticationService authenticationService;
 
     @InjectMocks
     WebSecurityConfig webSecurityConfig;
@@ -46,5 +58,21 @@ public abstract class ControllerTest {
 
     protected String stringify(Object object) throws JsonProcessingException {
         return objectMapper.writeValueAsString(object);
+    }
+
+    protected void mockInvalidAuthHeader() {
+        when(authenticationService.getUserFromHeader(any())).thenReturn(null);
+    }
+
+    protected void mockValidAuthHeader(User user) {
+        when(authenticationService.getUserFromHeader(any())).thenReturn(user);
+    }
+
+    protected void testEndpointWithInvalidUser(Function<String, MockHttpServletRequestBuilder> method, String endpoint) throws Exception {
+        mockInvalidAuthHeader();
+
+        mockMvc.perform(
+                method.apply(endpoint).header("Authorization", "")
+        ).andExpect(status().isBadRequest());
     }
 }

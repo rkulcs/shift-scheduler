@@ -46,13 +46,6 @@ public class EmployeeService extends UserService  {
         return employeeRepository.findByAccountUsername(username).orElse(null);
     }
 
-    public Employee findByAuthHeader(String authHeader) {
-
-        String token = jwtService.extractTokenFromHeader(authHeader);
-        String username = jwtService.extractUsername(token);
-        return (Employee) this.findByUsername(username);
-    }
-
     public Iterable<Employee> findAll() {
         return employeeRepository.findAll();
     }

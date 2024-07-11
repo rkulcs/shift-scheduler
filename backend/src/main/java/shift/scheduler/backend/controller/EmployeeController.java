@@ -12,6 +12,7 @@ import shift.scheduler.backend.model.Shift;
 import shift.scheduler.backend.model.schedule.ScheduleForDay;
 import shift.scheduler.backend.model.schedule.ScheduleForWeek;
 import shift.scheduler.backend.repository.AvailabilityRepository;
+import shift.scheduler.backend.service.AuthenticationService;
 import shift.scheduler.backend.service.EmployeeService;
 import shift.scheduler.backend.service.JwtService;
 import shift.scheduler.backend.service.ScheduleService;
@@ -25,6 +26,9 @@ import java.util.List;
 @RestController
 @RequestMapping("employee")
 public class EmployeeController {
+
+    @Autowired
+    private AuthenticationService authenticationService;
 
     @Autowired
     private JwtService jwtService;
@@ -41,7 +45,7 @@ public class EmployeeController {
     @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Employee> get(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
 
-        Employee employee = employeeService.findByAuthHeader(authHeader);
+        Employee employee = (Employee) authenticationService.getUserFromHeader(authHeader);
 
         if (employee == null)
             return ResponseEntity.badRequest().body(null);
@@ -53,7 +57,7 @@ public class EmployeeController {
     public ResponseEntity<String> post(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
                                        @RequestBody Employee newEmployeeDetails) {
 
-        Employee employee = employeeService.findByAuthHeader(authHeader);
+        Employee employee = (Employee) authenticationService.getUserFromHeader(authHeader);
 
         employee.setAvailabilities(newEmployeeDetails.getAvailabilities());
         employee.setMinHoursPerDay(newEmployeeDetails.getMinHoursPerDay());
@@ -76,7 +80,7 @@ public class EmployeeController {
     @GetMapping(value = "/dashboard", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<EmployeeDashboardData> getDashboard(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
 
-        Employee employee = employeeService.findByAuthHeader(authHeader);
+        Employee employee = (Employee) authenticationService.getUserFromHeader(authHeader);
         LocalDate date = LocalDate.now();
         int today = date.getDayOfWeek().getValue();
 
