@@ -1,10 +1,7 @@
 package shift.scheduler.backend.util;
 
 import org.checkerframework.checker.units.qual.A;
-import shift.scheduler.backend.model.Account;
-import shift.scheduler.backend.model.Company;
-import shift.scheduler.backend.model.Employee;
-import shift.scheduler.backend.model.Manager;
+import shift.scheduler.backend.model.*;
 import shift.scheduler.backend.model.schedule.ScheduleForDay;
 import shift.scheduler.backend.model.schedule.ScheduleForWeek;
 import shift.scheduler.backend.payload.ScheduleGenerationRequest;
@@ -40,7 +37,7 @@ public final class Util {
         Employee employee = new Employee(
                 validAccounts[0],
                 company,
-                (short) 0, (short) 0, (short) 0, (short) 0
+                (short) 4, (short) 8, (short) 12, (short) 24
         );
 
         return employee;
@@ -54,7 +51,11 @@ public final class Util {
     }
 
     public static ScheduleForWeek createValidScheduleForWeek() {
-        ScheduleForWeek schedule = new ScheduleForWeek(List.of(new ScheduleForDay()));
+        ScheduleForDay dailySchedule = new ScheduleForDay(
+                Day.MON, List.of(new Shift((short) 4, (short) 8, createValidEmployee()))
+        );
+
+        ScheduleForWeek schedule = new ScheduleForWeek(List.of(dailySchedule));
         schedule.setCompany(company);
 
         return schedule;

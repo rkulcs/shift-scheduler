@@ -1,16 +1,20 @@
 package shift.scheduler.backend.controller;
 
+import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import shift.scheduler.backend.model.Employee;
-import shift.scheduler.backend.service.CompanyService;
 import shift.scheduler.backend.service.EmployeeService;
+import shift.scheduler.backend.service.ScheduleService;
 import shift.scheduler.backend.util.Util;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import java.util.ArrayList;
+import java.util.Set;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -18,11 +22,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 public class EmployeeControllerTest extends ControllerTest {
 
-    @Autowired
+    @MockBean
     private EmployeeService employeeService;
 
-    @Autowired
-    private CompanyService companyService;
+    @MockBean
+    private ScheduleService scheduleService;
 
     @Test
     void getShouldReturnBadRequestWithInvalidUser() throws Exception {
@@ -50,6 +54,7 @@ public class EmployeeControllerTest extends ControllerTest {
         Employee employee = Util.createValidEmployee();
 
         mockValidAuthHeader(employee);
+        when(employeeService.save(employee)).thenThrow(new ConstraintViolationException(Set.of()));
 
         mockMvc.perform(
                 post("/employee").header("Authorization", "")
@@ -63,5 +68,33 @@ public class EmployeeControllerTest extends ControllerTest {
 
         Employee employee = Util.createValidEmployee();
         Employee updatedEmployee = Util.createValidEmployee();
+        updatedEmployee.setAvailabilities(new ArrayList<>());
+
+        mockValidAuthHeader(employee);
+        when(employeeService.save(employee)).thenReturn(employee);
+
+        mockMvc.perform(
+                postJson("/employee", stringify(updatedEmployee))
+                        .header("Authorization", "")
+        ).andExpect(status().isOk());
+    }
+
+    @Test
+    void getDashboardShouldReturnBadRequestWithInvalidUser() throws Exception {
+        testEndpointWithInvalidUser(MockMvcRequestBuilders::get, "/employee/dashboard");
+    }
+
+    @Test
+    void getDashboardShouldReturnOkWithValidUser() throws Exception {
+
+        Employee employee = Util.createValidEmployee();
+
+        mockValidAuthHeader(employee);
+        when(authenticationService.getUserFromHeader(any())).thenReturn(employee);
+        when(scheduleService.findByCompanyAndDate(any(), any())).thenReturn(Util.createValidScheduleForWeek());
+
+        mockMvc.perform(
+                get("/employee/dashboard").header("Authorization", "")
+        ).andExpect(status().isOk());
     }
 }

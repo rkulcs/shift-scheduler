@@ -81,6 +81,10 @@ public class EmployeeController {
     public ResponseEntity<EmployeeDashboardData> getDashboard(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
 
         Employee employee = (Employee) authenticationService.getUserFromHeader(authHeader);
+
+        if (employee == null)
+            return ResponseEntity.badRequest().build();
+
         LocalDate date = LocalDate.now();
         int today = date.getDayOfWeek().getValue();
 

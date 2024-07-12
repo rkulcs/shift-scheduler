@@ -26,9 +26,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 public class CompanyControllerTest extends ControllerTest {
 
     @MockBean
-    private AuthenticationService authenticationService;
-
-    @MockBean
     private CompanyService companyService;
 
     @MockBean
