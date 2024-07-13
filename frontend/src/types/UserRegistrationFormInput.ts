@@ -1,3 +1,5 @@
+import Company from "../model/Company"
+
 type UserRegistrationFormInput = { 
   username: string,
   name: string,

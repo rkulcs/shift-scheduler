@@ -40,7 +40,7 @@ export default function HoursOfOperationForm() {
         } else {
           setSubmissionStatus({ type: 'error', message: 'Failed to update hours of operation' })
         }
-      }).catch(e => {
+      }).catch(() => {
         setSubmissionStatus({ type: 'error', message: 'Failed to update hours of operation' })
       })
   }

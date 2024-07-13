@@ -4,17 +4,18 @@ import { Day } from "../model/Day"
 import { VALID_HOURS } from "../model/TimePeriod"
 import { Shift } from "../model/Shift"
 import PersonIcon from '@mui/icons-material/Person'
+import { DailySchedule } from "../model/DailySchedule"
 
 export default function Schedule({ schedule }: { schedule: WeeklySchedule }) {
   // Store each shift in a map for easier access
-  const blocks = new Object()
-  Object.keys(Day).filter(key => isNaN(key)).map((day: string) => blocks[day] = new Object())
-  Object.keys(blocks).map(day => VALID_HOURS.slice(0, -1).map(hour => blocks[day][hour] = new Array()))
+  const blocks = new Map<string, Map<Number, Shift[]>>()
+  Object.keys(Day).filter(key => isNaN(parseInt(key))).forEach(day => blocks.set(day, new Map()))
+  blocks.forEach(entry => VALID_HOURS.slice(0, -1).forEach(hour => entry.set(hour, new Array())))
 
-  schedule.dailySchedules.forEach(schedule => {
-    schedule.shifts.forEach(shift => {
+  schedule.dailySchedules.forEach(dailySchedule => {
+    dailySchedule.shifts.forEach(shift => {
       for (let i = shift.startHour; i < shift.endHour; i += 4) {
-        blocks[schedule.day][i].push(shift)
+        blocks.get(dailySchedule.day.toString())?.get(i)?.push(shift)
       }
     })
   })
@@ -23,15 +24,15 @@ export default function Schedule({ schedule }: { schedule: WeeklySchedule }) {
     return (schedule.constraintViolations && schedule.constraintViolations.length > 0) as boolean
   }
 
-  function getCellColour(shifts: Shift[]) {
-    if (shifts.length === 0)
+  function getCellColour(shifts: Shift[] | undefined) {
+    if (shifts === undefined || shifts.length === 0)
       return '#8ca18c'
 
     const username = localStorage.getItem('username')
 
     // Use a different colour for blocks in which the user is scheduled to work
     for (let shift of shifts) {
-      if (shift.employee.account.username === username)
+      if (shift.employee.account?.username === username)
         return '#35baf6'
     }
     
@@ -43,7 +44,7 @@ export default function Schedule({ schedule }: { schedule: WeeklySchedule }) {
     {hasConstraintViolations(schedule) && <Alert severity="warning">
       The following issues were detected with this schedule:
       <ul>
-        {schedule.constraintViolations.map(violation => {
+        {schedule.constraintViolations?.map(violation => {
           return <li>{violation.description}</li>
         })}
       </ul>
@@ -53,7 +54,7 @@ export default function Schedule({ schedule }: { schedule: WeeklySchedule }) {
         <TableHead>
           <TableRow>
             <TableCell>Time</TableCell>
-            {Object.keys(Day).filter(key => isNaN(key)).map(day => <TableCell key={day}>{day}</TableCell>)}
+            {Object.keys(Day).filter(key => isNaN(parseInt(key))).map(day => <TableCell key={day}>{day}</TableCell>)}
           </TableRow>
         </TableHead>
         <TableBody>
@@ -61,8 +62,8 @@ export default function Schedule({ schedule }: { schedule: WeeklySchedule }) {
             return (
               <TableRow key={hour}>
                 <TableCell>{`${hour}:00`}</TableCell>
-                {Object.keys(Day).filter(key => isNaN(key)).map(day => {
-                  const shifts = blocks[day][hour]
+                {Object.keys(Day).filter(key => isNaN(parseInt(key))).map(day => {
+                  const shifts = blocks.get(day.toString())?.get(hour)
 
                   return (
                     <TableCell
@@ -79,8 +80,8 @@ export default function Schedule({ schedule }: { schedule: WeeklySchedule }) {
                         {shifts && shifts.map((shift: Shift, i: number) => {
                           return (
                             <ListItem key={i} sx={{ padding: 0 }}>
-                              <ListItemAvatar sx={{ width: '20%', minWidth: 0 }}><PersonIcon fontSize="5%"/></ListItemAvatar>
-                              <ListItemText primaryTypographyProps={{ fontSize: '80%' }} primary={shift.employee.account.name}/>
+                              <ListItemAvatar sx={{ width: '20%', minWidth: 0 }}><PersonIcon/></ListItemAvatar>
+                              <ListItemText primaryTypographyProps={{ fontSize: '80%' }} primary={shift.employee.account?.name}/>
                             </ListItem>
                           )
                         })}

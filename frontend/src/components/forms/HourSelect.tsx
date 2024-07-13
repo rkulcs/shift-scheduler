@@ -15,7 +15,7 @@ export default function HourSelect({ i, label, value, min, max, onChange }: Hour
 
   function generateOptions() {
     if (min !== undefined && max !== undefined) {
-      const options: MenuItem[] = []
+      const options = []
 
       for (let v = min; v <= max; v += 4)
         options.push(<MenuItem key={v} value={v}>{v}</MenuItem>)
