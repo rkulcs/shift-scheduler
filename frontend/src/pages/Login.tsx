@@ -11,6 +11,10 @@ import { useDispatch } from "react-redux"
 import { setUser } from "../redux/user"
 import { unauthenticatedPostRequest } from "../components/client/client"
 
+interface TokenPayload extends JwtPayload {
+  role?: string
+}
+
 export default function Login() {
   const navigate = useNavigate()
   const dispatch = useDispatch()
@@ -30,7 +34,7 @@ export default function Login() {
             .then(body => storeJWT(body.token))
             .then(() => {
               // Store username and role locally
-              const payload: JwtPayload = jwtDecode(getJWT() as string)
+              const payload: TokenPayload = jwtDecode(getJWT() as string)
               const user = new User(payload.sub as string, payload.role as string)
               localStorage.setItem('username', user.username)
               localStorage.setItem('role', user.role)

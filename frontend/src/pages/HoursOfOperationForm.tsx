@@ -1,15 +1,16 @@
 import { useEffect, useState } from "react"
-import { Container, Button, Paper, Checkbox, FormControlLabel, Grid, FormControl, InputLabel, Select, MenuItem, Box, Alert } from "@mui/material"
-import { useForm, SubmitHandler, Controller } from "react-hook-form"
+import { Container, Button, Paper, Grid, Box, Alert } from "@mui/material"
+import { useForm, SubmitHandler } from "react-hook-form"
 
 import Company from "../model/Company"
 import { Day } from "../model/Day"
-import { TimePeriod, VALID_HOURS } from "../model/TimePeriod"
+import { TimePeriod } from "../model/TimePeriod"
 import { TimePeriodFormInput } from "../types/TimePeriodFormInput"
 import FormSection from "../components/forms/FormSection"
 import HourSelect from "../components/forms/HourSelect"
 import LabeledCheckbox from "../components/forms/LabeledCheckbox"
 import { getRequest, postRequest } from "../components/client/client"
+import { FormSubmissionStatus } from "../types/FormSubmissionStatus"
 
 export default function HoursOfOperationForm() {
   const {
@@ -27,7 +28,7 @@ export default function HoursOfOperationForm() {
   })
 
   const [company, setCompany] = useState<Company>(new Company('', '', getValues().periods))
-  const [submissionStatus, setSubmissionStatus] = useState({ type: '', message: '' })
+  const [submissionStatus, setSubmissionStatus] = useState<FormSubmissionStatus>({ type: undefined, message: '' })
 
   const onSubmit: SubmitHandler<TimePeriodFormInput> = (data) => {
     const payload: TimePeriod[] = data.periods.filter(entry => entry.active)
@@ -72,10 +73,13 @@ export default function HoursOfOperationForm() {
     <Container fixed>
       <form onSubmit={handleSubmit(onSubmit)}>
         <FormSection title="Hours of Operation">
-          {submissionStatus.type &&
             <Box mb={2}>
               <Alert severity={submissionStatus.type}>{submissionStatus.message}</Alert>
-            </Box>}
+            </Box>
+          {/* {submissionStatus.type &&
+            <Box mb={2}>
+              <Alert severity={submissionStatus.type}>{submissionStatus.message}</Alert>
+            </Box>} */}
           <Grid container spacing={1}>
             {Object.keys(Day).filter(key => !isNaN(Number(key))).map(key => Number(key)).map((i: number) => {
               return (
@@ -84,7 +88,7 @@ export default function HoursOfOperationForm() {
                     <LabeledCheckbox
                       name={`periods.${i}.active`}
                       label={getValues().periods[i].day}
-                      control={control}
+                      control={control as any}
                     />
 
                     <HourSelect

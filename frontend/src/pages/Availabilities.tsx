@@ -8,6 +8,7 @@ import LabeledCheckbox from "../components/forms/LabeledCheckbox"
 import HourSelect from "../components/forms/HourSelect"
 import { getRequest, postRequest } from "../components/client/client"
 import { Employee } from "../model/Employee"
+import { FormSubmissionStatus } from "../types/FormSubmissionStatus"
 
 type EmployeeFormInput = {
   employee: Employee
@@ -40,7 +41,7 @@ export default function Availabilities() {
 
   const [employee, setEmployee] = useState<Employee>(getValues().employee)
 
-  const [submissionStatus, setSubmissionStatus] = useState({ type: '', message: '' })
+  const [submissionStatus, setSubmissionStatus] = useState<FormSubmissionStatus>({ type: undefined, message: '' })
 
   const onSubmit: SubmitHandler<EmployeeFormInput> = (data) => {
     const activeAvailabilities: TimePeriod[] = data.employee.availabilities.filter(entry => entry.active)
@@ -53,7 +54,7 @@ export default function Availabilities() {
         } else {
           setSubmissionStatus({ type: 'error', message: 'Failed to update availabilities' })
         }
-      }).catch(e => {
+      }).catch(() => {
         setSubmissionStatus({ type: 'error', message: 'Failed to update availabilities' })
       })
   }
@@ -94,7 +95,7 @@ export default function Availabilities() {
             label="Minimum"
             value={employee.minHoursPerDay}
             onChange={e => {
-              setEmployee({...employee, minHoursPerDay: e.target.value})
+              setEmployee({...employee, minHoursPerDay: e.target.value as number})
               return
             }}
           />
@@ -103,7 +104,7 @@ export default function Availabilities() {
             label="Maximum"
             value={employee.maxHoursPerDay}
             onChange={e => {
-              setEmployee({...employee, maxHoursPerDay: e.target.value})
+              setEmployee({...employee, maxHoursPerDay: e.target.value as number})
               return
             }}
           />
@@ -115,7 +116,7 @@ export default function Availabilities() {
             min={MIN_WEEKLY_HOURS}
             max={MAX_WEEKLY_HOURS}
             onChange={e => {
-              setEmployee({...employee, minHoursPerWeek: e.target.value})
+              setEmployee({...employee, minHoursPerWeek: e.target.value as number})
               return
             }}
           />
@@ -126,7 +127,7 @@ export default function Availabilities() {
             min={MIN_WEEKLY_HOURS}
             max={MAX_WEEKLY_HOURS}
             onChange={e => {
-              setEmployee({...employee, maxHoursPerWeek: e.target.value})
+              setEmployee({...employee, maxHoursPerWeek: e.target.value as number})
               return
             }}
           />
@@ -140,7 +141,7 @@ export default function Availabilities() {
                     <LabeledCheckbox
                       name={`employee.availabilities.${i}.active`}
                       label={getValues().employee.availabilities[i].day}
-                      control={control}
+                      control={control as any}
                     />
 
                     <HourSelect

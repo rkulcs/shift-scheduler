@@ -4,14 +4,15 @@ import Schedule from "../components/Schedule"
 import FormSection from "../components/forms/FormSection"
 import { postRequest } from "../components/client/client"
 import { Alert, Box, Button } from "@mui/material"
-import { useState } from "react"
+import { ReactElement, useState } from "react"
+import { FormSubmissionStatus } from "../types/FormSubmissionStatus"
 
 export default function ScheduleSelection() {
   const { state } = useLocation()
   const navigate = useNavigate()
   const schedules: WeeklySchedule[] = state
 
-  const [submissionStatus, setSubmissionStatus] = useState({ type: '', message: '' })
+  const [submissionStatus, setSubmissionStatus] = useState<FormSubmissionStatus>({ type: undefined, message: '' })
 
   function saveSchedule(schedule: WeeklySchedule) {
     delete schedule.constraintViolations
@@ -29,6 +30,23 @@ export default function ScheduleSelection() {
       })
   }
 
+  function getScheduleList(schedules: any[]): ReactElement {
+    return (
+      <>
+        {
+          schedules.map((schedule, i) => (
+            <div key={i}>
+              <Schedule schedule={schedule}/>
+              <Box mt={2}>
+                <Button variant="contained" onClick={() => saveSchedule(schedule)}>Select</Button>
+              </Box>
+            </div>
+          ))
+        }
+      </>
+    )
+  }
+
   return (
     <FormSection title="Select a Schedule">
       <Box mb={2}>
@@ -37,16 +55,7 @@ export default function ScheduleSelection() {
             {submissionStatus.message}
           </Alert>}
       </Box>
-      {schedules.map(schedule => {
-        return (
-          <>
-            <Schedule schedule={schedule}/>
-            <Box mt={2}>
-              <Button variant="contained" onClick={() => saveSchedule(schedule)}>Select</Button>
-            </Box>
-          </>
-        )
-      })}
+      {getScheduleList(schedules)}
     </FormSection>
   )
 }

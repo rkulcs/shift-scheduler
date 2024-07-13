@@ -3,7 +3,7 @@ import { SelectInputProps } from "@mui/material/Select/SelectInput"
 import { VALID_HOURS } from "../../model/TimePeriod"
 
 type HourSelectProps = {
-  i: number
+  i?: number
   label: string
   value: number
   min?: number,

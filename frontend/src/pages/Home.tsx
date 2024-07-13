@@ -1,16 +1,16 @@
 import { Grid, Button, Paper, Typography } from "@mui/material";
 import { Link } from "react-router-dom";
-import { isValidJWTStored } from "../util/jwt";
-import { isUserEmployee, isUserManager } from "../util/session";
 import { useEffect, useState } from "react";
 import { Shift } from "../model/Shift";
 import { getRequest } from "../components/client/client";
 import { useStore } from "react-redux";
-import { UserDetails } from "../model/User";
-import { getUser, getUserRole } from "../redux/store";
+import { getUserRole } from "../redux/store";
 
 type EmployeeDashboardData = {
-  nextShift: Shift,
+  nextShift: {
+    shift: Shift,
+    date: Date
+  },
   numShifts: number,
   numHours: number
 }

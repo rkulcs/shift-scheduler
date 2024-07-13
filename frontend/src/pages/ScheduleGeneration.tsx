@@ -44,11 +44,11 @@ export default function ScheduleGeneration() {
   }
 
   function handleInputChange(e: FormEvent<HTMLDivElement>) {
-    let input: number = parseInt(e.target.value)
+    let input: number = parseInt((e.target as HTMLTextAreaElement).value)
 
     if (input < 0) {
+      (e.target as HTMLTextAreaElement).value = `${0}`
       input = 0
-      e.target.value = input
     }
     
     setHours(input)

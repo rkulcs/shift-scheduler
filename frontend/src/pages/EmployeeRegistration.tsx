@@ -8,13 +8,12 @@ import Company from "../model/Company"
 import { getRequest, unauthenticatedPostRequest } from "../components/client/client"
 
 export default function EmployeeRegistration() {
-  const [companies, setCompanies] = useState<Company[]>([new Company('', '')])
+  const [companies, setCompanies] = useState<Company[]>([new Company('', '', [])])
   const [selectedCompany, setSelectedCompany] = useState<number>(0)
 
   const {
     control,
     handleSubmit,
-    watch,
     setValue,
     formState: { errors }
   } = useForm<UserRegistrationFormInput>()
@@ -58,7 +57,7 @@ export default function EmployeeRegistration() {
               labelId="company-label"
               label="Company"
               value={selectedCompany}
-              onChange={e => setSelectedCompany(e.target.value)}
+              onChange={e => setSelectedCompany(e.target.value as number)}
               required
             >
               {companies.map((company, i) => <MenuItem key={company.name} value={i}>{company.name}</MenuItem>)}
