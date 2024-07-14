@@ -1,10 +1,9 @@
-import { Alert, List, ListItem, ListItemAvatar, ListItemIcon, ListItemText, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material"
+import { Alert, List, ListItem, ListItemAvatar, ListItemText, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material"
 import { WeeklySchedule } from "../model/WeeklySchedule"
 import { Day } from "../model/Day"
 import { VALID_HOURS } from "../model/TimePeriod"
 import { Shift } from "../model/Shift"
 import PersonIcon from '@mui/icons-material/Person'
-import { DailySchedule } from "../model/DailySchedule"
 
 export default function Schedule({ schedule }: { schedule: WeeklySchedule }) {
   // Store each shift in a map for easier access

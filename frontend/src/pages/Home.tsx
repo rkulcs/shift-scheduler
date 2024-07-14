@@ -1,10 +1,11 @@
-import { Grid, Button, Paper, Typography } from "@mui/material";
+import { Grid, Button, Paper, Typography, Box, Tabs, Tab } from "@mui/material";
 import { Link } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { Shift } from "../model/Shift";
 import { getRequest } from "../components/client/client";
 import { useStore } from "react-redux";
 import { getUserRole } from "../redux/store";
+import TabbedIntroductions from "../components/TabbedIntroductions";
 
 type EmployeeDashboardData = {
   nextShift: {
@@ -25,21 +26,6 @@ type CompanyDashboardData = {
   totalHours: number
 }
 
-const buttons = [
-  {
-    label: 'Login',
-    route: 'login'
-  },
-  {
-    label: 'Company Registration',
-    route: 'register-company'
-  },
-  {
-    label: 'Employee Registration',
-    route: 'register-employee'
-  }
-]
-
 export default function Home() {
   const store = useStore()
 
@@ -51,35 +37,12 @@ export default function Home() {
 
   return (
     <>
-      {!role && <AuthenticationOptions/>}
+      {/* {!role && <AuthenticationOptions/>} */}
+      {!role && <TabbedIntroductions/>}
       {role === 'EMPLOYEE' && <EmployeeDashboard/>}
       {role === 'MANAGER' && <CompanyDashboard/>}
     </>
   )
-}
-
-function AuthenticationOptions() {
-    return (
-      <Grid mt={7} container spacing={4} alignItems="center" justifyContent="center">
-        <Grid container justifyContent="center" spacing={2}>
-          {buttons.map((button, i) => (
-            <Grid key={i} item>
-              <Link to={button.route}>
-                <Button
-                  variant="contained"
-                  sx={{
-                    height: 140,
-                    width: 140
-                  }}
-                >
-                  {button.label}
-                </Button>
-              </Link>
-            </Grid>
-          ))}
-        </Grid>
-      </Grid>
-    )
 }
 
 function EmployeeDashboard() {
@@ -152,8 +115,6 @@ function CompanyDashboard() {
 
     return `${date} (${data.nextDay.startHour}:00 to ${data.nextDay.endHour}:00)`
   }
-
-  console.log(data)
 
   return (
     <>
