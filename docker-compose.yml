@@ -1,0 +1,18 @@
+services:
+  frontend:
+    expose:
+      - "8080"
+    image: shift-scheduler-frontend 
+    environment:
+      - APP_API_URL=https://backend:8443
+  backend:
+    expose:
+      - "8443"
+    image: shift-scheduler-backend 
+    environment:
+      - DB_IP=db
+  db:
+    image: shift-scheduler-db
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
