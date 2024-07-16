@@ -12,7 +12,6 @@ import Tooltip from '@mui/material/Tooltip'
 import MenuItem from '@mui/material/MenuItem'
 import { Link, useNavigate } from 'react-router-dom'
 
-import { removeJWT } from '../util/jwt'
 import { UserDetails } from '../model/User'
 import { useDispatch, useStore } from 'react-redux'
 import { removeUser } from '../redux/user'
@@ -74,10 +73,12 @@ export default function NavBar() {
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null)
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null)
 
+  // Update the navbar when a user logs in or out
   store.subscribe(() => {
     setUserDetails(getUser())
   })
 
+  // Update the navbar links depending on the role of the current user
   useEffect(() => {
     let newPages: PageMapping[] = commonPages 
 
@@ -114,6 +115,47 @@ export default function NavBar() {
     dispatch(removeUser())
     handleCloseUserMenu()
     navigate('/')
+  }
+
+  function getUserMenu() {
+    return (
+      <Box sx={{ flexGrow: 0 }}>
+        <Tooltip title={userDetails.username ? userDetails.username : undefined}>
+          <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+            <Avatar alt="User Name" />
+          </IconButton>
+        </Tooltip>
+        <Menu
+          sx={{ mt: '45px' }}
+          id="menu-appbar"
+          anchorEl={anchorElUser}
+          anchorOrigin={{
+            vertical: 'top',
+            horizontal: 'right',
+          }}
+          keepMounted
+          transformOrigin={{
+            vertical: 'top',
+            horizontal: 'right',
+          }}
+          open={Boolean(anchorElUser)}
+          onClose={handleCloseUserMenu}
+        >
+          <MenuItem key="logout" onClick={handleLogout}>
+            <Typography textAlign="center">Log Out</Typography>
+          </MenuItem>
+        </Menu>
+      </Box>)
+  }
+
+  function getLoginLink() {
+    return (
+      <Link key="login-link" to="login">
+        <Button sx={{ my: 2, color: 'white', display: 'block' }}>
+          Log In 
+        </Button>
+      </Link>
+    )
   }
 
   return (
@@ -158,43 +200,13 @@ export default function NavBar() {
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {pages.map((page) => (
               <Link key={page.label} to={page.route}>
-                <Button
-                  onClick={handleCloseNavMenu}
-                  sx={{ my: 2, color: 'white', display: 'block' }}
-                >
+                <Button sx={{ my: 2, color: 'white', display: 'block' }}>
                   {page.label}
                 </Button>
               </Link>
             ))}
           </Box>
-
-          {getUsername() && <Box sx={{ flexGrow: 0 }}>
-            <Tooltip title={userDetails.username ? userDetails.username : undefined}>
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="User Name" />
-              </IconButton>
-            </Tooltip>
-            <Menu
-              sx={{ mt: '45px' }}
-              id="menu-appbar"
-              anchorEl={anchorElUser}
-              anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              open={Boolean(anchorElUser)}
-              onClose={handleCloseUserMenu}
-            >
-              <MenuItem key="logout" onClick={handleLogout}>
-                <Typography textAlign="center">Log Out</Typography>
-              </MenuItem>
-            </Menu>
-          </Box>}
+          {getUsername() ? getUserMenu() : getLoginLink()}
         </Toolbar>
       </Container>
     </AppBar>
