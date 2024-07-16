@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { ReactElement, useEffect, useState } from "react"
 import { Container, Button, Paper, Grid, Box, Alert } from "@mui/material"
 import { useForm, SubmitHandler } from "react-hook-form"
 
@@ -69,17 +69,19 @@ export default function HoursOfOperationForm() {
     setValue('periods', [...(company.hoursOfOperation)])
   }, [company])
 
+  function getStatusBox(): ReactElement {
+    return (
+      <Box mb={2}>
+        <Alert severity={submissionStatus.type}>{submissionStatus.message}</Alert>
+      </Box>
+    )
+  }
+
   return (
     <Container fixed>
       <form onSubmit={handleSubmit(onSubmit)}>
         <FormSection title="Hours of Operation">
-            <Box mb={2}>
-              <Alert severity={submissionStatus.type}>{submissionStatus.message}</Alert>
-            </Box>
-          {/* {submissionStatus.type &&
-            <Box mb={2}>
-              <Alert severity={submissionStatus.type}>{submissionStatus.message}</Alert>
-            </Box>} */}
+          {submissionStatus.type ? getStatusBox() : <></>}
           <Grid container spacing={1}>
             {Object.keys(Day).filter(key => !isNaN(Number(key))).map(key => Number(key)).map((i: number) => {
               return (
@@ -96,7 +98,7 @@ export default function HoursOfOperationForm() {
                       label="Start Hour"
                       value={company.hoursOfOperation[i].startHour}
                       onChange={e => {
-                        let updatedHours: TimePeriod[] = company.hoursOfOperation
+                        let updatedHours: TimePeriod[] = getValues().periods
                         updatedHours[i].startHour = e.target.value as number
                         setCompany({ ...company, hoursOfOperation: updatedHours })
                       }}
@@ -107,7 +109,7 @@ export default function HoursOfOperationForm() {
                       label="End Hour"
                       value={company.hoursOfOperation[i].endHour}
                       onChange={e => {
-                        let updatedHours: TimePeriod[] = company.hoursOfOperation
+                        let updatedHours: TimePeriod[] = getValues().periods
                         updatedHours[i].endHour = e.target.value as number
                         setCompany({ ...company, hoursOfOperation: updatedHours })
                       }}
