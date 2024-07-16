@@ -3,7 +3,7 @@ FROM alpine:latest
 ADD . /opt
 WORKDIR /opt
 
-RUN apk update && apk add npm bash
+RUN apk update && apk add npm bash ca-certificates
 
 RUN npm install && npm run build
 RUN chmod +x env_setup.sh
