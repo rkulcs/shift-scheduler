@@ -151,7 +151,7 @@ export default function NavBar() {
   function getLoginLink() {
     return (
       <Link key="login-link" to="login">
-        <Button sx={{ my: 2, color: 'white', display: 'block' }}>
+        <Button className="navbar-login-button" sx={{ my: 2, color: 'white', display: 'block' }}>
           Log In 
         </Button>
       </Link>
@@ -199,7 +199,7 @@ export default function NavBar() {
           </Box>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {pages.map((page) => (
-              <Link key={page.label} to={page.route}>
+              <Link className={`navbar-${page.label.replaceAll(' ', '').toLowerCase()}`} key={page.label} to={page.route}>
                 <Button sx={{ my: 2, color: 'white', display: 'block' }}>
                   {page.label}
                 </Button>

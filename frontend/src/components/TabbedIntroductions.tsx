@@ -9,7 +9,7 @@ type ButtonProps = {
 
 const buttons: ButtonProps[] = [
   {
-    label: 'Login',
+    label: 'Log In',
     route: 'login'
   },
   {
@@ -26,7 +26,7 @@ export default function TabbedIntroductions() {
   const [selection, setSelection] = useState<number>(0)
 
   return (
-    <Paper>
+    <Paper className="introduction">
       <Box sx={{ flexGrow: 1, display: 'flex' }}>
         <Tabs
           orientation="vertical"
@@ -35,9 +35,9 @@ export default function TabbedIntroductions() {
           aria-label="Vertical tabs example"
           sx={{ borderRight: 1, borderColor: 'divider', minWidth: '15%' }}
         >
-          <Tab label="About" />
-          <Tab label="Managers" />
-          <Tab label="Employees" />
+          <Tab className="about-tab" label="About" />
+          <Tab className="managers-tab" label="Managers" />
+          <Tab className="employees-tab" label="Employees" />
         </Tabs>
         <TabPanel value={selection} index={0}>
           <Description
@@ -102,7 +102,7 @@ function Description({header, description, button}: DescriptionProps) {
       <Typography variant="h4">{header}</Typography>
       <Typography variant="subtitle1" mt={2} mb={2}>{description}</Typography>
       <Link to={button.route}>
-        <Button variant="contained">
+        <Button className="home-button" variant="contained">
           {button.label}
         </Button>
       </Link>
