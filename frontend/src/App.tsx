@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom"
 import NavBar from "./components/NavBar"
 import Home from "./pages/Home"
 import Login from "./pages/Login"
-import { Box, Container, createTheme, Stack, ThemeProvider } from "@mui/material"
+import { Box, Card, Container, createTheme, Paper, Stack, ThemeProvider } from "@mui/material"
 import CompanyRegistration from "./pages/CompanyRegistration"
 import EmployeeRegistration from "./pages/EmployeeRegistration"
 import HoursOfOperationForm from "./pages/HoursOfOperationForm"
@@ -27,22 +27,24 @@ function App() {
           <Box>
             <NavBar />
           </Box>
-          <Box mt={6}>
+          <Box mt={2}>
             <Container>
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/register-company" element={<CompanyRegistration />} />
-                <Route path="/register-employee" element={<EmployeeRegistration />} />
+              <Paper sx={{ padding: 3 }}>
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/register-company" element={<CompanyRegistration />} />
+                  <Route path="/register-employee" element={<EmployeeRegistration />} />
 
-                <Route path="/hours" element={<HoursOfOperationForm />} />
-                <Route path="/generate-schedules" element={<ScheduleGeneration />} />
-                <Route path="/select-schedule" element={<ScheduleSelection />} />
+                  <Route path="/hours" element={<HoursOfOperationForm />} />
+                  <Route path="/generate-schedules" element={<ScheduleGeneration />} />
+                  <Route path="/select-schedule" element={<ScheduleSelection />} />
 
-                <Route path="/availabilities" element={<Availabilities />} />
+                  <Route path="/availabilities" element={<Availabilities />} />
 
-                <Route path="/schedules" element={<ScheduleBrowser />} />
-              </Routes>
+                  <Route path="/schedules" element={<ScheduleBrowser />} />
+                </Routes>
+              </Paper>
             </Container>
           </Box>
         </Stack>

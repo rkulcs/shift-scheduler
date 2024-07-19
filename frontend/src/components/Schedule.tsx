@@ -32,7 +32,7 @@ export default function Schedule({ schedule }: { schedule: WeeklySchedule }) {
     // Use a different colour for blocks in which the user is scheduled to work
     for (let shift of shifts) {
       if (shift.employee.account?.username === username)
-        return '#35baf6'
+        return '#81d4fa'
     }
     
     return '#6fbf73'

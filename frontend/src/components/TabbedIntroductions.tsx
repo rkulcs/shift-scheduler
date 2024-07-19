@@ -26,47 +26,45 @@ export default function TabbedIntroductions() {
   const [selection, setSelection] = useState<number>(0)
 
   return (
-    <Paper className="introduction">
-      <Box sx={{ flexGrow: 1, display: 'flex' }}>
-        <Tabs
-          orientation="vertical"
-          value={selection}
-          onChange={(_, value) => setSelection(value)}
-          aria-label="Vertical tabs example"
-          sx={{ borderRight: 1, borderColor: 'divider', minWidth: '15%' }}
-        >
-          <Tab className="about-tab" label="About" />
-          <Tab className="managers-tab" label="Managers" />
-          <Tab className="employees-tab" label="Employees" />
-        </Tabs>
-        <TabPanel value={selection} index={0}>
-          <Description
-            header="Simplified schedule management"
-            description="Shift Scheduler is an application that aims to automate 
+    <Box className="introduction" sx={{ flexGrow: 1, display: 'flex' }}>
+      <Tabs
+        orientation="vertical"
+        value={selection}
+        onChange={(_, value) => setSelection(value)}
+        aria-label="Vertical tabs example"
+        sx={{ borderRight: 1, borderColor: 'divider', minWidth: '15%' }}
+      >
+        <Tab className="about-tab" label="About" />
+        <Tab className="managers-tab" label="Managers" />
+        <Tab className="employees-tab" label="Employees" />
+      </Tabs>
+      <TabPanel value={selection} index={0}>
+        <Description
+          header="Simplified schedule management"
+          description="Shift Scheduler is an application that aims to automate 
                          the creation of workplace schedules which meet the needs
                          of businesses, while also respecting the availabilities
                          of their employees."
-            button={buttons[0]}
-          />
-        </TabPanel>
-        <TabPanel value={selection} index={1}>
-          <Description
-            header="Automatic schedule generation"
-            description="Generate schedules that meet the needs of your business and 
+          button={buttons[0]}
+        />
+      </TabPanel>
+      <TabPanel value={selection} index={1}>
+        <Description
+          header="Automatic schedule generation"
+          description="Generate schedules that meet the needs of your business and 
                          employees."
-            button={buttons[1]}
-          />
-        </TabPanel>
-        <TabPanel value={selection} index={2}>
-          <Description
-            header="View schedules and update availabilities"
-            description="Keep track of your scheduled shifts, and update the times 
+          button={buttons[1]}
+        />
+      </TabPanel>
+      <TabPanel value={selection} index={2}>
+        <Description
+          header="View schedules and update availabilities"
+          description="Keep track of your scheduled shifts, and update the times 
                          during which you are available to work."
-            button={buttons[2]}
-          />
-        </TabPanel>
-      </Box>
-    </Paper>
+          button={buttons[2]}
+        />
+      </TabPanel>
+    </Box>
   )
 }
 
