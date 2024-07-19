@@ -1,4 +1,11 @@
-import { removeJWT } from "./jwt";
+import User from "../model/User";
+import { removeJWT, storeJWT } from "./jwt";
+
+export function login(user: User, token: string) {
+  localStorage.setItem('username', user.username)
+  localStorage.setItem('role', user.role)
+  storeJWT(token)
+}
 
 export function logout() {
   removeJWT()

@@ -1,15 +1,24 @@
 import { useForm, SubmitHandler } from "react-hook-form"
 import UserRegistrationFormInput from "../types/UserRegistrationFormInput"
-import { Container, Button, Select, MenuItem, FormControl, InputLabel } from "@mui/material"
+import { Container, Button, Select, MenuItem, FormControl, InputLabel, Alert } from "@mui/material"
 import FormSection from "../components/forms/FormSection"
 import TextInputField from "../components/forms/TextInputField"
 import { useEffect, useState } from "react"
 import Company from "../model/Company"
-import { getRequest, unauthenticatedPostRequest } from "../components/client/client"
+import { getRequest, unauthenticatedGetRequest, unauthenticatedPostRequest } from "../components/client/client"
+import User from "../model/User"
+import { login } from "../util/session"
+import { useDispatch } from "react-redux"
+import { setUser } from "../redux/user"
+import { useNavigate } from "react-router-dom"
 
 export default function EmployeeRegistration() {
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+
   const [companies, setCompanies] = useState<Company[]>([new Company('', '', [])])
   const [selectedCompany, setSelectedCompany] = useState<number>(0)
+  const [error, setError] = useState<string>('')
 
   const {
     control,
@@ -20,14 +29,30 @@ export default function EmployeeRegistration() {
 
   const onSubmit: SubmitHandler<UserRegistrationFormInput> = (data) => {
     unauthenticatedPostRequest('user/register', {...data, role: "EMPLOYEE"})
-      .then(res => console.log(res))
+      .then(res => res.json())
+      .then(body => {
+        if (body.error) {
+          setError(body.error)
+          return false
+        } else {
+          setError('')
+          const user = new User(data.username, 'EMPLOYEE')
+          login(user, body.token)
+          dispatch(setUser(user.serialize()))
+          return true
+        }
+      })
+      .then(ok => ok && navigate('/'))
+      .catch(() => setError('Invalid registration details'))
   }
 
   // Get the names and locations of all registered companies for the user to choose from
   useEffect(() => {
-    getRequest('company/all')
+    unauthenticatedGetRequest('company/all')
       .then(res => res.json())
       .then(data => setCompanies(data))
+      .then(() => setError(''))
+      .catch(() => setError('Failed to load companies'))
   }, [])
 
   // Select the first company by default once the companies are loaded
@@ -45,6 +70,7 @@ export default function EmployeeRegistration() {
   return (
     <Container fixed>
       <form onSubmit={handleSubmit(onSubmit)}>
+        {error && <Alert severity="error">{error}</Alert>}
         
         <FormSection title="Employee Details">
           <TextInputField name="username" label="Username" control={control} />
