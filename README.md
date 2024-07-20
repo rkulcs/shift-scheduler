@@ -7,6 +7,9 @@ that meet their needs, while also respecting their employees' availabilities.
 
 # Screenshots
 
+<details>
+<summary>View</summary>
+
 | ![shift_scheduler_home](https://github.com/user-attachments/assets/b2703575-851d-4f2b-bcf2-e8d4a0bf1cd8) |
 |:--:| 
 | *Home page* |
@@ -55,3 +58,4 @@ that meet their needs, while also respecting their employees' availabilities.
 |:--:| 
 | *Employee registration* |
 
+</details>
