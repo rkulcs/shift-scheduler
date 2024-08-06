@@ -4,8 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import shift.scheduler.backend.model.*;
-import shift.scheduler.backend.payload.LoginRequest;
-import shift.scheduler.backend.payload.RegistrationRequest;
+import shift.scheduler.backend.dto.LoginRequestDTO;
+import shift.scheduler.backend.dto.RegistrationRequestDTO;
 import shift.scheduler.backend.util.exception.EntityValidationException;
 
 @Service
@@ -48,7 +48,7 @@ public class AuthenticationService {
         }
     }
 
-    public AuthenticationResult register(RegistrationRequest request) {
+    public AuthenticationResult register(RegistrationRequestDTO request) {
 
         if (!Account.validatePassword(request.getPassword()))
             return new AuthenticationResult(null, "Invalid password");
@@ -106,7 +106,7 @@ public class AuthenticationService {
         return new AuthenticationResult(jwtService.generateToken(account), null);
     }
 
-    public AuthenticationResult login(LoginRequest request) {
+    public AuthenticationResult login(LoginRequestDTO request) {
         Account account = accountService.findByUsername(request.getUsername());
 
         if (account == null)

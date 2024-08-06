@@ -3,8 +3,8 @@ package shift.scheduler.backend.controller;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import shift.scheduler.backend.model.*;
-import shift.scheduler.backend.payload.LoginRequest;
-import shift.scheduler.backend.payload.RegistrationRequest;
+import shift.scheduler.backend.dto.LoginRequestDTO;
+import shift.scheduler.backend.dto.RegistrationRequestDTO;
 import shift.scheduler.backend.util.Util;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -58,13 +58,13 @@ public class UserControllerTest extends ControllerTest {
 
     private String createRegistrationRequestBody() throws Exception {
 
-        RegistrationRequest request = new RegistrationRequest(Role.MANAGER, "username", "Name", "password");
+        RegistrationRequestDTO request = new RegistrationRequestDTO(Role.MANAGER, "username", "Name", "password");
         return stringify(request);
     }
 
     private String createLoginRequestBody() throws Exception {
 
-        LoginRequest request = new LoginRequest("username", "password");
+        LoginRequestDTO request = new LoginRequestDTO("username", "password");
         return stringify(request);
     }
 }

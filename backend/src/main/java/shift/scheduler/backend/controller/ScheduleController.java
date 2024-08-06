@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import shift.scheduler.backend.model.*;
 import shift.scheduler.backend.model.schedule.ScheduleForWeek;
-import shift.scheduler.backend.payload.ScheduleGenerationRequest;
+import shift.scheduler.backend.dto.ScheduleGenerationRequestDTO;
 import shift.scheduler.backend.service.AuthenticationService;
 import shift.scheduler.backend.service.ScheduleGenerationService;
 import shift.scheduler.backend.service.ScheduleService;
@@ -50,7 +50,7 @@ public class ScheduleController {
     @PostMapping(value = "/generate", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @RolesAllowed("MANAGER")
     public ResponseEntity<Collection<ScheduleForWeek>> generate(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
-                                                                @RequestBody ScheduleGenerationRequest request) {
+                                                                @RequestBody ScheduleGenerationRequestDTO request) {
 
         Manager manager = (Manager) authenticationService.getUserFromHeader(authHeader);
 

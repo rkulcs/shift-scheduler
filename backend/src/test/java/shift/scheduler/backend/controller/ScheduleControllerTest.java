@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import shift.scheduler.backend.model.*;
-import shift.scheduler.backend.payload.ScheduleGenerationRequest;
+import shift.scheduler.backend.dto.ScheduleGenerationRequestDTO;
 import shift.scheduler.backend.service.ScheduleGenerationService;
 import shift.scheduler.backend.service.ScheduleService;
 import shift.scheduler.backend.util.Util;
@@ -80,7 +80,7 @@ public class ScheduleControllerTest extends ControllerTest {
         mockMvc.perform(
                 post("/schedule/generate")
                         .contentType("application/json")
-                        .content(stringify(new ScheduleGenerationRequest()))
+                        .content(stringify(new ScheduleGenerationRequestDTO()))
         ).andExpect(status().isBadRequest());
     }
 
@@ -98,7 +98,7 @@ public class ScheduleControllerTest extends ControllerTest {
                 post("/schedule/generate")
                         .header("Authorization", "")
                         .contentType("application/json")
-                        .content(stringify(new ScheduleGenerationRequest()))
+                        .content(stringify(new ScheduleGenerationRequestDTO()))
         ).andExpect(status().isOk());
     }
 
@@ -113,7 +113,7 @@ public class ScheduleControllerTest extends ControllerTest {
                 .thenReturn(new ArrayList<>());
 
         mockMvc.perform(
-                postJson("/schedule/generate", stringify(new ScheduleGenerationRequest()))
+                postJson("/schedule/generate", stringify(new ScheduleGenerationRequestDTO()))
                         .header("Authorization", "")
         ).andExpect(status().isUnprocessableEntity());
     }

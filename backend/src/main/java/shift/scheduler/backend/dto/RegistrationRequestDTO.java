@@ -1,9 +1,9 @@
-package shift.scheduler.backend.payload;
+package shift.scheduler.backend.dto;
 
 import shift.scheduler.backend.model.Company;
 import shift.scheduler.backend.model.Role;
 
-public class RegistrationRequest {
+public class RegistrationRequestDTO {
 
     private Role role;
 
@@ -19,16 +19,16 @@ public class RegistrationRequest {
     private Short minHoursPerWeek;
     private Short maxHoursPerWeek;
 
-    public RegistrationRequest() {}
+    public RegistrationRequestDTO() {}
 
-    public RegistrationRequest(Role role, String username, String name, String password) {
+    public RegistrationRequestDTO(Role role, String username, String name, String password) {
         this.role = role;
         this.username = username;
         this.name = name;
         this.password = password;
     }
 
-    public RegistrationRequest(Role role, String username, String name, String password, Short minHoursPerDay, Short maxHoursPerDay, Short minHoursPerWeek, Short maxHoursPerWeek) {
+    public RegistrationRequestDTO(Role role, String username, String name, String password, Short minHoursPerDay, Short maxHoursPerDay, Short minHoursPerWeek, Short maxHoursPerWeek) {
         this.role = role;
         this.username = username;
         this.name = name;

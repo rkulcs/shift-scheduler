@@ -1,15 +1,12 @@
 package shift.scheduler.backend.util;
 
-import org.checkerframework.checker.units.qual.A;
 import shift.scheduler.backend.model.*;
 import shift.scheduler.backend.model.schedule.ScheduleForDay;
 import shift.scheduler.backend.model.schedule.ScheduleForWeek;
-import shift.scheduler.backend.payload.ScheduleGenerationRequest;
+import shift.scheduler.backend.dto.ScheduleGenerationRequestDTO;
 
 import java.time.LocalDate;
 import java.util.List;
-
-import static com.fasterxml.jackson.databind.type.LogicalType.Collection;
 
 public final class Util {
 
@@ -29,7 +26,7 @@ public final class Util {
 
     public static final Company company = new Company("Company", "City", null);
 
-    public static final ScheduleGenerationRequest validScheduleGenerationRequest = new ScheduleGenerationRequest(
+    public static final ScheduleGenerationRequestDTO VALID_SCHEDULE_GENERATION_REQUEST_DTO = new ScheduleGenerationRequestDTO(
             LocalDate.now(), (short) 2
     );
 

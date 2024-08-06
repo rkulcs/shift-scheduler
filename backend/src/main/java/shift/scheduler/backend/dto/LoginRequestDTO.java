@@ -1,13 +1,13 @@
-package shift.scheduler.backend.payload;
+package shift.scheduler.backend.dto;
 
-public class LoginRequest {
+public class LoginRequestDTO {
 
     private String username;
     private String password;
 
-    public LoginRequest() {}
+    public LoginRequestDTO() {}
 
-    public LoginRequest(String username, String password) {
+    public LoginRequestDTO(String username, String password) {
         this.username = username;
         this.password = password;
     }

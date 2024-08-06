@@ -4,8 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import shift.scheduler.backend.payload.LoginRequest;
-import shift.scheduler.backend.payload.RegistrationRequest;
+import shift.scheduler.backend.dto.LoginRequestDTO;
+import shift.scheduler.backend.dto.RegistrationRequestDTO;
 import shift.scheduler.backend.service.*;
 
 import static shift.scheduler.backend.service.AuthenticationService.AuthenticationResult;
@@ -18,7 +18,7 @@ public class UserController {
     private AuthenticationService authenticationService;
 
     @PostMapping(value = "/register", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<AuthenticationResult> register(@RequestBody RegistrationRequest request) {
+    public ResponseEntity<AuthenticationResult> register(@RequestBody RegistrationRequestDTO request) {
 
         AuthenticationResult result = authenticationService.register(request);
 
@@ -29,7 +29,7 @@ public class UserController {
     }
 
     @PostMapping(value = "/login", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<AuthenticationResult> login(@RequestBody LoginRequest request) {
+    public ResponseEntity<AuthenticationResult> login(@RequestBody LoginRequestDTO request) {
 
         AuthenticationResult result = authenticationService.login(request);
 

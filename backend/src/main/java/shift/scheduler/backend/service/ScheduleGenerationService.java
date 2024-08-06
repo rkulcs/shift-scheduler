@@ -5,14 +5,13 @@ import shift.scheduler.backend.model.*;
 import shift.scheduler.backend.model.schedule.Schedule;
 import shift.scheduler.backend.model.schedule.ScheduleForDay;
 import shift.scheduler.backend.model.schedule.ScheduleForWeek;
-import shift.scheduler.backend.payload.ScheduleGenerationRequest;
+import shift.scheduler.backend.dto.ScheduleGenerationRequestDTO;
 import shift.scheduler.backend.util.DateTimeUtil;
 import shift.scheduler.backend.util.algorithm.DailyScheduleGenerator;
 import shift.scheduler.backend.util.algorithm.WeeklyScheduleGenerator;
 
 import java.time.LocalDate;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class ScheduleGenerationService {
@@ -40,7 +39,7 @@ public class ScheduleGenerationService {
         }
     }
 
-    public Collection<ScheduleForWeek> generateSchedulesForWeek(ScheduleGenerationRequest request, Company company) {
+    public Collection<ScheduleForWeek> generateSchedulesForWeek(ScheduleGenerationRequestDTO request, Company company) {
 
         if (company == null)
             return null;

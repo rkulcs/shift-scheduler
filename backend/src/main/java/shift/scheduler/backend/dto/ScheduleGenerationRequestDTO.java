@@ -1,4 +1,4 @@
-package shift.scheduler.backend.payload;
+package shift.scheduler.backend.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -7,7 +7,7 @@ import shift.scheduler.backend.util.validator.Hour;
 
 import java.time.LocalDate;
 
-public class ScheduleGenerationRequest {
+public class ScheduleGenerationRequestDTO {
 
     @JsonFormat(pattern = "yyyy-MM-dd")
     @JsonSerialize(using = LocalDateSerializer.class)
@@ -16,9 +16,9 @@ public class ScheduleGenerationRequest {
     @Hour
     private Short numEmployeesPerHour;
 
-    public ScheduleGenerationRequest() {}
+    public ScheduleGenerationRequestDTO() {}
 
-    public ScheduleGenerationRequest(LocalDate date, Short numEmployeesPerHour) {
+    public ScheduleGenerationRequestDTO(LocalDate date, Short numEmployeesPerHour) {
         this.date = date;
         this.numEmployeesPerHour = numEmployeesPerHour;
     }
