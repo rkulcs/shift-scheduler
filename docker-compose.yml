@@ -3,6 +3,8 @@ services:
     expose:
       - "4173"
     image: shift-scheduler-frontend 
+    build:
+      context: ./frontend
     environment:
       - APP_API_URL=https://10.5.0.2:8443/api
   backend:
@@ -12,6 +14,8 @@ services:
     expose:
       - "8443"
     image: shift-scheduler-backend 
+    build:
+      context: ./backend
     environment:
       - DB_IP=10.5.0.3
   db:
@@ -19,6 +23,8 @@ services:
       shift-scheduler-net:
         ipv4_address: 10.5.0.3
     image: shift-scheduler-db
+    build:
+      context: ./db
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
