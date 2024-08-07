@@ -5,6 +5,9 @@ services:
     image: shift-scheduler-frontend 
     build:
       context: ./frontend
+    networks:
+      shift-scheduler-net:
+        ipv4_address: 10.5.0.4
     environment:
       - APP_API_URL=https://10.5.0.2:8443/api
   backend:
