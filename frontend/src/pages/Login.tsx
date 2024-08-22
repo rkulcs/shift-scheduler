@@ -69,7 +69,7 @@ export default function Login() {
             password />
         </FormSection>
 
-        <Button variant="contained" type="submit">Log In</Button>
+        <Button id="login-button" variant="contained" type="submit">Log In</Button>
       </form>
     </Container>    
   )

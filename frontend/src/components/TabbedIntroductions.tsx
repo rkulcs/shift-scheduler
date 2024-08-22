@@ -34,9 +34,9 @@ export default function TabbedIntroductions() {
         aria-label="Vertical tabs example"
         sx={{ borderRight: 1, borderColor: 'divider', minWidth: '15%' }}
       >
-        <Tab className="about-tab" label="About" />
-        <Tab className="managers-tab" label="Managers" />
-        <Tab className="employees-tab" label="Employees" />
+        <Tab id="about-tab" label="About" />
+        <Tab id="managers-tab" label="Managers" />
+        <Tab id="employees-tab" label="Employees" />
       </Tabs>
       <TabPanel value={selection} index={0}>
         <Description

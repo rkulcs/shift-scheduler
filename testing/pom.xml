@@ -40,8 +40,12 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
-            <version>5.10.3</version>
-            <scope>test</scope>
+            <version>5.11.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>5.11.0</version>
         </dependency>
         <dependency>
             <groupId>com.titusfortner</groupId>
@@ -67,7 +71,8 @@
                         </configurationParameters>
                     </properties>
                     <environmentVariables>
-                        <APP_URL>http://localhost:5173</APP_URL>
+                        <!-- The IP address of the React application (Docker Compose) -->
+                        <APP_URL>http://10.5.0.4:4173</APP_URL>
                     </environmentVariables>
                 </configuration>
             </plugin>
