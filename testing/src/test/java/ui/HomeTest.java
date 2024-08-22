@@ -2,8 +2,11 @@ package ui;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import shift.scheduler.pages.Page;
 
+@Execution(ExecutionMode.CONCURRENT)
 public class HomeTest extends UITest {
 
     @BeforeEach
