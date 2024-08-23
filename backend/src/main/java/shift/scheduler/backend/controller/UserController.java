@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import shift.scheduler.backend.dto.LoginRequestDTO;
 import shift.scheduler.backend.dto.RegistrationRequestDTO;
+import shift.scheduler.backend.model.User;
 import shift.scheduler.backend.service.*;
 
 import static shift.scheduler.backend.service.AuthenticationService.AuthenticationResult;
@@ -16,6 +17,12 @@ public class UserController {
 
     @Autowired
     private AuthenticationService authenticationService;
+
+    @Autowired
+    private ManagerService managerService;
+
+    @Autowired
+    private EmployeeService employeeService;
 
     @PostMapping(value = "/register", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<AuthenticationResult> register(@RequestBody RegistrationRequestDTO request) {
@@ -37,5 +44,23 @@ public class UserController {
             return ResponseEntity.badRequest().body(result);
         else
             return ResponseEntity.ok().body(result);
+    }
+
+    @DeleteMapping(value = "/{username}")
+    public ResponseEntity delete(@PathVariable String username) {
+
+        boolean isDeleted = false;
+
+        if (managerService.existsByUsername(username))
+            isDeleted = managerService.deleteByUsername(username);
+        else if (employeeService.existsByUsername(username))
+            isDeleted = employeeService.deleteByUsername(username);
+        else
+            return ResponseEntity.internalServerError().body("User does not exist.");
+
+        if (isDeleted)
+            return ResponseEntity.ok().build();
+        else
+            return ResponseEntity.internalServerError().body("Failed to delete user.");
     }
 }

@@ -8,4 +8,5 @@ public abstract class UserService {
     public abstract User save(User user) throws EntityValidationException;
     public abstract boolean existsByUsername(String username);
     public abstract User findByUsername(String username);
+    public abstract boolean deleteByUsername(String username);
 }

@@ -2,6 +2,7 @@ package shift.scheduler.backend.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import shift.scheduler.backend.model.Employee;
 import shift.scheduler.backend.model.EmployeeDashboardData;
 import shift.scheduler.backend.model.User;
@@ -44,6 +45,17 @@ public class EmployeeService extends UserService  {
     @Override
     public User findByUsername(String username) {
         return employeeRepository.findByAccountUsername(username).orElse(null);
+    }
+
+    @Override
+    @Transactional
+    public boolean deleteByUsername(String username) {
+        try {
+            employeeRepository.deleteByAccountUsername(username);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     public Iterable<Employee> findAll() {

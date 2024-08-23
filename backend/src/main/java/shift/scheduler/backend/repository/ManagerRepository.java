@@ -8,4 +8,5 @@ import java.util.Optional;
 public interface ManagerRepository extends CrudRepository<Manager, String> {
     boolean existsByAccountUsername(String username);
     Optional<Manager> findByAccountUsername(String username);
+    void deleteByAccountUsername(String username);
 }
