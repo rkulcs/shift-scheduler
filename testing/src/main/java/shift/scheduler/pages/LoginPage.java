@@ -3,8 +3,7 @@ package shift.scheduler.pages;
 import org.openqa.selenium.By;
 import shift.scheduler.framework.Bot;
 
-import static shift.scheduler.util.Constants.APP_URL;
-import static shift.scheduler.util.Constants.LOGIN_URL;
+import static shift.scheduler.util.Constants.*;
 
 public class LoginPage extends Page {
 
@@ -18,7 +17,11 @@ public class LoginPage extends Page {
         bot.findElement(By.name("password")).sendKeys(password);
         bot.findElement(By.id("login-button")).click();
 
-        // A successful login should result in a redirection to the home page
-        return bot.waitUntilOnPage(APP_URL);
+        try {
+            return (bot.findElement(By.className("Mui-error")) != null);
+        } catch (Exception e) {
+            // A successful login should result in a redirection to the home page
+            return bot.waitUntilOnPage(HOME_URL);
+        }
     }
 }
