@@ -19,6 +19,7 @@ import org.apache.hc.core5.ssl.TrustStrategy;
 
 import javax.net.ssl.SSLContext;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -46,17 +47,17 @@ public class ApiClient {
     public static boolean registerEmployee(String username, String name, String password,
                                            String companyName, String companyLocation) {
 
-        String body = String.format("{" +
-                    "\"role\": \"EMPLOYEE\"," +
-                    "\"username\": \"%s\"," +
-                    "\"name\": \"%s\"," +
-                    "\"password\": \"%s\"," +
-                    "\"company\": {" +
-                    "\"name\": \"%s\"," +
-                    "\"location\": \"%s\"," +
-                    "\"hoursOfOperation\": []" +
-                    "}" +
-                "}", username, name, password, companyName, companyLocation);
+        String body = new JsonStringBuilder()
+                .with("role", "EMPLOYEE")
+                .with("username", username)
+                .with("name", name)
+                .with("password", password)
+                .with("company", new JsonStringBuilder()
+                        .with("name", companyName)
+                        .with("location", companyLocation)
+                        .with("hoursOfOperation", new ArrayList<>())
+                )
+                .build();
 
         Request request = Request.post(EMPLOYEE_REGISTRATION_ENDPOINT)
                 .addHeader("Content-Type", "application/json")
