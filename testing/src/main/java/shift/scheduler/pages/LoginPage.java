@@ -18,7 +18,7 @@ public class LoginPage extends Page {
         bot.findElement(By.id("login-button")).click();
 
         try {
-            return (bot.findElement(By.className("Mui-error")).isDisplayed());
+            return !(bot.findElement(By.className("Mui-error")).isDisplayed());
         } catch (Exception e) {
             // A successful login should result in a redirection to the home page
             return bot.waitUntilOnPage(HOME_URL);

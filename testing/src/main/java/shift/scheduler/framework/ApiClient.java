@@ -1,8 +1,5 @@
 package shift.scheduler.framework;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.hc.client5.http.fluent.Form;
 import org.apache.hc.client5.http.fluent.Request;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
@@ -20,8 +17,6 @@ import org.apache.hc.core5.ssl.TrustStrategy;
 import javax.net.ssl.SSLContext;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 import static shift.scheduler.util.Constants.*;
 
@@ -37,11 +32,26 @@ public class ApiClient {
         }
     }
 
-    private static final ObjectMapper objectMapper = new ObjectMapper();
+    public static boolean registerManager(String username, String name,
+                                       String password, String companyName, String companyLocation) {
 
-    public static void registerManager(String username, String managerName,
-                                       String password, String companyName, String location) {
+        String body = new JsonStringBuilder()
+                .with("role", "MANAGER")
+                .with("manager", username)
+                .with("name", name)
+                .with("password", password)
+                .with("company", new JsonStringBuilder()
+                        .with("name", companyName)
+                        .with("location", companyLocation)
+                        .with("hoursOfOperation", new ArrayList<>())
+                )
+                .build();
 
+        Request request = Request.post(USER_REGISTRATION_ENDPOINT)
+                .addHeader("Content-Type", "application/json")
+                .bodyString(body, ContentType.APPLICATION_JSON);
+
+        return executeHttpRequest(request, HttpStatus.SC_OK);
     }
 
     public static boolean registerEmployee(String username, String name, String password,
@@ -59,14 +69,14 @@ public class ApiClient {
                 )
                 .build();
 
-        Request request = Request.post(EMPLOYEE_REGISTRATION_ENDPOINT)
+        Request request = Request.post(USER_REGISTRATION_ENDPOINT)
                 .addHeader("Content-Type", "application/json")
                 .bodyString(body, ContentType.APPLICATION_JSON);
 
         return executeHttpRequest(request, HttpStatus.SC_OK);
     }
 
-    public static boolean deleteEmployee(String username) {
+    public static boolean deleteUser(String username) {
 
         Request request = Request.delete(String.format("%s/%s", USER_DELETION_ENDPOINT, username));
 
