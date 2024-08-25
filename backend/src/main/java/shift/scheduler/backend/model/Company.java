@@ -34,9 +34,11 @@ public class Company {
     private Collection<HoursOfOperation> hoursOfOperation;
 
     @OneToOne(mappedBy = "company")
+    @Cascade(org.hibernate.annotations.CascadeType.ALL)
     private Manager manager;
 
     @OneToMany(mappedBy = "company")
+    @Cascade(org.hibernate.annotations.CascadeType.ALL)
     private Collection<Employee> employees;
 
     public Company() {}
