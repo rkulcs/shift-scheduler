@@ -37,7 +37,7 @@ public class ApiClient {
 
         String body = new JsonStringBuilder()
                 .with("role", "MANAGER")
-                .with("manager", username)
+                .with("username", username)
                 .with("name", name)
                 .with("password", password)
                 .with("company", new JsonStringBuilder()

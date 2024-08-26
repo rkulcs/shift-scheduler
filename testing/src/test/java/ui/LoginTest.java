@@ -1,17 +1,14 @@
 package ui;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import shift.scheduler.framework.ApiClient;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @Execution(ExecutionMode.CONCURRENT)
+@TestInstance(TestInstance.Lifecycle.PER_METHOD)
 public class LoginTest extends UITest {
 
     @BeforeEach
@@ -22,23 +19,29 @@ public class LoginTest extends UITest {
 
     @Test
     void loginAsNonexistentUserShouldFail() {
-        assertFalse(site.getLoginPage().logIn("username", "password"));
+
+        site.getLoginPage().logIn("username", "password");
+        assertEquals("Invalid username", site.getLoginPage().getFormError());
     }
 
     @Test
     void loginWithValidEmployeeDetailsShouldSucceed() throws Exception {
-        assertTrue(site.getLoginPage().logIn("employee", "password123"));
+
+        site.getLoginPage().logIn("employee", "password123");
+        assertNull(site.getLoginPage().getFormError());
     }
 
     @Test
     void loginWithValidManagerDetailsShouldSucceed() throws Exception {
-        assertTrue(site.getLoginPage().logIn("manager", "password123"));
+
+        site.getLoginPage().logIn("manager", "password123");
+        assertNull(site.getLoginPage().getFormError());
     }
 
     @BeforeAll
     public static void registerAccounts() {
 
-        ApiClient.registerEmployee("manager", "Test Manager", "password123", "Company", "City");
+        ApiClient.registerManager("manager", "Test Manager", "password123", "Company", "City");
         ApiClient.registerEmployee("employee", "Test Employee", "password123", "Company", "City");
     }
 

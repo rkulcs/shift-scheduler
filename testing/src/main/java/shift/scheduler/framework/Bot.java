@@ -20,6 +20,7 @@ public class Bot {
         options.setAcceptInsecureCerts(true);
         driver = new FirefoxDriver(options);
 
+        driver.manage().timeouts().implicitlyWait(Duration.ofMillis(500));
         wait = new WebDriverWait(driver, Duration.ofSeconds(5));
     }
 

@@ -91,7 +91,7 @@ export default function EmployeeRegistration() {
           </FormControl>
         </FormSection>
 
-        <Button variant="contained" type="submit">Register</Button>
+        <Button id="register-button" variant="contained" type="submit">Register</Button>
       </form>
     </Container>
   )

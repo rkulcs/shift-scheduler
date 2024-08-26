@@ -58,7 +58,7 @@ export default function CompanyRegistration() {
           <TextInputField name="company.location" label="Location" control={control} />
         </FormSection>
 
-        <Button variant="contained" type="submit">Register</Button>
+        <Button id="register-button" variant="contained" type="submit">Register</Button>
       </form>
     </Container>
   )
