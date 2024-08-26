@@ -1,6 +1,7 @@
 package shift.scheduler.backend.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shift.scheduler.backend.model.Employee;
@@ -11,6 +12,8 @@ import shift.scheduler.backend.util.exception.EntityValidationException;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 public class EmployeeService extends UserService  {
@@ -32,6 +35,11 @@ public class EmployeeService extends UserService  {
         try {
             employeeRepository.save(employee);
             return employee;
+        } catch (DataIntegrityViolationException e) {
+            String field = extractInvalidField(e);
+            String message = (field != null) ? String.format("Invalid %s", field) : e.getMessage();
+
+            throw new EntityValidationException(message);
         } catch (Exception e) {
             throw new EntityValidationException(e.getMessage());
         }
