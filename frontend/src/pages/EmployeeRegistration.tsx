@@ -28,7 +28,7 @@ export default function EmployeeRegistration() {
   } = useForm<UserRegistrationFormInput>()
 
   const onSubmit: SubmitHandler<UserRegistrationFormInput> = (data) => {
-    unauthenticatedPostRequest('user/register', {...data, role: "EMPLOYEE"})
+    unauthenticatedPostRequest('user/register', {...data, company: companies[selectedCompany], role: "EMPLOYEE"})
       .then(res => res.json())
       .then(body => {
         if (body.error) {
@@ -59,6 +59,7 @@ export default function EmployeeRegistration() {
   useEffect(() => {
     if (companies.length > 0) {
       setSelectedCompany(0)
+      setValue("company", companies[0])
     }
   }, [companies])
 
