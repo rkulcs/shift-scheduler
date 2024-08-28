@@ -57,10 +57,13 @@ public class JwtService {
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
 
-        boolean isExpired = extractClaim(token, Claims::getExpiration).before(new Date());
-        boolean isValidUser = extractUsername(token).equals(userDetails.getUsername());
+        String username = extractUsername(token);
 
-        return !isExpired && isValidUser;
+        boolean isExpired = extractClaim(token, Claims::getExpiration).before(new Date());
+        boolean isValidUser = username.equals(userDetails.getUsername());
+        boolean isCached = jwtRepository.existsById(username);
+
+        return !isExpired && isValidUser && isCached;
     }
 
     public void saveToken(String token) {

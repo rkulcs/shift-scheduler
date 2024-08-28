@@ -1,5 +1,6 @@
 package shift.scheduler.backend.config.filter;
 
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -58,6 +59,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authToken);
+                } else {
+                    // TODO: Handle invalid JWTs more gracefully
+                    throw new JwtException("Invalid JWT.");
                 }
             }
         }
