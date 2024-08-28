@@ -103,7 +103,10 @@ public class AuthenticationService {
             return new AuthenticationResult(null, "Invalid role");
         }
 
-        return new AuthenticationResult(jwtService.generateToken(account), null);
+        String token = jwtService.generateToken(account);
+        jwtService.saveToken(token);
+
+        return new AuthenticationResult(token, null);
     }
 
     public AuthenticationResult login(LoginRequestDTO request) {
@@ -115,7 +118,14 @@ public class AuthenticationService {
         if (!passwordEncoder.matches(request.getPassword(), account.getPassword()))
             return new AuthenticationResult(null, "Invalid password");
 
-        return new AuthenticationResult(jwtService.generateToken(account), null);
+        String token = jwtService.generateToken(account);
+        jwtService.saveToken(token);
+
+        return new AuthenticationResult(token, null);
+    }
+
+    public boolean logout(String token) {
+        return jwtService.deleteToken(token);
     }
 
     public User getUserFromHeader(String authHeader) {

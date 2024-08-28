@@ -4,10 +4,13 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import shift.scheduler.backend.model.Account;
+import shift.scheduler.backend.model.jwt.CachedJwt;
+import shift.scheduler.backend.repository.JwtRepository;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
@@ -34,6 +37,9 @@ public class JwtService {
     @Value("${application.security.jwt.refresh-token}")
     private long refresh;
 
+    @Autowired
+    private JwtRepository jwtRepository;
+
     public String extractTokenFromHeader(String header) {
         return header.substring(HEADER_JWT_START_INDEX);
     }
@@ -55,6 +61,24 @@ public class JwtService {
         boolean isValidUser = extractUsername(token).equals(userDetails.getUsername());
 
         return !isExpired && isValidUser;
+    }
+
+    public void saveToken(String token) {
+
+        String username = extractUsername(token);
+        jwtRepository.save(new CachedJwt(username, token));
+    }
+
+    public boolean deleteToken(String token) {
+
+        String username = extractUsername(token);
+        CachedJwt cachedJwt = jwtRepository.findById(username).orElse(null);
+
+        if (cachedJwt == null || !token.equals(cachedJwt.getToken()))
+            return false;
+
+        jwtRepository.deleteById(username);
+        return true;
     }
 
     private <T> T extractClaim(String token, Function<Claims, T> claimResolver) {

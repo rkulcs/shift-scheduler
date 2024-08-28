@@ -1,6 +1,7 @@
 package shift.scheduler.backend.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -44,6 +45,22 @@ public class UserController {
             return ResponseEntity.badRequest().body(result);
         else
             return ResponseEntity.ok().body(result);
+    }
+
+    @PostMapping(value = "/logout")
+    public ResponseEntity<String> logout(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
+
+        String[] authComponents = authHeader.split(" ");
+
+        if (authComponents.length == 0)
+            return ResponseEntity.badRequest().body("The request was not sent as a logged-in user.");
+
+        String token = authComponents[authComponents.length-1];
+
+        if (authenticationService.logout(token))
+            return ResponseEntity.ok("Successfully logged out.");
+        else
+            return ResponseEntity.internalServerError().body("Failed to log out.");
     }
 
     @DeleteMapping(value = "/{username}")
