@@ -118,8 +118,7 @@ public class AuthenticationService {
         if (!passwordEncoder.matches(request.getPassword(), account.getPassword()))
             return new AuthenticationResult(null, "Invalid password");
 
-        String token = jwtService.generateToken(account);
-        jwtService.saveToken(token);
+        String token = jwtService.findOrCreateToken(account);
 
         return new AuthenticationResult(token, null);
     }

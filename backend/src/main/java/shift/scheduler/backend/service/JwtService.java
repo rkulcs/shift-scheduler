@@ -16,6 +16,7 @@ import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 
 /**
@@ -55,21 +56,57 @@ public class JwtService {
         return extractClaim(token, Claims::getSubject);
     }
 
+    /**
+     * Checks if the provided token is usable by the specified user. The token must
+     * be valid and stored in a Redis cache for it to be usable.
+     */
+    public boolean isTokenUsable(String token, UserDetails userDetails) {
+
+        String username = userDetails.getUsername();
+        boolean isCached = jwtRepository.existsById(username);
+
+        return isTokenValid(token, userDetails) && isCached;
+    }
+
+    /**
+     * Checks if the given token is valid by verifying that it is associated with the
+     * specified user, and that it has not expired yet.
+     */
     public boolean isTokenValid(String token, UserDetails userDetails) {
 
         String username = extractUsername(token);
 
         boolean isExpired = extractClaim(token, Claims::getExpiration).before(new Date());
         boolean isValidUser = username.equals(userDetails.getUsername());
-        boolean isCached = jwtRepository.existsById(username);
 
-        return !isExpired && isValidUser && isCached;
+        return !isExpired && isValidUser;
     }
 
     public void saveToken(String token) {
 
         String username = extractUsername(token);
         jwtRepository.save(new CachedJwt(username, token));
+    }
+
+    /**
+     * Checks the Redis cache for a
+     * @param userDetails
+     * @return
+     */
+    public String findOrCreateToken(UserDetails userDetails) {
+
+        String username = userDetails.getUsername();
+
+        CachedJwt cachedJwt = jwtRepository.findById(username).orElse(null);
+
+        if (cachedJwt == null || !isTokenValid(cachedJwt.getToken(), userDetails)) {
+            String token = generateToken(userDetails);
+
+            saveToken(token);
+            return token;
+        } else {
+            return cachedJwt.getToken();
+        }
     }
 
     public boolean deleteToken(String token) {
