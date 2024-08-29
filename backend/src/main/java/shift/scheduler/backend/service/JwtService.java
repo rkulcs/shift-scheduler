@@ -16,7 +16,6 @@ import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.Function;
 
 /**
@@ -82,6 +81,9 @@ public class JwtService {
         return !isExpired && isValidUser;
     }
 
+    /**
+     * Caches the given token.
+     */
     public void saveToken(String token) {
 
         String username = extractUsername(token);
@@ -89,9 +91,8 @@ public class JwtService {
     }
 
     /**
-     * Checks the Redis cache for a
-     * @param userDetails
-     * @return
+     * Checks the Redis cache for a token that is associated with the specified user.
+     * If a token is found, it is returned, otherwise, a new token is created.
      */
     public String findOrCreateToken(UserDetails userDetails) {
 
@@ -109,6 +110,9 @@ public class JwtService {
         }
     }
 
+    /**
+     * Removes the given token from the Redis cache.
+     */
     public boolean deleteToken(String token) {
 
         String username = extractUsername(token);
