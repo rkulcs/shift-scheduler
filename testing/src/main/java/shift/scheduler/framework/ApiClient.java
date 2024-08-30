@@ -11,11 +11,14 @@ import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.HttpResponse;
 import org.apache.hc.core5.http.HttpStatus;
 import org.apache.hc.core5.http.config.RegistryBuilder;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.apache.hc.core5.http.message.BasicClassicHttpResponse;
 import org.apache.hc.core5.ssl.SSLContexts;
 import org.apache.hc.core5.ssl.TrustStrategy;
 
 import javax.net.ssl.SSLContext;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 import static shift.scheduler.util.Constants.*;
@@ -29,6 +32,31 @@ public class ApiClient {
             client = initClient();
         } catch (Exception e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    public static String logIn(String username, String password) {
+
+        String body = new JsonStringBuilder()
+                .with("username", username)
+                .with("password", password)
+                .build();
+
+        Request request = Request.post(USER_LOGIN_ENDPOINT)
+                .addHeader("Content-Type", "application/json")
+                .bodyString(body, ContentType.APPLICATION_JSON);
+
+        var response = executeHttpRequest(request);
+
+        if (assertResponseIsOk(response)) {
+            try {
+                var responseBody = EntityUtils.toString(((BasicClassicHttpResponse) response).getEntity(), StandardCharsets.UTF_8);
+                return responseBody.split("\"")[3];
+            } catch (Exception e) {
+                return null;
+            }
+        } else {
+            return null;
         }
     }
 
@@ -51,7 +79,7 @@ public class ApiClient {
                 .addHeader("Content-Type", "application/json")
                 .bodyString(body, ContentType.APPLICATION_JSON);
 
-        return executeHttpRequest(request, HttpStatus.SC_OK);
+        return assertResponseIsOk(executeHttpRequest(request));
     }
 
     public static boolean registerEmployee(String username, String name, String password,
@@ -73,24 +101,22 @@ public class ApiClient {
                 .addHeader("Content-Type", "application/json")
                 .bodyString(body, ContentType.APPLICATION_JSON);
 
-        return executeHttpRequest(request, HttpStatus.SC_OK);
+        return assertResponseIsOk(executeHttpRequest(request));
     }
 
     public static boolean deleteUser(String username) {
 
         Request request = Request.delete(String.format("%s/%s", USER_DELETION_ENDPOINT, username));
 
-        return executeHttpRequest(request, HttpStatus.SC_OK);
+        return assertResponseIsOk(executeHttpRequest(request));
     }
 
-    private static boolean executeHttpRequest(Request request, int expectedStatusCode) {
+    private static HttpResponse executeHttpRequest(Request request) {
 
         try {
-            HttpResponse response = request.execute(client).returnResponse();
-
-            return (response.getCode() == expectedStatusCode);
+            return request.execute(client).returnResponse();
         } catch (IOException e) {
-            return false;
+            return null;
         }
     }
 
@@ -106,5 +132,13 @@ public class ApiClient {
         );
 
         return HttpClients.custom().setConnectionManager(connectionManager).build();
+    }
+
+    private static boolean assertResponseIsOk(HttpResponse response) {
+
+        if (response == null)
+            return false;
+
+        return (response.getCode() == HttpStatus.SC_OK);
     }
 }
