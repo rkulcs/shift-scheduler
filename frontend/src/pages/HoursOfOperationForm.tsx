@@ -85,7 +85,7 @@ export default function HoursOfOperationForm() {
           <Grid container spacing={1}>
             {Object.keys(Day).filter(key => !isNaN(Number(key))).map(key => Number(key)).map((i: number) => {
               return (
-                <Grid item key={i} xs={1.7}>
+                <Grid item key={i} xs={1.7} id={`tile-${i}`}>
                   <Paper sx={{ padding: 0.5 }}>
                     <LabeledCheckbox
                       name={`periods.${i}.active`}
@@ -121,7 +121,7 @@ export default function HoursOfOperationForm() {
           </Grid>
         </FormSection>
 
-        <Button variant="contained" type="submit">Update</Button>
+        <Button id="update-button" variant="contained" type="submit">Update</Button>
       </form>
     </Container>
   )

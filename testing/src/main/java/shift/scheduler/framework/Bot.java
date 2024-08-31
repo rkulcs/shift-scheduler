@@ -6,14 +6,11 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
-import org.openqa.selenium.remote.RemoteWebDriver;
-import org.openqa.selenium.remote.Response;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
 import java.util.List;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class Bot {
@@ -49,7 +46,11 @@ public class Bot {
     }
 
     public Object execute(String command) {
-        return ((JavascriptExecutor) driver).executeScript(command);
+        return ((FirefoxDriver) driver).executeScript(command);
+    }
+
+    public void setLocalStorage(String key, String value) {
+        execute(String.format("localStorage.setItem(\"%s\", \"%s\")", key, value));
     }
 
     public boolean waitUntil(Supplier<Boolean> function) {
