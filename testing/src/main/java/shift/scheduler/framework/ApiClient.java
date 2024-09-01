@@ -1,5 +1,8 @@
 package shift.scheduler.framework;
 
+import com.beust.jcommander.Strings;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.hc.client5.http.fluent.Request;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
@@ -20,10 +23,27 @@ import javax.net.ssl.SSLContext;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static shift.scheduler.util.Constants.*;
 
 public class ApiClient {
+
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+    private static final TypeReference<HashMap<String, Object>> mapperTypeRef = new TypeReference<>() {};
+
+    private static final Map<Integer, String> DAYS = new HashMap<>()
+    {{
+        put(0, "MON");
+        put(1, "TUE");
+        put(2, "WED");
+        put(3, "THU");
+        put(4, "FRI");
+        put(5, "SAT");
+        put(6, "SUN");
+    }};
 
     private static final CloseableHttpClient client;
 
@@ -49,12 +69,12 @@ public class ApiClient {
         var response = executeHttpRequest(request);
 
         if (assertResponseIsOk(response)) {
-            try {
-                var responseBody = EntityUtils.toString(((BasicClassicHttpResponse) response).getEntity(), StandardCharsets.UTF_8);
-                return responseBody.split("\"")[3];
-            } catch (Exception e) {
+            var responseBody = extractResponseBody(response);
+
+            if (responseBody == null)
                 return null;
-            }
+
+            return responseBody.split("\"")[3];
         } else {
             return null;
         }
@@ -111,6 +131,49 @@ public class ApiClient {
         return assertResponseIsOk(executeHttpRequest(request));
     }
 
+    public static Map<String, Object> getCompany(String userToken) {
+
+        Request request = Request.get(COMPANY_GET_ENDPOINT)
+                .addHeader("Authorization", String.format("Bearer %s", userToken));
+
+        var response = executeHttpRequest(request);
+        var responseBody = extractResponseBody(response);
+
+        try {
+            return (responseBody == null) ? null : objectMapper.readValue(responseBody, mapperTypeRef);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static boolean setHoursOfOperation(String managerToken, int companyId, List<List<Integer>> hoursOfOperation) {
+
+        List<String> days = new ArrayList<>();
+
+        for (int day = 0; day < hoursOfOperation.size(); day++) {
+            List<Integer> hours = hoursOfOperation.get(day);
+
+            if (hours == null)
+                continue;
+
+            days.add(new JsonStringBuilder()
+                    .with("company", companyId)
+                    .with("day", DAYS.get(day))
+                    .with("startHour", hours.getFirst())
+                    .with("endHour", hours.get(1))
+                    .build());
+        }
+
+        String body = String.format("[%s]", Strings.join(",", days));
+
+        Request request = Request.post(HOURS_OF_OPERATION_ENDPOINT)
+                .addHeader("Authorization", String.format("Bearer %s", managerToken))
+                .addHeader("Content-Type", "application/json")
+                .bodyString(body, ContentType.APPLICATION_JSON);
+
+        return assertResponseIsOk(executeHttpRequest(request));
+    }
+
     private static HttpResponse executeHttpRequest(Request request) {
 
         try {
@@ -140,5 +203,14 @@ public class ApiClient {
             return false;
 
         return (response.getCode() == HttpStatus.SC_OK);
+    }
+
+    private static String extractResponseBody(HttpResponse response) {
+
+        try {
+            return EntityUtils.toString(((BasicClassicHttpResponse) response).getEntity(), StandardCharsets.UTF_8);
+        } catch (Exception e) {
+            return null;
+        }
     }
 }

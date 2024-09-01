@@ -6,6 +6,8 @@ public final class Constants {
     public static final String USER_LOGIN_ENDPOINT = String.format("%s/user/login", API_URL);
     public static final String USER_REGISTRATION_ENDPOINT = String.format("%s/user/register", API_URL);
     public static final String USER_DELETION_ENDPOINT = String.format("%s/user", API_URL);
+    public static final String COMPANY_GET_ENDPOINT = String.format("%s/company", API_URL);
+    public static final String HOURS_OF_OPERATION_ENDPOINT = String.format("%s/hours", COMPANY_GET_ENDPOINT);
 
     public static final String APP_URL = "http://10.5.0.4:4173";
     public static final String HOME_URL = String.format("%s/", APP_URL);

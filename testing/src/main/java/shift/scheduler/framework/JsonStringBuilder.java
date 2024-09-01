@@ -27,6 +27,14 @@ public class JsonStringBuilder {
         return this;
     }
 
+    public JsonStringBuilder with(String key, int value) {
+
+        addCommaIfNeeded();
+
+        builder.append(String.format("\"%s\": \"%d\"", key, value));
+        return this;
+    }
+
     public JsonStringBuilder with(String key, List<String> value) {
 
         addCommaIfNeeded();
