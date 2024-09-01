@@ -1,1 +1,5 @@
+# Personal script for starting Postgres and Docker services, and Redis server
+setup.sh
+
+# Redis snapshot
 dump.rdb
