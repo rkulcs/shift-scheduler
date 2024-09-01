@@ -27,13 +27,13 @@ that meet their needs, while also respecting their employees' availabilities.
 1. Start a local PostgreSQL server, and create a database called "shiftscheduler", which will be used to store user and company data
 2. Start a local Redis server, which will be used to cache valid and usable JWTs
 3. Open `backend/src/main/resources/application.properties`, and update the following settings, as needed:
-  - `load.sample.data`: set this to `true` to populate the database with sample data when the application is started. Note that this should only be set to `true` when the application is started for the first time (or when the shiftscheduler database is empty).
-  - `spring.datasource.url`: ensure that the URL matches the URL of the PostgreSQL server.
-  - `redis.host`: the hostname or IP address of the Redis server.
-  - `redis.port`: the port of the Redis server.
-  - `application.security.jwt.secret-key`: change this as needed to a 384-bit (or larger) key.
-  - `application.security.jwt.expiration`: JWT expiration time in milliseconds.
-  - `server.ssl.key-store-password`: change this if the keystore password in `backend/keystore_gen.sh` is modified.
+    - `load.sample.data`: set this to `true` to populate the database with sample data when the application is started. Note that this should only be set to `true` when the application is started for the first time (or when the shiftscheduler database is empty).
+    - `spring.datasource.url`: ensure that the URL matches the URL of the PostgreSQL server.
+    - `redis.host`: the hostname or IP address of the Redis server.
+    - `redis.port`: the port of the Redis server.
+    - `application.security.jwt.secret-key`: change this as needed to a 384-bit (or larger) key.
+    - `application.security.jwt.expiration`: JWT expiration time in milliseconds.
+    - `server.ssl.key-store-password`: change this if the keystore password in `backend/keystore_gen.sh` is modified.
 4. Open `backend/keystore_gen.sh`, and edit the values of `STOREPASS` and `KEYPASS` if needed.
 5. Generate the keystore from the `backend` directory:
 ```
