@@ -12,6 +12,44 @@ that meet their needs, while also respecting their employees' availabilities.
 3. Visit https://10.5.0.2:8443/api/ and trust the self-signed certificate of the backend
 4. Visit the frontend application at http://10.5.0.4:4173
 
+# Running the Application in a Development Environment
+
+## Requirements
+
+- A *nix system or WSL is recommended to be able to create a keystore with the Bash script in the `backend` directory
+- [Java 21 or above](https://www.oracle.com/ca-en/java/technologies/downloads/)
+- [Node.js](https://nodejs.org/en)
+- [PostgreSQL](https://www.postgresql.org/download/)
+- [Redis](https://redis.io/downloads/)
+
+## Steps
+
+1. Start a local PostgreSQL server, and create a database called "shiftscheduler", which will be used to store user and company data
+2. Start a local Redis server, which will be used to cache valid and usable JWTs
+3. Open `backend/src/main/resources/application.properties`, and update the following settings, as needed:
+  - `load.sample.data`: set this to `true` to populate the database with sample data when the application is started. Note that this should only be set to `true` when the application is started for the first time (or when the shiftscheduler database is empty).
+  - `spring.datasource.url`: ensure that the URL matches the URL of the PostgreSQL server.
+  - `redis.host`: the hostname or IP address of the Redis server.
+  - `redis.port`: the port of the Redis server.
+  - `application.security.jwt.secret-key`: change this as needed to a 384-bit (or larger) key.
+  - `application.security.jwt.expiration`: JWT expiration time in milliseconds.
+  - `server.ssl.key-store-password`: change this if the keystore password in `backend/keystore_gen.sh` is modified.
+4. Open `backend/keystore_gen.sh`, and edit the values of `STOREPASS` and `KEYPASS` if needed.
+5. Generate the keystore from the `backend` directory:
+```
+chmod +x keystore_gen.sh
+./keystore_gen.sh
+```
+6. Start the backend:
+```
+./mvnw spring-boot:run
+```
+7. Navigate to the `frontend` directory, install all dependencies, then start the application:
+```
+npm install
+npx vite
+```
+
 # Screenshots
 
 <details>
