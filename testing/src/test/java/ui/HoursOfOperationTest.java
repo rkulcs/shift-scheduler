@@ -3,9 +3,9 @@ package ui;
 import org.junit.jupiter.api.*;
 import shift.scheduler.framework.ApiClient;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
@@ -50,5 +50,11 @@ public class HoursOfOperationTest extends UITest {
 
         site.getHoursOfOperationPage().submitForm();
         assertNull(site.getHoursOfOperationPage().getFormError());
+
+        // Reload the page to verify that the changes were persisted
+        site.getHoursOfOperationPage().load();
+
+        for (int day = 0; day < hours.size(); day++)
+            assertEquals(hours.get(day), site.getHoursOfOperationPage().getHours(day));
     }
 }
