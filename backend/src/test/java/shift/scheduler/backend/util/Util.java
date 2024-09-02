@@ -6,6 +6,7 @@ import shift.scheduler.backend.model.schedule.ScheduleForWeek;
 import shift.scheduler.backend.dto.ScheduleGenerationRequestDTO;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 public final class Util {
@@ -36,6 +37,8 @@ public final class Util {
                 company,
                 (short) 4, (short) 8, (short) 12, (short) 24
         );
+
+        employee.setAvailabilities(new ArrayList<>());
 
         return employee;
     }

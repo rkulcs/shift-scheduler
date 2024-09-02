@@ -7,7 +7,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import shift.scheduler.backend.model.*;
 import shift.scheduler.backend.model.schedule.ScheduleForDay;
 import shift.scheduler.backend.model.schedule.ScheduleForWeek;
-import shift.scheduler.backend.service.AuthenticationService;
 import shift.scheduler.backend.service.CompanyService;
 import shift.scheduler.backend.service.ScheduleService;
 import shift.scheduler.backend.util.Util;
