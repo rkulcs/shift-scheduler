@@ -25,7 +25,7 @@ public final class Util {
             new Account("username", "Test User", null)
     };
 
-    public static final Company company = new Company("Company", "City", null);
+    public static final Company company = new Company("Company", "City", new ArrayList<>());
 
     public static final ScheduleGenerationRequestDTO VALID_SCHEDULE_GENERATION_REQUEST_DTO = new ScheduleGenerationRequestDTO(
             LocalDate.now(), (short) 2

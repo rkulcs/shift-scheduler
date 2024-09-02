@@ -32,6 +32,7 @@ public class Employee extends User {
 
     public Employee(Account account) {
         super(account);
+        this.availabilities = new ArrayList<>();
     }
 
     public Employee(Account account, Company company,
@@ -44,6 +45,7 @@ public class Employee extends User {
         this.maxHoursPerDay = maxHoursPerDay;
         this.minHoursPerWeek = minHoursPerWeek;
         this.maxHoursPerWeek = maxHoursPerWeek;
+        this.availabilities = new ArrayList<>();
     }
 
     public @NotNull Company getCompany() {
