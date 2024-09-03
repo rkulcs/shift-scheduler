@@ -1,6 +1,7 @@
 package shift.scheduler.framework;
 
 import com.beust.jcommander.Strings;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.hc.client5.http.fluent.Request;
@@ -80,7 +81,7 @@ public class ApiClient {
         }
     }
 
-    public static boolean registerManager(String username, String name,
+    public static String registerManager(String username, String name,
                                        String password, String companyName, String companyLocation) {
 
         String body = new JsonStringBuilder()
@@ -95,14 +96,10 @@ public class ApiClient {
                 )
                 .build();
 
-        Request request = Request.post(USER_REGISTRATION_ENDPOINT)
-                .addHeader("Content-Type", "application/json")
-                .bodyString(body, ContentType.APPLICATION_JSON);
-
-        return assertResponseIsOk(executeHttpRequest(request));
+        return registerUser(body);
     }
 
-    public static boolean registerEmployee(String username, String name, String password,
+    public static String registerEmployee(String username, String name, String password,
                                            String companyName, String companyLocation) {
 
         String body = new JsonStringBuilder()
@@ -117,11 +114,7 @@ public class ApiClient {
                 )
                 .build();
 
-        Request request = Request.post(USER_REGISTRATION_ENDPOINT)
-                .addHeader("Content-Type", "application/json")
-                .bodyString(body, ContentType.APPLICATION_JSON);
-
-        return assertResponseIsOk(executeHttpRequest(request));
+        return registerUser(body);
     }
 
     public static boolean deleteUser(String username) {
@@ -174,6 +167,18 @@ public class ApiClient {
         return assertResponseIsOk(executeHttpRequest(request));
     }
 
+    private static String registerUser(String requestBody) {
+
+        Request request = Request.post(USER_REGISTRATION_ENDPOINT)
+                .addHeader("Content-Type", "application/json")
+                .bodyString(requestBody, ContentType.APPLICATION_JSON);
+
+        var response = executeHttpRequest(request);
+
+        return assertResponseIsOk(response) ? extractTokenFromBody(extractResponseBody(response))
+                : null;
+    }
+
     private static HttpResponse executeHttpRequest(Request request) {
 
         try {
@@ -210,6 +215,20 @@ public class ApiClient {
         try {
             return EntityUtils.toString(((BasicClassicHttpResponse) response).getEntity(), StandardCharsets.UTF_8);
         } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private static String extractTokenFromBody(String body) {
+
+        if (body == null)
+            return null;
+
+        try {
+            Map<String, Object> map = objectMapper.readValue(body, mapperTypeRef);
+
+            return (String) map.get("token");
+        } catch (JsonProcessingException e) {
             return null;
         }
     }

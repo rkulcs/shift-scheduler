@@ -25,12 +25,17 @@ public class HoursOfOperationPage extends Page implements Form {
     }
 
     public List<Integer> getHours(int day) {
+
         var tile = getDayTile(day);
-        return List.of(tile.getStartHour(), tile.getEndHour());
+
+        return tile.isChecked() ? List.of(tile.getStartHour(), tile.getEndHour())
+                                : null;
     }
 
     public void unsetHours(int day) {
 
+        var tile = getDayTile(day);
+        tile.setChecked(false);
     }
 
     public void submitForm() {

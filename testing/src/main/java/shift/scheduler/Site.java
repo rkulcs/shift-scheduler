@@ -42,9 +42,7 @@ public class Site {
         return (HoursOfOperationPage) getPage("hoursOfOperation", HoursOfOperationPage::new);
     }
 
-    public void setCurrentUser(String username, String password, String role) {
-
-        String token = ApiClient.logIn(username, password);
+    public void setCurrentUser(String token, String username, String role) {
 
         getHomePage().load();
 

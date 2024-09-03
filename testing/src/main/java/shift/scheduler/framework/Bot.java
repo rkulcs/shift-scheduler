@@ -53,6 +53,10 @@ public class Bot {
         execute(String.format("localStorage.setItem(\"%s\", \"%s\")", key, value));
     }
 
+    public void waitMillis(long timeoutMillis) {
+        wait.withTimeout(Duration.ofMillis(timeoutMillis));
+    }
+
     public boolean waitUntil(Supplier<Boolean> function) {
         return wait.until(d -> function.get());
     }
