@@ -21,8 +21,8 @@ public class CompanyRegistrationTest extends UITest {
     void registrationWithValidDetailsShouldSucceed() {
 
         site.getCompanyRegistrationPage().register(
-                "manager", "Test Manager", "password123",
-                "Company", "City"
+                "validManager", "Test Manager", "password123",
+                "Brand New Company", "City"
         );
         assertNull(site.getCompanyRegistrationPage().getFormError());
     }
