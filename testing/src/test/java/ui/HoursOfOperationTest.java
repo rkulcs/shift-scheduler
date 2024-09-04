@@ -4,19 +4,19 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import shift.scheduler.framework.ApiClient;
+import shift.scheduler.framework.UserSession;
+import util.Util;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @Execution(ExecutionMode.CONCURRENT)
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
 public class HoursOfOperationTest extends UITest {
 
-    private static final Map<String, String> userTokens = new HashMap<>();
+    private static UserSession setterManager = null;
+    private static UserSession removerManager = null;
 
     @BeforeEach
     void setUp() {
@@ -25,8 +25,8 @@ public class HoursOfOperationTest extends UITest {
 
     @BeforeAll
     public static void createAccounts() {
-        userTokens.put("removerManager", ApiClient.registerManager("removerManager", "Remover Tester", "password123", "Remover Test Company", "City"));
-        userTokens.put("setterManager", ApiClient.registerManager("setterManager", "Setter Tester", "password123", "Setter Test Company", "City"));
+        setterManager = Util.createManager("setterManager", "Setter Company");
+        removerManager = Util.createManager("removerManager", "Remover Company");
     }
 
     @BeforeAll
@@ -42,16 +42,14 @@ public class HoursOfOperationTest extends UITest {
                 List.of(12, 16)
         );
 
-        String token = userTokens.get("removerManager");
-
-        var company = ApiClient.getCompany(token);
+        var company = ApiClient.getCompany(setterManager.getToken());
 
         if (company == null)
             throw new RuntimeException("Failed to set up hours of operation for test case.");
 
         int id = (int) company.get("id");
 
-        var isHourSettingSuccessful = ApiClient.setHoursOfOperation(token, id, hours);
+        var isHourSettingSuccessful = ApiClient.setHoursOfOperation(setterManager.getToken(), id, hours);
 
         if (!isHourSettingSuccessful)
             throw new RuntimeException("Failed to set up hours of operation for test case.");
@@ -59,15 +57,14 @@ public class HoursOfOperationTest extends UITest {
 
     @AfterAll
     public static void deleteAccounts() {
-        ApiClient.deleteUser("removerManager");
-        ApiClient.deleteUser("setterManager");
+        ApiClient.deleteUser(removerManager.getUsername());
+        ApiClient.deleteUser(setterManager.getUsername());
     }
 
     @Test
     void shouldBeAbleToSetHoursOfOperation() {
 
-        site.setCurrentUser(userTokens.get("setterManager"), "setterManager", "MANAGER");
-        site.getHoursOfOperationPage().load();
+        site.getHoursOfOperationPage().loadWithSession(setterManager);
 
         List<List<Integer>> hours = List.of(
                 List.of(4, 12),
@@ -96,10 +93,20 @@ public class HoursOfOperationTest extends UITest {
     }
 
     @Test
+    void shouldNotBeAbleToSetInvalidHoursOfOperation() {
+
+        site.getHoursOfOperationPage().loadWithSession(setterManager);
+
+        site.getHoursOfOperationPage().setHours(1, 16, 12);
+
+        site.getHoursOfOperationPage().submitForm();
+        assertEquals("Failed to update hours of operation", site.getHoursOfOperationPage().getFormError());
+    }
+
+    @Test
     void shouldBeAbleToRemoveHoursOfOperation() throws InterruptedException {
 
-        site.setCurrentUser(userTokens.get("removerManager"), "removerManager", "MANAGER");
-        site.getHoursOfOperationPage().load();
+        site.getHoursOfOperationPage().loadWithSession(removerManager);
 
         // TODO: Add a loading page to the frontend to avoid having to wait like this
         // Wait to ensure that the React components' states were updated before testing

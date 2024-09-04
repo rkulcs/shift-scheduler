@@ -3,6 +3,7 @@ package shift.scheduler;
 import org.openqa.selenium.support.ui.LoadableComponent;
 import shift.scheduler.framework.ApiClient;
 import shift.scheduler.framework.Bot;
+import shift.scheduler.framework.UserSession;
 import shift.scheduler.pages.*;
 
 import java.util.HashMap;
@@ -42,13 +43,9 @@ public class Site {
         return (HoursOfOperationPage) getPage("hoursOfOperation", HoursOfOperationPage::new);
     }
 
-    public void setCurrentUser(String token, String username, String role) {
-
+    public void setCurrentUser(UserSession session) {
         getHomePage().load();
-
-        bot.setLocalStorage("role", role);
-        bot.setLocalStorage("username", username);
-        bot.setLocalStorage("token", String.format("Bearer %s", token));
+        bot.setSession(session);
     }
 
     private Page getPage(String key, Function<Bot, Page> constructor) {

@@ -49,6 +49,13 @@ public class Bot {
         return ((FirefoxDriver) driver).executeScript(command);
     }
 
+    public void setSession(UserSession session) {
+
+        setLocalStorage("role", session.getRole());
+        setLocalStorage("username", session.getUsername());
+        setLocalStorage("token", String.format("Bearer %s", session.getToken()));
+    }
+
     public void setLocalStorage(String key, String value) {
         execute(String.format("localStorage.setItem(\"%s\", \"%s\")", key, value));
     }
