@@ -1,4 +1,4 @@
-package shift.scheduler.backend.model;
+package shift.scheduler.backend.model.period;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 

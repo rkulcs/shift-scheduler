@@ -2,6 +2,7 @@ package shift.scheduler.backend.service;
 
 import org.springframework.stereotype.Service;
 import shift.scheduler.backend.model.*;
+import shift.scheduler.backend.model.period.HoursOfOperation;
 import shift.scheduler.backend.model.schedule.Schedule;
 import shift.scheduler.backend.model.schedule.ScheduleForDay;
 import shift.scheduler.backend.model.schedule.ScheduleForWeek;

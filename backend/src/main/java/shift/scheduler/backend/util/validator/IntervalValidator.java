@@ -2,7 +2,7 @@ package shift.scheduler.backend.util.validator;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import shift.scheduler.backend.model.TimePeriod;
+import shift.scheduler.backend.model.period.TimePeriod;
 
 public class IntervalValidator implements ConstraintValidator<Interval, TimePeriod> {
     @Override

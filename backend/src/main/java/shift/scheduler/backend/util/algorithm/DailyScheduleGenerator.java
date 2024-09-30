@@ -1,6 +1,8 @@
 package shift.scheduler.backend.util.algorithm;
 
 import shift.scheduler.backend.model.*;
+import shift.scheduler.backend.model.period.HoursOfOperation;
+import shift.scheduler.backend.model.period.TimePeriod;
 import shift.scheduler.backend.model.schedule.Schedule;
 import shift.scheduler.backend.model.schedule.ScheduleForDay;
 

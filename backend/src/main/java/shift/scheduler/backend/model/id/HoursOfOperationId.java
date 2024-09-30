@@ -1,7 +1,7 @@
 package shift.scheduler.backend.model.id;
 
 import shift.scheduler.backend.model.Company;
-import shift.scheduler.backend.model.Day;
+import shift.scheduler.backend.model.period.Day;
 
 import java.io.Serializable;
 

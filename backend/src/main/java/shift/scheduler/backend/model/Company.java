@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.Cascade;
+import shift.scheduler.backend.model.period.HoursOfOperation;
 import shift.scheduler.backend.model.view.EntityViews;
 
 import java.util.Collection;

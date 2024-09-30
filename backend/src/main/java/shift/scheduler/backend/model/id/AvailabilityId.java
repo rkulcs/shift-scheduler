@@ -1,6 +1,6 @@
 package shift.scheduler.backend.model.id;
 
-import shift.scheduler.backend.model.Day;
+import shift.scheduler.backend.model.period.Day;
 import shift.scheduler.backend.model.Employee;
 
 import java.io.Serializable;

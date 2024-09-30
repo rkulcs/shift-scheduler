@@ -4,6 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.Cascade;
+import shift.scheduler.backend.model.period.Availability;
+import shift.scheduler.backend.model.period.Day;
+import shift.scheduler.backend.model.period.HoursOfOperation;
 import shift.scheduler.backend.util.Period;
 
 import java.util.ArrayList;

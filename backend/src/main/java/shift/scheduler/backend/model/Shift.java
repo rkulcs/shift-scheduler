@@ -4,6 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import shift.scheduler.backend.model.period.TimePeriod;
 
 @Entity
 public class Shift extends TimePeriod {

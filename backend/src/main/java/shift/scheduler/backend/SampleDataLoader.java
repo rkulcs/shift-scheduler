@@ -3,9 +3,13 @@ package shift.scheduler.backend;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import shift.scheduler.backend.model.*;
+import shift.scheduler.backend.model.period.Availability;
+import shift.scheduler.backend.model.period.Day;
+import shift.scheduler.backend.model.period.HoursOfOperation;
 import shift.scheduler.backend.service.EmployeeService;
 import shift.scheduler.backend.service.ManagerService;
 
@@ -13,7 +17,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 @Component
-@ConditionalOnProperty(name = "load.sample.data", havingValue = "true")
+@Profile("dev")
 public class SampleDataLoader implements CommandLineRunner {
 
     @Autowired

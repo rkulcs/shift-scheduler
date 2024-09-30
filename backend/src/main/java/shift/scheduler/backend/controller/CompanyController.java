@@ -7,6 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import shift.scheduler.backend.model.*;
+import shift.scheduler.backend.model.period.HoursOfOperation;
 import shift.scheduler.backend.model.schedule.ScheduleForDay;
 import shift.scheduler.backend.model.schedule.ScheduleForWeek;
 import shift.scheduler.backend.model.view.EntityViews;

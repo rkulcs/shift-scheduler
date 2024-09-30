@@ -1,7 +1,8 @@
-package shift.scheduler.backend.model;
+package shift.scheduler.backend.model.period;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import shift.scheduler.backend.model.Employee;
 import shift.scheduler.backend.model.id.AvailabilityId;
 
 @Entity
