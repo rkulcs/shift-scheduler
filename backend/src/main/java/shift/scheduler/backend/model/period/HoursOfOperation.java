@@ -27,6 +27,12 @@ public class HoursOfOperation extends TimePeriod {
 
     public HoursOfOperation() {}
 
+    public HoursOfOperation(Short startHour, Short endHour, Day day) {
+
+        super(startHour, endHour);
+        this.day = day;
+    }
+
     public HoursOfOperation(Short startHour, Short endHour, Company company, Day day) {
 
         super(startHour, endHour);

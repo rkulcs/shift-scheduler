@@ -12,6 +12,8 @@ import shift.scheduler.backend.model.period.Day;
 import shift.scheduler.backend.model.period.HoursOfOperation;
 import shift.scheduler.backend.service.EmployeeService;
 import shift.scheduler.backend.service.ManagerService;
+import shift.scheduler.backend.util.builder.CompanyBuilder;
+import shift.scheduler.backend.util.builder.ManagerBuilder;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,29 +33,28 @@ public class SampleDataLoader implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        Company company = createSampleManagerAndCompany();
+        Company company = createCompany();
         createSampleEmployees(company);
     }
 
-    private Company createSampleManagerAndCompany() throws Exception {
+    private Company createCompany() throws Exception {
 
-        Company company = new Company("Company", "City", null);
+        Company company = new CompanyBuilder()
+                .setName("Company")
+                .addHoursOfOperation(Day.MON, 12, 20)
+                .addHoursOfOperation(Day.TUE, 12, 20)
+                .addHoursOfOperation(Day.WED, 8, 20)
+                .addHoursOfOperation(Day.THU, 8, 20)
+                .addHoursOfOperation(Day.FRI, 8, 20)
+                .addHoursOfOperation(Day.SAT, 8, 16)
+                .addHoursOfOperation(Day.SUN, 8, 16)
+                .build();
 
-        Collection<HoursOfOperation> hoursOfOperation = new ArrayList<>();
-        hoursOfOperation.add(new HoursOfOperation((short) 12, (short) 20, null, Day.MON));
-        hoursOfOperation.add(new HoursOfOperation((short) 12, (short) 20, null, Day.TUE));
-        hoursOfOperation.add(new HoursOfOperation((short) 8, (short) 20, null, Day.WED));
-        hoursOfOperation.add(new HoursOfOperation((short) 8, (short) 20, null, Day.THU));
-        hoursOfOperation.add(new HoursOfOperation((short) 8, (short) 20, null, Day.FRI));
-        hoursOfOperation.add(new HoursOfOperation((short) 8, (short) 16, null, Day.SAT));
-        hoursOfOperation.add(new HoursOfOperation((short) 8, (short) 16, null, Day.SUN));
-
-        company.setHoursOfOperation(hoursOfOperation);
-
-        Account account = new Account("sampleManager", "Manager",
-                passwordEncoder.encode("sampleManager"), Role.MANAGER);
-        Manager manager = new Manager(account);
-        manager.setCompany(company);
+        Manager manager = new ManagerBuilder()
+                .setUsername("sampleManager")
+                .setPasswordEncoder(passwordEncoder)
+                .setCompany(company)
+                .build();
 
         managerService.save(manager);
 
