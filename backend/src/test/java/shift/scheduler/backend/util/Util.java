@@ -1,6 +1,7 @@
 package shift.scheduler.backend.util;
 
 import shift.scheduler.backend.model.*;
+import shift.scheduler.backend.model.period.Day;
 import shift.scheduler.backend.model.schedule.ScheduleForDay;
 import shift.scheduler.backend.model.schedule.ScheduleForWeek;
 import shift.scheduler.backend.dto.ScheduleGenerationRequestDTO;

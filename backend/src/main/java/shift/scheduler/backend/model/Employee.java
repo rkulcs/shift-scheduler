@@ -38,6 +38,11 @@ public class Employee extends User {
         this.availabilities = new ArrayList<>();
     }
 
+    public Employee(Account account, Company company) {
+        this(account);
+        this.company = company;
+    }
+
     public Employee(Account account, Company company,
                     Short minHoursPerDay, Short maxHoursPerDay,
                     Short minHoursPerWeek, Short maxHoursPerWeek) {

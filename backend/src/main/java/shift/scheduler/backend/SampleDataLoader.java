@@ -10,8 +10,7 @@ import shift.scheduler.backend.model.*;
 import shift.scheduler.backend.model.period.Availability;
 import shift.scheduler.backend.model.period.Day;
 import shift.scheduler.backend.model.period.HoursOfOperation;
-import shift.scheduler.backend.service.EmployeeService;
-import shift.scheduler.backend.service.ManagerService;
+import shift.scheduler.backend.service.UserService;
 import shift.scheduler.backend.util.builder.CompanyBuilder;
 import shift.scheduler.backend.util.builder.EmployeeBuilder;
 import shift.scheduler.backend.util.builder.ManagerBuilder;
@@ -31,10 +30,10 @@ public class SampleDataLoader implements CommandLineRunner {
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    private ManagerService managerService;
+    private UserService<Manager> managerService;
 
     @Autowired
-    private EmployeeService employeeService;
+    private UserService<Employee> employeeService;
 
     @Override
     public void run(String... args) throws Exception {

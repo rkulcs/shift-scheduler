@@ -117,7 +117,7 @@ public class Account implements UserDetails {
         return List.of(new SimpleGrantedAuthority("ROLE_" + role.getAuthority()));
     }
 
-    public static boolean validatePassword(String password) {
+    public static boolean hasValidPassword(String password) {
         return (password != null && MIN_PASSWORD_LENGTH <= password.length()
                 && password.length() <= MAX_PASSWORD_LENGTH);
     }

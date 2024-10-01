@@ -5,12 +5,12 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import shift.scheduler.backend.dto.AuthenticationResultDTO;
 import shift.scheduler.backend.dto.LoginRequestDTO;
 import shift.scheduler.backend.dto.RegistrationRequestDTO;
-import shift.scheduler.backend.model.User;
+import shift.scheduler.backend.model.Employee;
+import shift.scheduler.backend.model.Manager;
 import shift.scheduler.backend.service.*;
-
-import static shift.scheduler.backend.service.AuthenticationService.AuthenticationResult;
 
 @RestController
 @RequestMapping("user")
@@ -20,28 +20,28 @@ public class UserController {
     private AuthenticationService authenticationService;
 
     @Autowired
-    private ManagerService managerService;
+    private UserService<Manager> managerService;
 
     @Autowired
-    private EmployeeService employeeService;
+    private UserService<Employee> employeeService;
 
     @PostMapping(value = "/register", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<AuthenticationResult> register(@RequestBody RegistrationRequestDTO request) {
+    public ResponseEntity<AuthenticationResultDTO> register(@RequestBody RegistrationRequestDTO request) {
 
-        AuthenticationResult result = authenticationService.register(request);
+        var result = authenticationService.register(request);
 
-        if (result.getError() != null)
+        if (result.error() != null)
             return ResponseEntity.badRequest().body(result);
         else
             return ResponseEntity.ok().body(result);
     }
 
     @PostMapping(value = "/login", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<AuthenticationResult> login(@RequestBody LoginRequestDTO request) {
+    public ResponseEntity<AuthenticationResultDTO> login(@RequestBody LoginRequestDTO request) {
 
-        AuthenticationResult result = authenticationService.login(request);
+        var result = authenticationService.login(request);
 
-        if (result.getError() != null)
+        if (result.error() != null)
             return ResponseEntity.badRequest().body(result);
         else
             return ResponseEntity.ok().body(result);
@@ -63,14 +63,15 @@ public class UserController {
             return ResponseEntity.internalServerError().body("Failed to log out.");
     }
 
+    // TODO: Require requests to this endpoint to be sent by a validated test user
     @DeleteMapping(value = "/{username}")
     public ResponseEntity delete(@PathVariable String username) {
 
         boolean isDeleted = false;
 
-        if (managerService.existsByUsername(username))
+        if (managerService.exists(username))
             isDeleted = managerService.deleteByUsername(username);
-        else if (employeeService.existsByUsername(username))
+        else if (employeeService.exists(username))
             isDeleted = employeeService.deleteByUsername(username);
         else
             return ResponseEntity.internalServerError().body("User does not exist.");

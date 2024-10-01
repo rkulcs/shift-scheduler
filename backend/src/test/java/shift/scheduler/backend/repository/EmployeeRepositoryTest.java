@@ -26,7 +26,7 @@ public class EmployeeRepositoryTest {
     CompanyRepository companyRepository;
 
     @Autowired
-    EmployeeRepository employeeRepository;
+    UserRepository<Employee> employeeRepository;
 
     @Test
     public void validEmployeeCreationShouldSucceed() throws Exception {

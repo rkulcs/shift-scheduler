@@ -13,9 +13,9 @@ import shift.scheduler.backend.model.schedule.ScheduleForDay;
 import shift.scheduler.backend.model.schedule.ScheduleForWeek;
 import shift.scheduler.backend.repository.AvailabilityRepository;
 import shift.scheduler.backend.service.AuthenticationService;
-import shift.scheduler.backend.service.EmployeeService;
 import shift.scheduler.backend.service.JwtService;
 import shift.scheduler.backend.service.ScheduleService;
+import shift.scheduler.backend.service.UserService;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -34,7 +34,7 @@ public class EmployeeController {
     private JwtService jwtService;
 
     @Autowired
-    private EmployeeService employeeService;
+    private UserService<Employee> employeeService;
 
     @Autowired
     private ScheduleService scheduleService;

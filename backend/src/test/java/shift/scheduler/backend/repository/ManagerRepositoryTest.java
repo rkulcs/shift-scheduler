@@ -23,7 +23,7 @@ public class ManagerRepositoryTest {
     JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Autowired
-    ManagerRepository managerRepository;
+    UserRepository<Manager> managerRepository;
 
     @Test
     public void validManagerCreationShouldSucceed() throws Exception {

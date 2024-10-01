@@ -1,6 +1,9 @@
 package shift.scheduler.backend.model;
 
 import org.junit.jupiter.api.Test;
+import shift.scheduler.backend.model.period.Availability;
+import shift.scheduler.backend.model.period.Day;
+import shift.scheduler.backend.model.period.HoursOfOperation;
 
 import java.util.ArrayList;
 import java.util.Collection;

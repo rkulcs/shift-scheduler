@@ -6,8 +6,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import shift.scheduler.backend.model.Employee;
-import shift.scheduler.backend.service.EmployeeService;
 import shift.scheduler.backend.service.ScheduleService;
+import shift.scheduler.backend.service.UserService;
 import shift.scheduler.backend.util.Util;
 
 import java.util.ArrayList;
@@ -23,7 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class EmployeeControllerTest extends ControllerTest {
 
     @MockBean
-    private EmployeeService employeeService;
+    private UserService<Employee> employeeService;
 
     @MockBean
     private ScheduleService scheduleService;

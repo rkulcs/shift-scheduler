@@ -3,6 +3,7 @@ package shift.scheduler.backend.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import shift.scheduler.backend.dto.AuthenticationResultDTO;
 import shift.scheduler.backend.model.*;
 import shift.scheduler.backend.dto.LoginRequestDTO;
 import shift.scheduler.backend.dto.RegistrationRequestDTO;
@@ -18,10 +19,10 @@ public class AuthenticationService {
     private AccountService accountService;
 
     @Autowired
-    private ManagerService managerService;
+    private UserService<Manager> managerService;
 
     @Autowired
-    private EmployeeService employeeService;
+    private UserService<Employee> employeeService;
 
     @Autowired
     private CompanyService companyService;
@@ -29,98 +30,73 @@ public class AuthenticationService {
     @Autowired
     private JwtService jwtService;
 
-    public static class AuthenticationResult {
+    public AuthenticationResultDTO register(RegistrationRequestDTO request) {
 
-        String token;
-        String error;
-
-        public AuthenticationResult(String token, String error) {
-            this.token = token;
-            this.error = error;
-        }
-
-        public String getToken() {
-            return token;
-        }
-
-        public String getError() {
-            return error;
-        }
-    }
-
-    public AuthenticationResult register(RegistrationRequestDTO request) {
-
-        if (!Account.validatePassword(request.getPassword()))
-            return new AuthenticationResult(null, "Invalid password");
+        // TODO: Include password requirements in error message
+        if (!Account.hasValidPassword(request.password()))
+            return new AuthenticationResultDTO(null, "Invalid password");
 
         Account account = new Account(
-                request.getUsername(),
-                request.getName(),
-                passwordEncoder.encode(request.getPassword()),
-                request.getRole()
+                request.username(),
+                request.name(),
+                passwordEncoder.encode(request.password()),
+                request.role()
         );
 
-        Company companyDetails = request.getCompany();
+        Company companyDetails = request.company();
 
         if (companyDetails == null)
-            return new AuthenticationResult(null, "Company must be specified");
+            return new AuthenticationResultDTO(null, "Company must be specified");
 
-        if (request.getRole() == Role.EMPLOYEE) {
+        if (request.role() == Role.EMPLOYEE) {
 
             Company company = companyService.findByNameAndLocation(companyDetails.getName(), companyDetails.getLocation());
 
             if (company == null)
-                return new AuthenticationResult(null, "Company does not exist");
+                return new AuthenticationResultDTO(null, "Company does not exist");
 
-            Employee employee = new Employee(
-                    account,
-                    company,
-                    request.getMinHoursPerDay(),
-                    request.getMaxHoursPerDay(),
-                    request.getMinHoursPerWeek(),
-                    request.getMaxHoursPerWeek()
-            );
+            Employee employee = new Employee(account, company);
 
             try {
                 employeeService.save(employee);
             } catch (EntityValidationException e) {
-                return new AuthenticationResult(null, e.getMessage());
+                return new AuthenticationResultDTO(null, e.getMessage());
             }
-        } else if (request.getRole() == Role.MANAGER) {
+        } else if (request.role() == Role.MANAGER) {
             Manager manager = new Manager(account);
 
             if (companyService.findByNameAndLocation(companyDetails.getName(), companyDetails.getLocation()) != null)
-                return new AuthenticationResult(null, "Company already exists");
+                return new AuthenticationResultDTO(null, "Company already exists");
 
             manager.setCompany(companyDetails);
 
             try {
                 managerService.save(manager);
             } catch (EntityValidationException e) {
-                return new AuthenticationResult(null, e.getMessage());
+                return new AuthenticationResultDTO(null, e.getMessage());
             }
         } else {
-            return new AuthenticationResult(null, "Invalid role");
+            return new AuthenticationResultDTO(null, "Invalid role");
         }
 
         String token = jwtService.generateToken(account);
         jwtService.saveToken(token);
 
-        return new AuthenticationResult(token, null);
+        return new AuthenticationResultDTO(token, null);
     }
 
-    public AuthenticationResult login(LoginRequestDTO request) {
-        Account account = accountService.findByUsername(request.getUsername());
+    public AuthenticationResultDTO login(LoginRequestDTO request) {
+        Account account = accountService.findByUsername(request.username());
 
         if (account == null)
-            return new AuthenticationResult(null, "Invalid username");
+            return new AuthenticationResultDTO(null, "Invalid username");
 
-        if (!passwordEncoder.matches(request.getPassword(), account.getPassword()))
-            return new AuthenticationResult(null, "Invalid password");
+        if (!passwordEncoder.matches(request.password(), account.getPassword()))
+            return new AuthenticationResultDTO(null, "Invalid password");
 
         String token = jwtService.findOrCreateToken(account);
 
-        return new AuthenticationResult(token, null);
+        return new AuthenticationResultDTO(token, null);
     }
 
     public boolean logout(String token) {
