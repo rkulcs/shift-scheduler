@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import shift.scheduler.backend.model.Account;
 import shift.scheduler.backend.model.User;
 import shift.scheduler.backend.repository.AccountRepository;
-import shift.scheduler.backend.util.exception.EntityValidationException;
 
 @Service
 public class AccountService {

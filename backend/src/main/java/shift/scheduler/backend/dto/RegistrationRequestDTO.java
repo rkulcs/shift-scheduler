@@ -1,9 +1,15 @@
 package shift.scheduler.backend.dto;
 
-import shift.scheduler.backend.model.Company;
-import shift.scheduler.backend.model.Role;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 
-// TODO: Update to have company ID instead of Company instance
 public record RegistrationRequestDTO(
-        Role role, String username, String name, String password, Company company) {
-}
+
+        @Valid
+        @NotNull(message = "Account details must be set")
+        AccountDTO account,
+
+        @Valid
+        @NotNull(message = "Company details must be set")
+        CompanyDTO company
+) {}

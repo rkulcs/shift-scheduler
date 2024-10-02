@@ -1,12 +1,9 @@
 package shift.scheduler.backend.service;
 
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import shift.scheduler.backend.model.Manager;
 import shift.scheduler.backend.model.User;
 import shift.scheduler.backend.repository.UserRepository;
-import shift.scheduler.backend.util.exception.EntityValidationException;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -24,22 +21,9 @@ public class UserService<T extends User> {
         return repository.existsByAccountUsername(username);
     }
 
-    public T save(T user) throws EntityValidationException {
-
-        if (user.getAccount() == null)
-            throw new EntityValidationException("Missing account details");
-
-        try {
-            repository.save(user);
-            return user;
-        } catch (DataIntegrityViolationException e) {
-            String field = extractInvalidField(e);
-            String message = (field != null) ? String.format("Invalid %s", field) : e.getMessage();
-
-            throw new EntityValidationException(message);
-        } catch (Exception e) {
-            throw new EntityValidationException(e.getMessage());
-        }
+    public T save(T user) throws Exception {
+        repository.save(user);
+        return user;
     }
 
     public User findByUsername(String username) {
@@ -54,16 +38,5 @@ public class UserService<T extends User> {
         } catch (Exception e) {
             return false;
         }
-    }
-
-    private String extractInvalidField(Exception e) {
-
-        Pattern pattern = Pattern.compile("Key \\((\\w*)\\)");
-        Matcher matcher = pattern.matcher(e.getMessage());
-
-        if (matcher.find())
-            return matcher.group(1);
-        else
-            return null;
     }
 }

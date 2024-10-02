@@ -16,12 +16,6 @@ import java.util.List;
 @Entity
 public class Account implements UserDetails {
 
-    @Transient
-    private static final short MIN_PASSWORD_LENGTH = 8;
-
-    @Transient
-    private static final short MAX_PASSWORD_LENGTH = 255;
-
     @Id
     @NotNull
     @NotBlank
@@ -115,10 +109,5 @@ public class Account implements UserDetails {
     @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("ROLE_" + role.getAuthority()));
-    }
-
-    public static boolean hasValidPassword(String password) {
-        return (password != null && MIN_PASSWORD_LENGTH <= password.length()
-                && password.length() <= MAX_PASSWORD_LENGTH);
     }
 }

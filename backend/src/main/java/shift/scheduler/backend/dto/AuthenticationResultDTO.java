@@ -1,4 +1,6 @@
 package shift.scheduler.backend.dto;
 
-public record AuthenticationResultDTO(String token, String error) {
+import java.util.List;
+
+public record AuthenticationResultDTO(String token, List<String> errors) {
 }

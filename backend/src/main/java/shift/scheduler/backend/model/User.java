@@ -2,6 +2,7 @@ package shift.scheduler.backend.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
@@ -11,6 +12,7 @@ public abstract class User {
     @GeneratedValue
     private Long id;
 
+    @NotNull
     @OneToOne(cascade = CascadeType.ALL)
     private Account account;
 
