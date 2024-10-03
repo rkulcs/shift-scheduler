@@ -2,13 +2,13 @@ package shift.scheduler.backend.service;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import shift.scheduler.backend.dto.AuthenticationResultDTO;
 import shift.scheduler.backend.model.*;
 import shift.scheduler.backend.dto.LoginRequestDTO;
 import shift.scheduler.backend.dto.RegistrationRequestDTO;
+import shift.scheduler.backend.util.exception.AuthenticationException;
+import shift.scheduler.backend.util.exception.ErrorSource;
 
 import java.util.List;
 
@@ -36,7 +36,7 @@ public class AuthenticationService {
     @Autowired
     private ModelMapper modelMapper;
 
-    public AuthenticationResultDTO register(RegistrationRequestDTO request) {
+    public String register(RegistrationRequestDTO request) {
 
         Account account = modelMapper.map(request.account(), Account.class);
 
@@ -47,7 +47,7 @@ public class AuthenticationService {
             Company company = modelMapper.map(request.company(), Company.class);
 
             if (companyService.findByNameAndLocation(company.getName(), company.getLocation()) != null)
-                return new AuthenticationResultDTO(null, List.of("Company already exists"));
+                throw new AuthenticationException(List.of("Company already exists"));
 
             Manager manager = new Manager(account);
             manager.setCompany(company);
@@ -55,57 +55,55 @@ public class AuthenticationService {
             try {
                 managerService.save(manager);
             } catch (Exception e) {
-                return new AuthenticationResultDTO(null, List.of(e.getMessage()));
+                throw new AuthenticationException(List.of(e.getMessage()));
             }
         } else {
             Company company = companyService.findByNameAndLocation(request.company().name(), request.company().location());
 
             if (company == null)
-                return new AuthenticationResultDTO(null, List.of("Company does not exist"));
+                throw new AuthenticationException(List.of("Company does not exist"));
 
             Employee employee = new Employee(account, company);
 
             try {
                 employeeService.save(employee);
             } catch (Exception e) {
-                return new AuthenticationResultDTO(null, List.of(e.getMessage()));
+                throw new AuthenticationException(List.of(e.getMessage()));
             }
         }
 
         String token = jwtService.generateToken(account);
         jwtService.saveToken(token);
 
-        return new AuthenticationResultDTO(token, null);
+        return token;
     }
 
-    public AuthenticationResultDTO login(LoginRequestDTO request) {
+    public String login(LoginRequestDTO request) {
 
         Account account = accountService.findByUsername(request.username());
 
         if (account == null)
-            return new AuthenticationResultDTO(null, List.of("Invalid username"));
+            throw new AuthenticationException(List.of("Invalid username"));
 
         if (!passwordEncoder.matches(request.password(), account.getPassword()))
-            return new AuthenticationResultDTO(null, List.of("Invalid password"));
+            throw new AuthenticationException(List.of("Invalid password"));
 
-        String token = jwtService.findOrCreateToken(account);
-
-        return new AuthenticationResultDTO(token, null);
+        return jwtService.findOrCreateToken(account);
     }
 
-    public AuthenticationResultDTO logout(String authHeaderWithToken) {
+    public void logout(String authHeaderWithToken) {
 
         String[] headerComponents = authHeaderWithToken.split(" ");
 
         if (headerComponents.length != 2)
-            return new AuthenticationResultDTO(null, List.of("Invalid JWT token in authorization header"));
+            throw new AuthenticationException(List.of("Invalid JWT token in authorization header"));
 
         String token = headerComponents[1];
 
-        boolean isTokenDeleted = jwtService.deleteToken(token);
-        var errors = isTokenDeleted ? null : List.of("Failed to log out");
+        if (jwtService.deleteToken(token))
+            return;
 
-        return new AuthenticationResultDTO(token, errors);
+        throw new AuthenticationException(List.of("Failed to log out"), ErrorSource.SERVER);
     }
 
     public User getUserFromHeader(String authHeader) {
