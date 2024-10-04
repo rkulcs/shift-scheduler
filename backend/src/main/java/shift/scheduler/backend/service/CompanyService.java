@@ -9,6 +9,7 @@ import shift.scheduler.backend.repository.CompanyRepository;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Optional;
 
 @Service
 public class CompanyService {
@@ -32,12 +33,16 @@ public class CompanyService {
         return companyRepository.findById(id).orElse(null);
     }
 
-    public Company findByNameAndLocation(String name, String location) {
+    public boolean exists(String name, String location) {
+        return companyRepository.findByNameAndLocation(name, location).isPresent();
+    }
+
+    public Optional<Company> findByNameAndLocation(String name, String location) {
 
         if (name == null || location == null)
-            return null;
+            return Optional.empty();
 
-        return companyRepository.findByNameAndLocation(name, location).orElse(null);
+        return companyRepository.findByNameAndLocation(name, location);
     }
 
     public Company findByManager(Manager manager) {

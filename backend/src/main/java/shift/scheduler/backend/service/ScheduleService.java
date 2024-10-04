@@ -51,7 +51,7 @@ public class ScheduleService {
         }
 
         schedule.getDailySchedules().forEach(dailySchedule -> {
-            dailySchedule.getShifts().forEach(shift -> shift.setEmployee((Employee) employeeService.findByUsername(shift.getEmployee().getUsername())));
+            dailySchedule.getShifts().forEach(shift -> shift.setEmployee((Employee) employeeService.findByUsername(shift.getEmployee().getUsername()).get()));
         });
 
         return scheduleForWeekRepository.save(schedule);

@@ -1,5 +1,6 @@
 package shift.scheduler.backend.service;
 
+import jakarta.validation.constraints.NotNull;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -33,10 +34,17 @@ public class AuthenticationService {
     @Autowired
     private JwtService jwtService;
 
-    @Autowired
     private ModelMapper modelMapper;
 
+    @Autowired
+    public AuthenticationService(ModelMapper modelMapper) {
+        this.modelMapper = modelMapper;
+    }
+
     public String register(RegistrationRequestDTO request) {
+
+        if (accountService.exists(request.account().username()))
+            throw new AuthenticationException(List.of("Username taken"));
 
         Account account = modelMapper.map(request.account(), Account.class);
 
@@ -44,32 +52,24 @@ public class AuthenticationService {
         account.setPassword(passwordEncoder.encode(request.account().password()));
 
         if (account.getRole() == Role.MANAGER) {
-            Company company = modelMapper.map(request.company(), Company.class);
-
-            if (companyService.findByNameAndLocation(company.getName(), company.getLocation()) != null)
+            if (companyService.exists(request.company().name(), request.company().location()))
                 throw new AuthenticationException(List.of("Company already exists"));
+
+            Company company = modelMapper.map(request.company(), Company.class);
 
             Manager manager = new Manager(account);
             manager.setCompany(company);
 
-            try {
-                managerService.save(manager);
-            } catch (Exception e) {
-                throw new AuthenticationException(List.of(e.getMessage()));
-            }
+            managerService.save(manager)
+                    .orElseThrow(() -> new AuthenticationException(List.of("Failed to save manager"), ErrorSource.SERVER));
         } else {
-            Company company = companyService.findByNameAndLocation(request.company().name(), request.company().location());
-
-            if (company == null)
-                throw new AuthenticationException(List.of("Company does not exist"));
+            Company company = companyService.findByNameAndLocation(request.company().name(), request.company().location())
+                    .orElseThrow(() -> new AuthenticationException(List.of("Company does not exist")));
 
             Employee employee = new Employee(account, company);
 
-            try {
-                employeeService.save(employee);
-            } catch (Exception e) {
-                throw new AuthenticationException(List.of(e.getMessage()));
-            }
+            employeeService.save(employee)
+                    .orElseThrow(() -> new AuthenticationException(List.of("Failed to save employee"), ErrorSource.SERVER));
         }
 
         String token = jwtService.generateToken(account);
@@ -80,10 +80,8 @@ public class AuthenticationService {
 
     public String login(LoginRequestDTO request) {
 
-        Account account = accountService.findByUsername(request.username());
-
-        if (account == null)
-            throw new AuthenticationException(List.of("Invalid username"));
+        Account account = accountService.findByUsername(request.username())
+                .orElseThrow(() -> new AuthenticationException(List.of("Invalid username")));
 
         if (!passwordEncoder.matches(request.password(), account.getPassword()))
             throw new AuthenticationException(List.of("Invalid password"));
@@ -91,12 +89,12 @@ public class AuthenticationService {
         return jwtService.findOrCreateToken(account);
     }
 
-    public void logout(String authHeaderWithToken) {
+    public void logout(@NotNull String authHeaderWithToken) {
 
         String[] headerComponents = authHeaderWithToken.split(" ");
 
         if (headerComponents.length != 2)
-            throw new AuthenticationException(List.of("Invalid JWT token in authorization header"));
+            throw new AuthenticationException(List.of("Invalid JWT in authorization header"));
 
         String token = headerComponents[1];
 
@@ -111,11 +109,13 @@ public class AuthenticationService {
         String token = jwtService.extractTokenFromHeader(authHeader);
         String username = jwtService.extractUsername(token);
 
-        Account account = accountService.findByUsername(username);
+        Account account = accountService.findByUsername(username)
+                .orElseThrow(() -> new AuthenticationException(List.of("User does not exist")));
 
-        return switch (account.getRole()) {
-            case MANAGER -> managerService.findByUsername(username);
-            case EMPLOYEE -> employeeService.findByUsername(username);
-        };
+        UserService<? extends User> service = (account.getRole() == Role.MANAGER) ?
+                managerService : employeeService;
+
+        return service.findByUsername(username)
+                .orElseThrow(() -> new AuthenticationException(List.of("User does not exist")));
     }
 }

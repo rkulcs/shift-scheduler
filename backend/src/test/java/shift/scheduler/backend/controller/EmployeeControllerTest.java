@@ -11,6 +11,7 @@ import shift.scheduler.backend.service.UserService;
 import shift.scheduler.backend.util.Util;
 
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.Set;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -71,7 +72,7 @@ public class EmployeeControllerTest extends ControllerTest {
         updatedEmployee.setAvailabilities(new ArrayList<>());
 
         mockValidAuthHeader(employee);
-        when(employeeService.save(employee)).thenReturn(employee);
+        when(employeeService.save(employee)).thenReturn(Optional.of(employee));
 
         mockMvc.perform(
                 postJson("/employee", stringify(updatedEmployee))

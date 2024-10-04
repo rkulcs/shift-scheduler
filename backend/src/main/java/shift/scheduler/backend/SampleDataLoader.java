@@ -2,21 +2,17 @@ package shift.scheduler.backend;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import shift.scheduler.backend.model.*;
-import shift.scheduler.backend.model.period.Availability;
 import shift.scheduler.backend.model.period.Day;
-import shift.scheduler.backend.model.period.HoursOfOperation;
 import shift.scheduler.backend.service.UserService;
 import shift.scheduler.backend.util.builder.CompanyBuilder;
 import shift.scheduler.backend.util.builder.EmployeeBuilder;
 import shift.scheduler.backend.util.builder.ManagerBuilder;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 /**

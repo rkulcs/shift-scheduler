@@ -5,8 +5,7 @@ import org.springframework.transaction.annotation.Transactional;
 import shift.scheduler.backend.model.User;
 import shift.scheduler.backend.repository.UserRepository;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.Optional;
 
 @Service
 public class UserService<T extends User> {
@@ -21,22 +20,21 @@ public class UserService<T extends User> {
         return repository.existsByAccountUsername(username);
     }
 
-    public T save(T user) throws Exception {
-        repository.save(user);
-        return user;
+    public Optional<T> save(T user) {
+
+        try {
+            return Optional.of(repository.save(user));
+        } catch (Exception e) {
+            return Optional.empty();
+        }
     }
 
-    public User findByUsername(String username) {
-        return repository.findByAccountUsername(username).orElse(null);
+    public Optional<T> findByUsername(String username) {
+        return repository.findByAccountUsername(username);
     }
 
     @Transactional
     public boolean deleteByUsername(String username) {
-        try {
-            repository.deleteByAccountUsername(username);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
+        return repository.deleteByAccountUsername(username) > 0;
     }
 }
