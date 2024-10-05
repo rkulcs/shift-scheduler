@@ -15,7 +15,7 @@ import java.time.LocalDate;
 public class ScheduleService {
 
     @Autowired
-    private UserService<Employee> employeeService;
+    private UserService employeeService;
 
     @Autowired
     private CompanyService companyService;

@@ -24,7 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class EmployeeControllerTest extends ControllerTest {
 
     @MockBean
-    private UserService<Employee> employeeService;
+    private UserService employeeService;
 
     @MockBean
     private ScheduleService scheduleService;

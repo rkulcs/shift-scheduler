@@ -8,11 +8,11 @@ import shift.scheduler.backend.repository.UserRepository;
 import java.util.Optional;
 
 @Service
-public class UserService<T extends User> {
+public class UserService {
 
-    private final UserRepository<T> repository;
+    private final UserRepository repository;
 
-    public UserService(UserRepository<T> repository) {
+    public UserService(UserRepository repository) {
         this.repository = repository;
     }
 
@@ -20,7 +20,7 @@ public class UserService<T extends User> {
         return repository.existsByAccountUsername(username);
     }
 
-    public Optional<T> save(T user) {
+    public <T extends User> Optional<T> save(T user) {
 
         try {
             return Optional.of(repository.save(user));
@@ -29,8 +29,12 @@ public class UserService<T extends User> {
         }
     }
 
-    public Optional<T> findByUsername(String username) {
-        return repository.findByAccountUsername(username);
+    public <T extends User> Optional<T> findByUsername(String username) {
+        try {
+            return (Optional<T>) repository.findByAccountUsername(username);
+        } catch (Exception e) {
+            return Optional.empty();
+        }
     }
 
     @Transactional

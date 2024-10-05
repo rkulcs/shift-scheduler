@@ -34,7 +34,7 @@ public class EmployeeController {
     private JwtService jwtService;
 
     @Autowired
-    private UserService<Employee> employeeService;
+    private UserService employeeService;
 
     @Autowired
     private ScheduleService scheduleService;

@@ -2,8 +2,7 @@ package shift.scheduler.backend.model;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotEmpty;
 import org.hibernate.annotations.Cascade;
 import shift.scheduler.backend.model.period.HoursOfOperation;
 import shift.scheduler.backend.model.view.EntityViews;
@@ -19,13 +18,11 @@ public class Company {
     @JsonView(EntityViews.Public.class)
     private Long id;
 
-    @NotNull
-    @NotBlank
+    @NotEmpty
     @JsonView(EntityViews.Public.class)
     private String name;
 
-    @NotNull
-    @NotBlank
+    @NotEmpty
     @JsonView(EntityViews.Public.class)
     private String location;
 
@@ -58,19 +55,19 @@ public class Company {
         this.id = id;
     }
 
-    public @NotNull @NotBlank String getName() {
+    public String getName() {
         return name;
     }
 
-    public void setName(@NotNull @NotBlank String name) {
+    public void setName(String name) {
         this.name = name;
     }
 
-    public @NotNull @NotBlank String getLocation() {
+    public String getLocation() {
         return location;
     }
 
-    public void setLocation(@NotNull @NotBlank String location) {
+    public void setLocation(String location) {
         this.location = location;
     }
 

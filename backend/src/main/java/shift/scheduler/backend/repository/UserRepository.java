@@ -1,14 +1,14 @@
 package shift.scheduler.backend.repository;
 
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.repository.CrudRepository;
 import shift.scheduler.backend.model.User;
 
 import java.util.Optional;
 
-public interface UserRepository<T extends User> extends CrudRepository<T, String> {
+public interface UserRepository extends JpaRepository<User, String> {
     boolean existsByAccountUsername(String username);
-    Optional<T> findByAccountUsername(String username);
+    Optional<User> findByAccountUsername(String username);
 
     @Modifying
     int deleteByAccountUsername(String username);

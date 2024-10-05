@@ -26,10 +26,7 @@ public class SampleDataLoader implements CommandLineRunner {
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    private UserService<Manager> managerService;
-
-    @Autowired
-    private UserService<Employee> employeeService;
+    private UserService userService;
 
     @Override
     public void run(String... args) throws Exception {
@@ -56,7 +53,7 @@ public class SampleDataLoader implements CommandLineRunner {
                 .setCompany(company)
                 .build();
 
-        managerService.save(manager);
+        userService.save(manager);
 
         return company;
     }
@@ -192,6 +189,6 @@ public class SampleDataLoader implements CommandLineRunner {
 
 
         for (var employee : employees)
-            employeeService.save(employee);
+            userService.save(employee);
     }
 }

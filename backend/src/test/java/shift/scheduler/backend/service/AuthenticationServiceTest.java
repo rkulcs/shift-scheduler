@@ -40,10 +40,7 @@ public class AuthenticationServiceTest {
     AccountService accountService;
 
     @Mock
-    UserService<Manager> managerService;
-
-    @Mock
-    UserService<Employee> employeeService;
+    UserService userService;
 
     @Mock
     CompanyService companyService;
@@ -133,9 +130,9 @@ public class AuthenticationServiceTest {
 
         void mockUserSave(Class<? extends User> userClass, boolean isSuccessful) {
             if (userClass == Manager.class)
-                when(managerService.save(any())).thenReturn(isSuccessful ? Optional.of(new Manager()) : Optional.empty());
+                when(userService.save(any())).thenReturn(isSuccessful ? Optional.of(new Manager()) : Optional.empty());
             else
-                when(employeeService.save(any())).thenReturn(isSuccessful ? Optional.of(new Employee()) : Optional.empty());
+                when(userService.save(any())).thenReturn(isSuccessful ? Optional.of(new Employee()) : Optional.empty());
         }
 
         void mockPasswordHashing() {

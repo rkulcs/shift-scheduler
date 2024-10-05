@@ -23,10 +23,7 @@ public class AuthenticationService {
     private AccountService accountService;
 
     @Autowired
-    private UserService<Manager> managerService;
-
-    @Autowired
-    private UserService<Employee> employeeService;
+    private UserService userService;
 
     @Autowired
     private CompanyService companyService;
@@ -60,7 +57,7 @@ public class AuthenticationService {
             Manager manager = new Manager(account);
             manager.setCompany(company);
 
-            managerService.save(manager)
+            userService.save(manager)
                     .orElseThrow(() -> new AuthenticationException(List.of("Failed to save manager"), ErrorSource.SERVER));
         } else {
             Company company = companyService.findByNameAndLocation(request.company().name(), request.company().location())
@@ -68,7 +65,7 @@ public class AuthenticationService {
 
             Employee employee = new Employee(account, company);
 
-            employeeService.save(employee)
+            userService.save(employee)
                     .orElseThrow(() -> new AuthenticationException(List.of("Failed to save employee"), ErrorSource.SERVER));
         }
 
@@ -112,10 +109,7 @@ public class AuthenticationService {
         Account account = accountService.findByUsername(username)
                 .orElseThrow(() -> new AuthenticationException(List.of("User does not exist")));
 
-        UserService<? extends User> service = (account.getRole() == Role.MANAGER) ?
-                managerService : employeeService;
-
-        return service.findByUsername(username)
+        return userService.findByUsername(username)
                 .orElseThrow(() -> new AuthenticationException(List.of("User does not exist")));
     }
 }
