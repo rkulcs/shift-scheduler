@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
 import shift.scheduler.backend.model.Company;
-import shift.scheduler.backend.model.id.HoursOfOperationId;
 import shift.scheduler.backend.model.view.EntityViews;
 import shift.scheduler.backend.util.Period;
 
@@ -12,15 +11,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 @Entity
-@IdClass(HoursOfOperationId.class)
 public class HoursOfOperation extends TimePeriod {
 
-    @Id
     @ManyToOne
     @JsonIgnore
     private Company company;
 
-    @Id
     @Enumerated(EnumType.ORDINAL)
     @JsonView(EntityViews.Associate.class)
     private Day day;
@@ -66,7 +62,7 @@ public class HoursOfOperation extends TimePeriod {
 
         Collection<TimePeriod> blocks = new ArrayList<>();
 
-        for (short time = getStartHour(); time < getEndHour(); time += Period.HOURS)
+        for (short time = getStart(); time < getEnd(); time += Period.HOURS)
             blocks.add(new TimePeriod(time, (short) (time+Period.HOURS)));
 
         return blocks;

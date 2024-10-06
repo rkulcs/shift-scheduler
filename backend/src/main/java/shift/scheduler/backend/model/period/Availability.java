@@ -3,19 +3,15 @@ package shift.scheduler.backend.model.period;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import shift.scheduler.backend.model.Employee;
-import shift.scheduler.backend.model.id.AvailabilityId;
 
 @Entity
 @Table(name = "availability")
-@IdClass(AvailabilityId.class)
 public class Availability extends TimePeriod {
 
-    @Id
     @ManyToOne
     @JsonIgnore
     private Employee employee;
 
-    @Id
     @Enumerated(EnumType.ORDINAL)
     private Day day;
 

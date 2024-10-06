@@ -2,11 +2,10 @@ package shift.scheduler.backend.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.Cascade;
-import shift.scheduler.backend.model.period.Availability;
-import shift.scheduler.backend.model.period.Day;
-import shift.scheduler.backend.model.period.HoursOfOperation;
+import shift.scheduler.backend.model.period.*;
 import shift.scheduler.backend.util.Period;
 
 import java.util.ArrayList;
@@ -22,10 +21,15 @@ public class Employee extends User {
     @JsonIgnore
     private Company company;
 
-    private Short minHoursPerDay;
-    private Short maxHoursPerDay;
-    private Short minHoursPerWeek;
-    private Short maxHoursPerWeek;
+    @Valid
+    @NotNull
+    @OneToOne
+    private TimePeriod hoursPerDayRange;
+
+    @Valid
+    @NotNull
+    @OneToOne
+    private TimePeriod hoursPerWeekRange;
 
     @OneToMany(mappedBy = "employee", orphanRemoval = true)
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
@@ -49,10 +53,8 @@ public class Employee extends User {
 
         super(account);
         this.company = company;
-        this.minHoursPerDay = minHoursPerDay;
-        this.maxHoursPerDay = maxHoursPerDay;
-        this.minHoursPerWeek = minHoursPerWeek;
-        this.maxHoursPerWeek = maxHoursPerWeek;
+        this.hoursPerDayRange = new TimePeriod(minHoursPerDay, maxHoursPerDay);
+        this.hoursPerWeekRange = new TimePeriod(minHoursPerWeek, maxHoursPerWeek);
         this.availabilities = new ArrayList<>();
     }
 
@@ -65,35 +67,31 @@ public class Employee extends User {
     }
 
     public Short getMinHoursPerDay() {
-        return minHoursPerDay;
-    }
-
-    public void setMinHoursPerDay(Short minHoursPerDay) {
-        this.minHoursPerDay = minHoursPerDay;
+        return hoursPerDayRange.getStart();
     }
 
     public Short getMaxHoursPerDay() {
-        return maxHoursPerDay;
+        return hoursPerDayRange.getEnd();
     }
 
-    public void setMaxHoursPerDay(Short maxHoursPerDay) {
-        this.maxHoursPerDay = maxHoursPerDay;
+    public void setHoursPerDayRange(Short min, Short max) {
+        var range = (TimePeriod) hoursPerDayRange;
+        range.setStart(min);
+        range.setEnd(max);
     }
 
     public Short getMinHoursPerWeek() {
-        return minHoursPerWeek;
-    }
-
-    public void setMinHoursPerWeek(Short minHoursPerWeek) {
-        this.minHoursPerWeek = minHoursPerWeek;
+        return hoursPerWeekRange.getStart();
     }
 
     public Short getMaxHoursPerWeek() {
-        return maxHoursPerWeek;
+        return hoursPerWeekRange.getEnd();
     }
 
-    public void setMaxHoursPerWeek(Short maxHoursPerWeek) {
-        this.maxHoursPerWeek = maxHoursPerWeek;
+    public void setHoursPerWeekRange(Short min, Short max) {
+        var range = (TimePeriod) hoursPerWeekRange;
+        range.setStart(min);
+        range.setEnd(max);
     }
 
     public Collection<Availability> getAvailabilities() {
@@ -139,9 +137,9 @@ public class Employee extends User {
 
         Collection<Shift> potentialShifts = new ArrayList<>();
 
-        for (short length = minHoursPerDay; length <= maxHoursPerDay; length += Period.HOURS) {
-            for (short time = period.getStartHour(); time < period.getEndHour(); time += Period.HOURS) {
-                if (time+length <= period.getEndHour())
+        for (short length = hoursPerDayRange.getStart(); length <= hoursPerDayRange.getEnd(); length += Period.HOURS) {
+            for (short time = period.getStart(); time < period.getEnd(); time += Period.HOURS) {
+                if (time+length <= period.getEnd())
                     potentialShifts.add(new Shift(time, (short) (time+length), this));
             }
         }

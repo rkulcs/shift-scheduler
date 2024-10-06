@@ -24,7 +24,7 @@ public class CompanyConstraintViolation extends ScheduleConstraintViolation {
 
         builder.append(String.format(
                 "Required number of employees between %d:00 and %d:00 ",
-                period.getStartHour(), period.getEndHour()
+                period.getStart(), period.getEnd()
         ));
 
         if (difference < 0)

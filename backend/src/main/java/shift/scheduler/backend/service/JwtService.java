@@ -11,10 +11,12 @@ import org.springframework.stereotype.Service;
 import shift.scheduler.backend.model.Account;
 import shift.scheduler.backend.model.jwt.CachedJwt;
 import shift.scheduler.backend.repository.JwtRepository;
+import shift.scheduler.backend.util.exception.AuthenticationException;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -41,7 +43,12 @@ public class JwtService {
     private JwtRepository jwtRepository;
 
     public String extractTokenFromHeader(String header) {
-        return header.substring(HEADER_JWT_START_INDEX);
+        var token = header.substring(HEADER_JWT_START_INDEX);
+
+        if (token == null)
+            throw new AuthenticationException(List.of("Missing JWT from authentication header"));
+
+        return token;
     }
 
     public String generateToken(UserDetails userDetails) {

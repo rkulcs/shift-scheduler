@@ -125,11 +125,11 @@ public class CompanyController {
                 int end = -Integer.MAX_VALUE;
 
                 for (Shift shift : dailySchedule.getShifts()) {
-                    if (shift.getStartHour() < start)
-                        start = shift.getStartHour();
+                    if (shift.getStart() < start)
+                        start = shift.getStart();
 
-                    if (shift.getEndHour() > end)
-                        end = shift.getEndHour();
+                    if (shift.getEnd() > end)
+                        end = shift.getEnd();
                 }
 
                 nextDay = new CompanyDashboardData.DailyScheduleSummary(scheduleDate, start, end);

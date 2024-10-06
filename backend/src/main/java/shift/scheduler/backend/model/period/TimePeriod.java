@@ -3,54 +3,67 @@ package shift.scheduler.backend.model.period;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import shift.scheduler.backend.model.view.EntityViews;
 import shift.scheduler.backend.util.validator.Hour;
-import shift.scheduler.backend.util.validator.Interval;
 
 import java.util.Objects;
 
-@MappedSuperclass
-@Interval
-public class TimePeriod {
+@Entity
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+public class TimePeriod implements TimeInterval {
+
+    @Id
+    private Long id;
 
     @Hour
+    @NotNull
     @JsonView(EntityViews.Associate.class)
-    private Short startHour;
+    private Short start;
 
     @Hour
+    @NotNull
     @JsonView(EntityViews.Associate.class)
-    private Short endHour;
+    private Short end;
 
     public TimePeriod() {}
 
-    public TimePeriod(Short startHour, Short endHour) {
-        this.startHour = startHour;
-        this.endHour = endHour;
+    public TimePeriod(Short start, Short end) {
+        this.start = start;
+        this.end = end;
     }
 
-    public Short getStartHour() {
-        return startHour;
+    public Long getId() {
+        return id;
     }
 
-    public void setStartHour(Short startHour) {
-        this.startHour = startHour;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public Short getEndHour() {
-        return endHour;
+    public Short getStart() {
+        return start;
     }
 
-    public void setEndHour(Short endHour) {
-        this.endHour = endHour;
+    public void setStart(Short start) {
+        this.start = start;
+    }
+
+    public Short getEnd() {
+        return end;
+    }
+
+    public void setEnd(@NotNull Short end) {
+        this.end = end;
     }
 
     @JsonIgnore
     public int getLength() {
-        return endHour-startHour;
+        return end - start;
     }
 
-    public boolean contains(TimePeriod period) {
-        return (startHour <= period.getStartHour() && period.getEndHour() <= endHour);
+    public boolean contains(TimePeriod interval) {
+        return (start <= interval.getStart() && interval.getEnd() <= end);
     }
 
     @Override
@@ -58,11 +71,11 @@ public class TimePeriod {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         TimePeriod that = (TimePeriod) o;
-        return Objects.equals(startHour, that.startHour) && Objects.equals(endHour, that.endHour);
+        return Objects.equals(start, that.start) && Objects.equals(end, that.end);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(startHour, endHour);
+        return Objects.hash(start, end);
     }
 }

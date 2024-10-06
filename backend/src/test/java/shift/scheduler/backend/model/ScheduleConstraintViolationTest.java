@@ -1,6 +1,7 @@
 package shift.scheduler.backend.model;
 
 import org.junit.jupiter.api.Test;
+import shift.scheduler.backend.model.period.TimeInterval;
 import shift.scheduler.backend.model.period.TimePeriod;
 import shift.scheduler.backend.model.violation.CompanyConstraintViolation;
 import shift.scheduler.backend.model.violation.EmployeeConstraintViolation;
@@ -56,7 +57,7 @@ public class ScheduleConstraintViolationTest {
     @Test
     public void producesCorrectCompanyConstraintViolationString() throws Exception {
 
-        TimePeriod period = new TimePeriod((short) 4, (short) 8);
+        TimeInterval period = new TimePeriod((short) 4, (short) 8);
 
         var violation = new CompanyConstraintViolation(period, 1);
         assertThat(violation.toString())

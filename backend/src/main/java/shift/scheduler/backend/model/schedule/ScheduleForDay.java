@@ -118,7 +118,7 @@ public class ScheduleForDay extends Schedule {
         }
 
         for (var entry : numEmployeesPerPeriod.entrySet()) {
-            TimePeriod period = entry.getKey();
+            var period = entry.getKey();
             int employeeCount = entry.getValue();
 
             int difference = 0;
@@ -168,11 +168,11 @@ public class ScheduleForDay extends Schedule {
 
         for (TimePeriod block : blocks) {
             numEmployeesPerPeriod.put(block, 0);
-            startHourToPeriodMap.put(block.getStartHour(), block);
+            startHourToPeriodMap.put(block.getStart(), block);
         }
 
         for (var shift : shifts) {
-            for (short hour = shift.getStartHour(); hour < shift.getEndHour(); hour += Period.HOURS) {
+            for (short hour = shift.getStart(); hour < shift.getEnd(); hour += Period.HOURS) {
                 TimePeriod block = startHourToPeriodMap.get(hour);
                 numEmployeesPerPeriod.put(block, numEmployeesPerPeriod.get(block)+1);
             }
