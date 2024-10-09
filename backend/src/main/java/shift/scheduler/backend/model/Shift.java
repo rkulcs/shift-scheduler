@@ -1,13 +1,11 @@
 package shift.scheduler.backend.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import shift.scheduler.backend.model.period.TimePeriod;
 
 @Entity
-public class Shift extends TimePeriod {
+@Table(name = "shift")
+public class Shift {
 
     @Id
     @GeneratedValue
@@ -16,12 +14,15 @@ public class Shift extends TimePeriod {
     @ManyToOne
     private Employee employee;
 
+    @OneToOne
+    private TimePeriod timePeriod;
+
     public Shift() {
         super();
     }
 
     public Shift(Short startHour, Short endHour, Employee employee) {
-        super(startHour, endHour);
+        this.timePeriod = new TimePeriod(startHour, endHour);
         this.employee = employee;
     }
 
@@ -39,5 +40,21 @@ public class Shift extends TimePeriod {
 
     public void setEmployee(Employee employee) {
         this.employee = employee;
+    }
+
+    public Short getStart() {
+        return timePeriod.getStartHour();
+    }
+
+    public Short getEnd() {
+        return timePeriod.getEndHour();
+    }
+
+    public int getLength() {
+        return timePeriod.getLength();
+    }
+
+    public boolean contains(TimePeriod interval) {
+        return timePeriod.contains(interval);
     }
 }

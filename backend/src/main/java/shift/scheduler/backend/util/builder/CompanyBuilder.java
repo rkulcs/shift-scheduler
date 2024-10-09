@@ -2,7 +2,7 @@ package shift.scheduler.backend.util.builder;
 
 import shift.scheduler.backend.model.Company;
 import shift.scheduler.backend.model.period.Day;
-import shift.scheduler.backend.model.period.HoursOfOperation;
+import shift.scheduler.backend.model.period.TimePeriod;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -14,7 +14,7 @@ public class CompanyBuilder implements Builder<Company> {
     // Use a default city name so that "setCity" does not need to be called to build a Company instance
     private String city = "City";
 
-    private Collection<HoursOfOperation> hours = new ArrayList<>();
+    private Collection<TimePeriod> hours = new ArrayList<>();
 
     public CompanyBuilder() {
     }
@@ -30,7 +30,7 @@ public class CompanyBuilder implements Builder<Company> {
     }
 
     public CompanyBuilder addHoursOfOperation(Day day, int start, int end) {
-        hours.add(new HoursOfOperation((short) start, (short) end, day));
+        hours.add(new TimePeriod(day, (short) start, (short) end));
         return this;
     }
 

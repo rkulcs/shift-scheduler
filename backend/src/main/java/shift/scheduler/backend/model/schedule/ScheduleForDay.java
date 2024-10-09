@@ -168,7 +168,7 @@ public class ScheduleForDay extends Schedule {
 
         for (TimePeriod block : blocks) {
             numEmployeesPerPeriod.put(block, 0);
-            startHourToPeriodMap.put(block.getStart(), block);
+            startHourToPeriodMap.put(block.getStartHour(), block);
         }
 
         for (var shift : shifts) {

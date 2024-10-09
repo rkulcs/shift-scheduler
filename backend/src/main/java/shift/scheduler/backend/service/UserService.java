@@ -6,7 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import shift.scheduler.backend.dto.EmployeeSettingsDTO;
 import shift.scheduler.backend.model.Employee;
 import shift.scheduler.backend.model.User;
-import shift.scheduler.backend.model.period.Availability;
+import shift.scheduler.backend.model.period.TimePeriod;
 import shift.scheduler.backend.repository.UserRepository;
 import shift.scheduler.backend.util.exception.AuthenticationException;
 
@@ -62,9 +62,9 @@ public class UserService {
 
     public boolean updateEmployeeSettings(Employee employee, EmployeeSettingsDTO settings) {
 
-        List<Availability> availabilities = settings.availabilities()
+        List<TimePeriod> availabilities = settings.availabilities()
                 .stream()
-                .map(dto -> modelMapper.map(dto, Availability.class))
+                .map(dto -> modelMapper.map(dto, TimePeriod.class))
                 .toList();
 
         employee.setAvailabilities(availabilities);

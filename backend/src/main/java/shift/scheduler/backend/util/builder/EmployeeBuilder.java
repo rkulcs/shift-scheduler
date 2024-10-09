@@ -4,8 +4,8 @@ import shift.scheduler.backend.model.Account;
 import shift.scheduler.backend.model.Company;
 import shift.scheduler.backend.model.Employee;
 import shift.scheduler.backend.model.Role;
-import shift.scheduler.backend.model.period.Availability;
 import shift.scheduler.backend.model.period.Day;
+import shift.scheduler.backend.model.period.TimePeriod;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -19,7 +19,7 @@ public class EmployeeBuilder extends UserBuilder<Employee, EmployeeBuilder> {
     private int minHoursPerWeek;
     private int maxHoursPerWeek;
 
-    private Collection<Availability> availabilities = new ArrayList<>();
+    private Collection<TimePeriod> availabilities = new ArrayList<>();
 
     public EmployeeBuilder setHoursPerDayRange(int min, int max) {
 
@@ -37,7 +37,7 @@ public class EmployeeBuilder extends UserBuilder<Employee, EmployeeBuilder> {
 
     public EmployeeBuilder addAvailability(Day day, int start, int end) {
 
-        availabilities.add(new Availability((short) start, (short) end, day));
+        availabilities.add(new TimePeriod(day, (short) start, (short) end));
         return this;
     }
 

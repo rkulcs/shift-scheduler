@@ -8,6 +8,7 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -77,8 +78,11 @@ public class WebSecurityConfig {
                 // TODO: Add custom CSRF configuration
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                // Added to enable access to H2 console (https://stackoverflow.com/questions/53395200/h2-console-is-not-showing-in-browser)
+                .headers(headersCustomizer -> headersCustomizer.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
                 .authorizeHttpRequests(authorize -> {
                     authorize
+                            .requestMatchers("/h2-console/**").permitAll()
                             .requestMatchers("/user/**").permitAll()
                             .requestMatchers("/company/**").permitAll()
                             .requestMatchers("/employee/**").hasRole(Role.EMPLOYEE.getAuthority())

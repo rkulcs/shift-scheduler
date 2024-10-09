@@ -2,7 +2,7 @@ package shift.scheduler.backend.service;
 
 import org.springframework.stereotype.Service;
 import shift.scheduler.backend.model.*;
-import shift.scheduler.backend.model.period.HoursOfOperation;
+import shift.scheduler.backend.model.period.TimePeriod;
 import shift.scheduler.backend.model.schedule.Schedule;
 import shift.scheduler.backend.model.schedule.ScheduleForDay;
 import shift.scheduler.backend.model.schedule.ScheduleForWeek;
@@ -22,12 +22,12 @@ public class ScheduleGenerationService {
     private static final int DAY_TO_CALENDAR_DAY_SHIFT = 2;
 
     private class DailyScheduleWorker implements Runnable {
-        private HoursOfOperation period;
+        private TimePeriod period;
         private short numEmployeesPerHour;
         private List<Employee> employees;
         private List<List<Schedule>> candidateDailySchedules;
 
-        DailyScheduleWorker(HoursOfOperation period, short numEmployeesPerHour, List<Employee> employees, List<List<Schedule>> candidateDailySchedules) {
+        DailyScheduleWorker(TimePeriod period, short numEmployeesPerHour, List<Employee> employees, List<List<Schedule>> candidateDailySchedules) {
             this.period = period;
             this.numEmployeesPerHour = numEmployeesPerHour;
             this.employees = employees;
@@ -90,7 +90,7 @@ public class ScheduleGenerationService {
         return weeklySchedules;
     }
 
-    private List<Schedule> generateCandidateSchedulesForDay(HoursOfOperation period,
+    private List<Schedule> generateCandidateSchedulesForDay(TimePeriod period,
                                                                  short numEmployeesPerHour,
                                                                  Collection<Employee> employees) {
 

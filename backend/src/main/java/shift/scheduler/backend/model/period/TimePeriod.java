@@ -10,27 +10,35 @@ import shift.scheduler.backend.util.validator.Hour;
 import java.util.Objects;
 
 @Entity
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-public class TimePeriod implements TimeInterval {
+public class TimePeriod {
 
     @Id
+    @GeneratedValue
     private Long id;
 
-    @Hour
-    @NotNull
-    @JsonView(EntityViews.Associate.class)
-    private Short start;
+    @Enumerated(EnumType.ORDINAL)
+    private Day day;
 
     @Hour
     @NotNull
     @JsonView(EntityViews.Associate.class)
-    private Short end;
+    private Short startHour;
+
+    @Hour
+    @NotNull
+    @JsonView(EntityViews.Associate.class)
+    private Short endHour;
 
     public TimePeriod() {}
 
-    public TimePeriod(Short start, Short end) {
-        this.start = start;
-        this.end = end;
+    public TimePeriod(Short startHour, Short endHour) {
+        this.startHour = startHour;
+        this.endHour = endHour;
+    }
+
+    public TimePeriod(Day day, Short startHour, Short endHour) {
+        this(startHour, endHour);
+        this.day = day;
     }
 
     public Long getId() {
@@ -41,29 +49,37 @@ public class TimePeriod implements TimeInterval {
         this.id = id;
     }
 
-    public Short getStart() {
-        return start;
+    public Day getDay() {
+        return day;
     }
 
-    public void setStart(Short start) {
-        this.start = start;
+    public void setDay(Day day) {
+        this.day = day;
     }
 
-    public Short getEnd() {
-        return end;
+    public Short getStartHour() {
+        return startHour;
     }
 
-    public void setEnd(@NotNull Short end) {
-        this.end = end;
+    public void setStartHour(Short startHour) {
+        this.startHour = startHour;
+    }
+
+    public Short getEndHour() {
+        return endHour;
+    }
+
+    public void setEndHour(Short endHour) {
+        this.endHour = endHour;
     }
 
     @JsonIgnore
     public int getLength() {
-        return end - start;
+        return endHour - startHour;
     }
 
     public boolean contains(TimePeriod interval) {
-        return (start <= interval.getStart() && interval.getEnd() <= end);
+        return (startHour <= interval.getStartHour() && interval.getEndHour() <= endHour);
     }
 
     @Override
@@ -71,11 +87,11 @@ public class TimePeriod implements TimeInterval {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         TimePeriod that = (TimePeriod) o;
-        return Objects.equals(start, that.start) && Objects.equals(end, that.end);
+        return Objects.equals(startHour, that.startHour) && Objects.equals(endHour, that.endHour);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(start, end);
+        return Objects.hash(startHour, endHour);
     }
 }

@@ -17,23 +17,23 @@ public class Employee extends User {
 
     @NotNull
     @ManyToOne
-    @JoinColumn(name = "company_id")
     @JsonIgnore
     private Company company;
 
     @Valid
     @NotNull
     @OneToOne
+    @JoinColumn(name = "daily_hours_id")
     private TimePeriod hoursPerDayRange;
 
     @Valid
     @NotNull
     @OneToOne
+    @JoinColumn(name = "weekly_hours_id")
     private TimePeriod hoursPerWeekRange;
 
-    @OneToMany(mappedBy = "employee", orphanRemoval = true)
-    @Cascade(org.hibernate.annotations.CascadeType.ALL)
-    private Collection<Availability> availabilities;
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    private Collection<TimePeriod> availabilities;
 
     public Employee() {}
 
@@ -66,54 +66,63 @@ public class Employee extends User {
         this.company = company;
     }
 
-    public Short getMinHoursPerDay() {
-        return hoursPerDayRange.getStart();
+    public TimePeriod getHoursPerDayRange() {
+        return hoursPerDayRange;
     }
 
+    public TimePeriod getHoursPerWeekRange() {
+        return hoursPerWeekRange;
+    }
+
+    @JsonIgnore
+    public Short getMinHoursPerDay() {
+        return hoursPerDayRange.getStartHour();
+    }
+
+    @JsonIgnore
     public Short getMaxHoursPerDay() {
-        return hoursPerDayRange.getEnd();
+        return hoursPerDayRange.getEndHour();
     }
 
     public void setHoursPerDayRange(Short min, Short max) {
         var range = (TimePeriod) hoursPerDayRange;
-        range.setStart(min);
-        range.setEnd(max);
+        range.setStartHour(min);
+        range.setEndHour(max);
     }
 
+    @JsonIgnore
     public Short getMinHoursPerWeek() {
-        return hoursPerWeekRange.getStart();
+        return hoursPerWeekRange.getStartHour();
     }
 
+    @JsonIgnore
     public Short getMaxHoursPerWeek() {
-        return hoursPerWeekRange.getEnd();
+        return hoursPerWeekRange.getEndHour();
     }
 
     public void setHoursPerWeekRange(Short min, Short max) {
         var range = (TimePeriod) hoursPerWeekRange;
-        range.setStart(min);
-        range.setEnd(max);
+        range.setStartHour(min);
+        range.setEndHour(max);
     }
 
-    public Collection<Availability> getAvailabilities() {
+    public Collection<TimePeriod> getAvailabilities() {
         return availabilities;
     }
 
-    public void setAvailabilities(Collection<Availability> availabilities) {
+    public void setAvailabilities(Collection<TimePeriod> availabilities) {
 
         if (this.availabilities == null) {
             this.availabilities = availabilities;
         } else {
-            this.availabilities.forEach(availability -> availability.setEmployee(null));
             this.availabilities.clear();
             this.availabilities.addAll(availabilities);
         }
-
-        this.availabilities.forEach(availability -> availability.setEmployee(this));
     }
 
-    public Availability getAvailabilityOn(Day day) {
+    public TimePeriod getAvailabilityOn(Day day) {
 
-        Availability availability = availabilities
+        var availability = availabilities
                 .stream()
                 .filter(a -> a.getDay().equals(day)).findFirst().orElse(null);
 
@@ -130,16 +139,16 @@ public class Employee extends User {
     /**
      * Generates a list of all possible shifts that the employee could work during the given time period.
      */
-    public Collection<Shift> generatePotentialShifts(HoursOfOperation period) {
+    public Collection<Shift> generatePotentialShifts(TimePeriod period) {
 
         if (!isAvailableOn(period.getDay()))
             return null;
 
         Collection<Shift> potentialShifts = new ArrayList<>();
 
-        for (short length = hoursPerDayRange.getStart(); length <= hoursPerDayRange.getEnd(); length += Period.HOURS) {
-            for (short time = period.getStart(); time < period.getEnd(); time += Period.HOURS) {
-                if (time+length <= period.getEnd())
+        for (short length = hoursPerDayRange.getStartHour(); length <= hoursPerDayRange.getEndHour(); length += Period.HOURS) {
+            for (short time = period.getStartHour(); time < period.getEndHour(); time += Period.HOURS) {
+                if (time+length <= period.getEndHour())
                     potentialShifts.add(new Shift(time, (short) (time+length), this));
             }
         }

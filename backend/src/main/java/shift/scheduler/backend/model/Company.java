@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import org.hibernate.annotations.Cascade;
-import shift.scheduler.backend.model.period.HoursOfOperation;
+import shift.scheduler.backend.model.period.TimePeriod;
 import shift.scheduler.backend.model.view.EntityViews;
 
 import java.util.Collection;
@@ -26,22 +26,21 @@ public class Company {
     @JsonView(EntityViews.Public.class)
     private String location;
 
-    @OneToMany(mappedBy = "company", orphanRemoval = true)
-    @Cascade({org.hibernate.annotations.CascadeType.ALL})
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonView(EntityViews.Associate.class)
-    private Collection<HoursOfOperation> hoursOfOperation;
+    private Collection<TimePeriod> hoursOfOperation;
 
-    @OneToOne(mappedBy = "company")
+    @OneToOne
+    @JoinColumn(name = "manager_id")
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
     private Manager manager;
 
-    @OneToMany(mappedBy = "company")
-    @Cascade(org.hibernate.annotations.CascadeType.ALL)
+    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true)
     private Collection<Employee> employees;
 
     public Company() {}
 
-    public Company(String name, String location, Collection<HoursOfOperation> hoursOfOperation) {
+    public Company(String name, String location, Collection<TimePeriod> hoursOfOperation) {
         this.name = name;
         this.location = location;
         this.hoursOfOperation = hoursOfOperation;
@@ -71,11 +70,11 @@ public class Company {
         this.location = location;
     }
 
-    public Collection<HoursOfOperation> getHoursOfOperation() {
+    public Collection<TimePeriod> getHoursOfOperation() {
         return hoursOfOperation;
     }
 
-    public void setHoursOfOperation(Collection<HoursOfOperation> hoursOfOperation) {
+    public void setHoursOfOperation(Collection<TimePeriod> hoursOfOperation) {
 
         if (this.hoursOfOperation == null) {
             this.hoursOfOperation = hoursOfOperation;
@@ -86,9 +85,6 @@ public class Company {
             this.hoursOfOperation.clear();
             this.hoursOfOperation.addAll(hoursOfOperation);
         }
-
-        for (HoursOfOperation period : hoursOfOperation)
-            period.setCompany(this);
     }
 
     public Manager getManager() {

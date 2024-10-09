@@ -7,7 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import shift.scheduler.backend.model.*;
-import shift.scheduler.backend.model.period.HoursOfOperation;
+import shift.scheduler.backend.model.period.TimePeriod;
 import shift.scheduler.backend.model.schedule.ScheduleForDay;
 import shift.scheduler.backend.model.schedule.ScheduleForWeek;
 import shift.scheduler.backend.model.view.EntityViews;
@@ -63,8 +63,8 @@ public class CompanyController {
     }
 
     @PostMapping(value = "/hours", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> setHoursOfOperation(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
-                                                      @RequestBody Collection<HoursOfOperation> timePeriods) {
+    public ResponseEntity<String> setTimePeriod(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
+                                                      @RequestBody Collection<TimePeriod> timePeriods) {
 
         Manager manager = (Manager) authenticationService.getUserFromHeader(authHeader);
 

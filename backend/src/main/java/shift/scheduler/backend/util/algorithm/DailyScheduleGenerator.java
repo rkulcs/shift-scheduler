@@ -1,10 +1,11 @@
 package shift.scheduler.backend.util.algorithm;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import shift.scheduler.backend.model.*;
-import shift.scheduler.backend.model.period.HoursOfOperation;
 import shift.scheduler.backend.model.period.TimePeriod;
 import shift.scheduler.backend.model.schedule.Schedule;
 import shift.scheduler.backend.model.schedule.ScheduleForDay;
+import shift.scheduler.backend.util.Period;
 
 import java.util.*;
 
@@ -12,13 +13,13 @@ public class DailyScheduleGenerator extends GeneticAlgorithm<Shift> {
 
     public int MAX_NUM_GENERATED_SCHEDULES = 1000;
 
-    private HoursOfOperation period;
+    private TimePeriod period;
     private List<TimePeriod> blocks;
     private short numEmployeesPerHour;
 
-    public DailyScheduleGenerator(HoursOfOperation period, short numEmployeesPerHour) {
+    public DailyScheduleGenerator(TimePeriod period, short numEmployeesPerHour) {
         this.period = period;
-        this.blocks = (List<TimePeriod>) period.getTimeBlocks();
+        this.blocks = (List<TimePeriod>) getTimeBlocks(period);
         this.numEmployeesPerHour = numEmployeesPerHour;
     }
 
@@ -118,5 +119,21 @@ public class DailyScheduleGenerator extends GeneticAlgorithm<Shift> {
         }
 
         return new ScheduleForDay(period.getDay(), shifts, blocks, numEmployeesPerHour);
+    }
+
+    /**
+     * Get the time blocks that make up the given hours of operation.
+     * For example, if the hours of operation are 4-16, and a time block is 4 hours,
+     * then this function will return the following periods: 4-8, 8-12, 12-16.
+     */
+    @JsonIgnore
+    public Collection<TimePeriod> getTimeBlocks(TimePeriod period) {
+
+        Collection<TimePeriod> blocks = new ArrayList<>();
+
+        for (short time = period.getStartHour(); time < period.getEndHour(); time += Period.HOURS)
+            blocks.add(new TimePeriod(time, (short) (time+Period.HOURS)));
+
+        return blocks;
     }
 }
