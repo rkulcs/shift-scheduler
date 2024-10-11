@@ -13,7 +13,6 @@ public class ScheduleGenerationRequestDTO {
     @JsonSerialize(using = LocalDateSerializer.class)
     private LocalDate date;
 
-    @Hour
     private Short numEmployeesPerHour;
 
     public ScheduleGenerationRequestDTO() {}

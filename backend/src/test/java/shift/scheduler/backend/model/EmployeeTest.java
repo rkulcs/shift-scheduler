@@ -1,9 +1,8 @@
 package shift.scheduler.backend.model;
 
 import org.junit.jupiter.api.Test;
-import shift.scheduler.backend.model.period.Availability;
 import shift.scheduler.backend.model.period.Day;
-import shift.scheduler.backend.model.period.HoursOfOperation;
+import shift.scheduler.backend.model.period.TimePeriod;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -16,7 +15,7 @@ public class EmployeeTest {
     void allPossibleShiftsAreGenerated() throws Exception {
 
         Employee employee = createEmployee();
-        HoursOfOperation period = new HoursOfOperation((short) 4, (short) 20, null, Day.MON);
+        TimePeriod period = new TimePeriod(Day.MON, (short) 4, (short) 20);
 
         Collection<Shift> shifts = employee.generatePotentialShifts(period);
         assertThat(shifts.size()).isEqualTo(9);
@@ -26,7 +25,7 @@ public class EmployeeTest {
     void noShiftsAreGeneratedIfNotAvailableOnGivenDay() {
 
         Employee employee = createEmployee();
-        HoursOfOperation period = new HoursOfOperation((short) 4, (short) 20, null, Day.TUE);
+        TimePeriod period = new TimePeriod(Day.TUE, (short) 4, (short) 20);
 
         Collection<Shift> shifts = employee.generatePotentialShifts(period);
         assertThat(shifts).isNull();
@@ -39,8 +38,8 @@ public class EmployeeTest {
                 (short) 4, (short) 12, (short) 4, (short) 4
         );
 
-        Collection<Availability> availabilities = new ArrayList<>();
-        availabilities.add(new Availability((short) 4, (short) 24, Day.MON));
+        Collection<TimePeriod> availabilities = new ArrayList<>();
+        availabilities.add(new TimePeriod(Day.MON, (short) 4, (short) 24));
         employee.setAvailabilities(availabilities);
 
         return employee;

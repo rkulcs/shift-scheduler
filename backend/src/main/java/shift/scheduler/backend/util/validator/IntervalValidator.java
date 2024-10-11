@@ -12,6 +12,8 @@ public class IntervalValidator implements ConstraintValidator<Interval, TimeInte
 
     @Override
     public boolean isValid(TimeInterval interval, ConstraintValidatorContext constraintValidatorContext) {
-        return interval.getStart() <= interval.getEnd();
+        return interval.getStart() != null
+                && interval.getEnd() != null
+                && interval.getStart() <= interval.getEnd();
     }
 }

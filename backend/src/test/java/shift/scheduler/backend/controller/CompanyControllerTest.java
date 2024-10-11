@@ -6,7 +6,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import shift.scheduler.backend.model.*;
 import shift.scheduler.backend.model.period.Day;
-import shift.scheduler.backend.model.period.HoursOfOperation;
+import shift.scheduler.backend.model.period.TimePeriod;
 import shift.scheduler.backend.model.schedule.ScheduleForDay;
 import shift.scheduler.backend.model.schedule.ScheduleForWeek;
 import shift.scheduler.backend.service.CompanyService;
@@ -97,7 +97,7 @@ public class CompanyControllerTest extends ControllerTest {
         Company company = mock(Company.class);
         when(authenticationService.getUserFromHeader(any())).thenReturn(null);
 
-        mockMvc.perform(postJson("/company/hours", createHoursOfOperationRequest(company)).header("Authorization", ""))
+        mockMvc.perform(postJson("/company/hours", createTimePeriodRequest(company)).header("Authorization", ""))
                 .andExpect(status().isBadRequest());
     }
 
@@ -108,8 +108,8 @@ public class CompanyControllerTest extends ControllerTest {
 
         when(authenticationService.getUserFromHeader(any())).thenReturn(manager);
 
-        Collection<HoursOfOperation> hours = new ArrayList<>();
-        hours.add(new HoursOfOperation((short) 0, (short) 60, manager.getCompany(), Day.MON));
+        Collection<TimePeriod> hours = new ArrayList<>();
+        hours.add(new TimePeriod(Day.MON, (short) 0, (short) 60));
 
         mockMvc.perform(postJson("/company/hours", stringify(hours)).header("Authorization", ""))
                 .andExpect(status().isBadRequest());
@@ -124,7 +124,7 @@ public class CompanyControllerTest extends ControllerTest {
         when(companyService.save(any())).thenReturn(manager.getCompany());
 
         mockMvc.perform(
-                        postJson("/company/hours", createHoursOfOperationRequest(manager.getCompany()))
+                        postJson("/company/hours", createTimePeriodRequest(manager.getCompany()))
                                 .header("Authorization", "")
                 )
                 .andExpect(status().isOk());
@@ -167,12 +167,12 @@ public class CompanyControllerTest extends ControllerTest {
                 .andExpect(status().isNoContent());
     }
 
-    private String createHoursOfOperationRequest(Company company) throws JsonProcessingException {
+    private String createTimePeriodRequest(Company company) throws JsonProcessingException {
 
-        Collection<HoursOfOperation> hours = new ArrayList<>();
+        Collection<TimePeriod> hours = new ArrayList<>();
 
         for (int i = 0; i < 6; i++) {
-            hours.add(new HoursOfOperation((short) 0, (short) (16 + 4*(i%2)), company, Day.MON));
+            hours.add(new TimePeriod(Day.MON, (short) 0, (short) (16 + 4*(i%2))));
         }
 
         return stringify(hours);

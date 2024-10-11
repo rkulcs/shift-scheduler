@@ -57,7 +57,7 @@ public class ScheduleConstraintViolationTest {
     @Test
     public void producesCorrectCompanyConstraintViolationString() throws Exception {
 
-        TimeInterval period = new TimePeriod((short) 4, (short) 8);
+        TimePeriod period = new TimePeriod((short) 4, (short) 8);
 
         var violation = new CompanyConstraintViolation(period, 1);
         assertThat(violation.toString())

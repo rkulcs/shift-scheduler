@@ -11,6 +11,8 @@ public class HourValidator implements ConstraintValidator<Hour, Short> {
 
     @Override
     public boolean isValid(Short aShort, ConstraintValidatorContext constraintValidatorContext) {
-        return (0 <= aShort && aShort <= 24 && (aShort % 4 == 0));
+        return aShort != null
+                && 0 <= aShort
+                && (aShort % 4 == 0);
     }
 }

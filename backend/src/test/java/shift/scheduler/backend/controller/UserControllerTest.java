@@ -40,7 +40,7 @@ public class UserControllerTest extends ControllerTest {
         @MethodSource("generateRegistrationRequestBodiesWithMissingDetails")
         void registrationShouldFailWithMissingDetails(String json) throws Exception {
 
-            var responseBody = executeInvalidUserControllerRequest(endpoint(), json);
+            var responseBody = executeUnauthenticatedPostWithUserError(endpoint(), json);
 
             assertNotNull(responseBody.errors());
             assertFalse(responseBody.errors().isEmpty());
@@ -50,7 +50,7 @@ public class UserControllerTest extends ControllerTest {
         @MethodSource("genereateRegistrationRequestBodiesWithBlankDetails")
         void registrationShouldFailWithBlankDetails(String json) throws Exception {
 
-            var responseBody = executeInvalidUserControllerRequest(endpoint(), json);
+            var responseBody = executeUnauthenticatedPostWithUserError(endpoint(), json);
 
             assertNotNull(responseBody.errors());
             assertFalse(responseBody.errors().isEmpty());
@@ -60,7 +60,7 @@ public class UserControllerTest extends ControllerTest {
         @MethodSource("generateRegistrationRequestBodiesWithInvalidPasswords")
         void registrationShouldFailWithInvalidPassword(String json) throws Exception {
 
-            var responseBody = executeInvalidUserControllerRequest(endpoint(), json);
+            var responseBody = executeUnauthenticatedPostWithUserError(endpoint(), json);
 
             assertNotNull(responseBody.errors());
             assertEquals(1, responseBody.errors().size());
@@ -177,7 +177,7 @@ public class UserControllerTest extends ControllerTest {
 
             String json = createLoginRequestBody();
 
-            var responseBody = executeInvalidUserControllerRequest(endpoint(), json);
+            var responseBody = executeUnauthenticatedPostWithUserError(endpoint(), json);
 
             assertNotNull(responseBody.errors());
             assertFalse(responseBody.errors().isEmpty());
@@ -256,24 +256,5 @@ public class UserControllerTest extends ControllerTest {
             assertFalse(responseBody.errors().isEmpty());
             assertEquals(error, responseBody.errors().getFirst());
         }
-    }
-
-    private ErrorDTO executeInvalidUserControllerRequest(String endpoint) throws Exception {
-
-        var result = mockMvc.perform(post(endpoint))
-                .andExpect(status().isBadRequest())
-                .andReturn();
-
-        return deserialize(result.getResponse().getContentAsString(), ErrorDTO.class);
-    }
-
-    private ErrorDTO executeInvalidUserControllerRequest(
-            String endpoint, String json) throws Exception {
-
-        var result = mockMvc.perform(postJson(endpoint, json))
-                .andExpect(status().isBadRequest())
-                .andReturn();
-
-        return deserialize(result.getResponse().getContentAsString(), ErrorDTO.class);
     }
 }
