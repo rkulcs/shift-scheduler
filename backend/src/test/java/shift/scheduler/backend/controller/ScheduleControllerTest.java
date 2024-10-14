@@ -1,14 +1,22 @@
 package shift.scheduler.backend.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import shift.scheduler.backend.model.*;
 import shift.scheduler.backend.dto.ScheduleGenerationRequestDTO;
+import shift.scheduler.backend.model.schedule.ScheduleForWeek;
 import shift.scheduler.backend.service.ScheduleGenerationService;
 import shift.scheduler.backend.service.ScheduleService;
+import shift.scheduler.backend.service.UserService;
 import shift.scheduler.backend.util.Util;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,132 +30,196 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class ScheduleControllerTest extends ControllerTest {
 
     @MockBean
+    UserService userService;
+
+    @MockBean
     ScheduleService scheduleService;
 
     @MockBean
     ScheduleGenerationService scheduleGenerationService;
 
-    @Test
-    void getScheduleShouldReturnBadRequestWithInvalidUser() throws Exception {
+    @Nested
+    class GetSchedule implements EndpointTest {
 
-        mockInvalidAuthHeader();
+        @Override
+        public String endpoint() {
+            return "/schedule";
+        }
 
-        mockMvc.perform(
-                get("/schedule/2024-06-30").header("Authorization", "Bearer jwt")
-        ).andExpect(status().isBadRequest());
+        public String endpoint(String date) {
+            return String.format("%s/%s", endpoint(), date);
+        }
+
+        @BeforeEach
+        void beforeEach() {
+
+            Employee employee = new Employee();
+            employee.setCompany(new Company());
+
+            when(userService.findByAuthHeaderValue(any())).thenReturn(employee);
+        }
+
+        @ParameterizedTest
+        @MethodSource("createValidDates")
+        void getShouldReturnOkWithValidDate(String date) throws Exception {
+
+            mockMvc.perform(get(endpoint(date)).header("Authorization", ""))
+                    .andExpect(status().isOk());
+        }
+
+        @ParameterizedTest
+        @MethodSource("createInvalidDates")
+        void getShouldReturnBadRequestWithInvalidDate(String date) throws Exception {
+
+            mockMvc.perform(get(endpoint(date)).header("Authorization", ""))
+                    .andExpect(status().isBadRequest());
+        }
+
+        private static List<String> createValidDates() {
+
+            return List.of(
+                "2024-01-01",
+                "2023-01-30",
+                "2023-02-28",
+                "2023-12-31"
+            );
+        }
+
+        private static List<String> createInvalidDates() {
+
+            return List.of(
+                "2024",
+                "2023-01",
+                "2023-02-31",
+                "date"
+            );
+        }
     }
 
-    @Test
-    void getScheduleShouldReturnBadRequestWithInvalidCompany() throws Exception {
+    @Nested
+    class GenerateSchedule implements EndpointTest {
 
-        Employee employee = new Employee();
+        @Override
+        public String endpoint() {
+            return "/schedule/generate";
+        }
 
-        mockMvc.perform(
-                get("/schedule/2024-06-30").header("Authorization", "Bearer jwt")
-        ).andExpect(status().isBadRequest());
+        @ParameterizedTest
+        @MethodSource("createInvalidScheduleGenerationRequests")
+        void generateShouldReturnBadRequestWithInvalidRequest(String request) throws Exception {
+
+            Manager manager = new Manager();
+            manager.setCompany(new Company());
+
+            when(userService.findByAuthHeaderValue(any())).thenReturn(manager);
+
+            mockMvc.perform(
+                    post(endpoint())
+                            .contentType("application/json")
+                            .content(request)
+                            .header("Authorization", "")
+            ).andExpect(status().isBadRequest());
+        }
+
+        @ParameterizedTest
+        @MethodSource("createValidScheduleGenerationRequests")
+        void generateShouldReturnUnprocessableEntityWithValidRequestIfNoScheduleWasGenerated(String request) throws Exception {
+
+            Manager manager = new Manager();
+            manager.setCompany(new Company());
+
+            when(userService.findByAuthHeaderValue(any())).thenReturn(manager);
+
+            mockMvc.perform(
+                    post(endpoint())
+                            .contentType("application/json")
+                            .content(request)
+                            .header("Authorization", "")
+            ).andExpect(status().isUnprocessableEntity());
+        }
+
+        @ParameterizedTest
+        @MethodSource("createValidScheduleGenerationRequests")
+        void generateShouldReturnOkWithValidRequestIfSchedulesWereGenerated(String request) throws Exception {
+
+            var manager = new Manager();
+            var company = new Company();
+            manager.setCompany(company);
+
+            var schedule = new ScheduleForWeek(new ArrayList<>());
+            schedule.setCompany(company);
+
+            when(userService.findByAuthHeaderValue(any())).thenReturn(manager);
+            when(scheduleGenerationService.generateSchedulesForWeek(any(), any()))
+                    .thenReturn(List.of(schedule));
+
+            mockMvc.perform(
+                    post(endpoint())
+                            .contentType("application/json")
+                            .content(request)
+                            .header("Authorization", "")
+            ).andExpect(status().isOk());
+        }
+
+        private static List<String> createInvalidScheduleGenerationRequests() throws JsonProcessingException {
+
+            return List.of(
+                    stringify(new ScheduleGenerationRequestDTO(null, null)),
+                    stringify(new ScheduleGenerationRequestDTO(LocalDate.of(2025, 2, 1), null)),
+                    stringify(new ScheduleGenerationRequestDTO(LocalDate.of(2024, 1, 1), null)),
+                    stringify(new ScheduleGenerationRequestDTO(LocalDate.of(2024, 1, 1), (short) -1)),
+                    stringify(new ScheduleGenerationRequestDTO(LocalDate.of(2024, 1, 1), (short) 0))
+            );
+        }
+
+        private static List<String> createValidScheduleGenerationRequests() throws JsonProcessingException {
+
+            return List.of(
+                    stringify(new ScheduleGenerationRequestDTO(LocalDate.of(2024, 1, 1), (short) 1)),
+                    stringify(new ScheduleGenerationRequestDTO(LocalDate.of(2024, 1, 1), (short) 4)),
+                    stringify(new ScheduleGenerationRequestDTO(LocalDate.of(2024, 12, 31), (short) 10))
+            );
+        }
     }
 
-    @Test
-    void getScheduleShouldReturnBadRequestWithInvalidDate() throws Exception {
+    @Nested
+    class SaveSchedule implements EndpointTest {
 
-        Employee employee = new Employee();
-        employee.setCompany(new Company());
+        @Override
+        public String endpoint() {
+            return "/schedule";
+        }
 
-        when(authenticationService.getUserFromHeader(any())).thenReturn(employee);
+        @Test
+        void saveShouldReturnInternalServerErrorIfScheduleCouldNotBeSaved() throws Exception {
 
-        mockMvc.perform(
-                get("/schedule/date").header("Authorization", "Bearer jwt")
-        ).andExpect(status().isBadRequest());
+            var schedule = new ScheduleForWeek(new ArrayList<>());
+            schedule.setCompany(new Company());
+
+            when(scheduleService.save(any())).thenThrow(new Exception());
+
+            mockMvc.perform(
+                    post(endpoint())
+                            .contentType("application/json")
+                            .content(stringify(schedule))
+                            .header("Authorization", "")
+            ).andExpect(status().isInternalServerError());
+        }
+
+        @Test
+        void saveShouldReturnOkIfScheduleWasSaved() throws Exception {
+
+            var schedule = new ScheduleForWeek(new ArrayList<>());
+            schedule.setCompany(new Company());
+
+            when(scheduleService.save(any())).thenReturn(null);
+
+            mockMvc.perform(
+                    post(endpoint())
+                            .contentType("application/json")
+                            .content(stringify(schedule))
+                            .header("Authorization", "")
+            ).andExpect(status().isOk());
+        }
     }
-
-    @Test
-    void getScheduleShouldReturnOkWithValidUserAndDate() throws Exception {
-
-        Employee employee = Util.createValidEmployee();
-
-        when(jwtService.isTokenValid(any(), any())).thenReturn(true);
-        when(authenticationService.getUserFromHeader(any())).thenReturn(employee);
-        when(scheduleService.findByCompanyAndDate(any(), any())).thenReturn(Util.createValidScheduleForWeek());
-
-        mockMvc.perform(
-                get("/schedule/2024-06-30").header("Authorization", "Bearer jwt")
-        ).andExpect(status().isOk());
-    }
-
-    @Test
-    void scheduleGenerationShouldReturnBadRequestWithInvalidRequest() throws Exception {
-
-        mockMvc.perform(
-                post("/schedule/generate")
-                        .contentType("application/json")
-                        .content(stringify(new ScheduleGenerationRequestDTO()))
-        ).andExpect(status().isBadRequest());
-    }
-
-    @Test
-    void scheduleGenerationShouldReturnOkWithValidRequest() throws Exception {
-
-        Manager manager = Util.createValidManager();
-
-        when(jwtService.isTokenValid(any(), any())).thenReturn(true);
-        when(authenticationService.getUserFromHeader(any())).thenReturn(manager);
-        when(scheduleGenerationService.generateSchedulesForWeek(any(), any()))
-                .thenReturn(List.of(Util.createValidScheduleForWeek()));
-
-        mockMvc.perform(
-                post("/schedule/generate")
-                        .header("Authorization", "")
-                        .contentType("application/json")
-                        .content(stringify(new ScheduleGenerationRequestDTO()))
-        ).andExpect(status().isOk());
-    }
-
-    @Test
-    void scheduleGenerationShouldReturnUnprocessableEntityWithEmptyScheduleList() throws Exception {
-
-        Manager manager = Util.createValidManager();
-
-        when(jwtService.isTokenValid(any(), any())).thenReturn(true);
-        when(authenticationService.getUserFromHeader(any())).thenReturn(manager);
-        when(scheduleGenerationService.generateSchedulesForWeek(any(), any()))
-                .thenReturn(new ArrayList<>());
-
-        mockMvc.perform(
-                postJson("/schedule/generate", stringify(new ScheduleGenerationRequestDTO()))
-                        .header("Authorization", "")
-        ).andExpect(status().isUnprocessableEntity());
-    }
-
-    @Test
-    void saveShouldReturnBadRequestWithInvalidSchedule() throws Exception {
-
-        Manager manager = Util.createValidManager();
-
-        when(jwtService.isTokenValid(any(), any())).thenReturn(true);
-        when(authenticationService.getUserFromHeader(any())).thenReturn(manager);
-
-        mockMvc.perform(
-                post("/schedule")
-                        .header("Authorization", "")
-                        .contentType("application/json")
-                        .content(stringify(null))
-        ).andExpect(status().isBadRequest());
-    }
-
-    @Test
-    void saveShouldReturnOkWithValidSchedule() throws Exception {
-
-        Manager manager = Util.createValidManager();
-
-        when(jwtService.isTokenValid(any(), any())).thenReturn(true);
-        when(authenticationService.getUserFromHeader(any())).thenReturn(manager);
-
-        mockMvc.perform(
-                post("/schedule")
-                        .header("Authorization", "")
-                        .contentType("application/json")
-                        .content(stringify(Util.createValidScheduleForWeek()))
-        ).andExpect(status().isOk());
-    }
-
 }

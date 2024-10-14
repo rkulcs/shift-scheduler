@@ -45,7 +45,7 @@ public class ScheduleGenerationService {
         if (company == null)
             return null;
 
-        short numEmployeesPerHour = request.getNumEmployeesPerHour();
+        short numEmployeesPerHour = request.numEmployeesPerHour();
         var employees = company.getEmployees();
 
         if (employees.size() < numEmployeesPerHour)
@@ -78,7 +78,7 @@ public class ScheduleGenerationService {
         WeeklyScheduleGenerator weeklyScheduleGenerator = new WeeklyScheduleGenerator();
         Collection<Schedule> schedules = weeklyScheduleGenerator.generateSchedules((List<List<ScheduleForDay>>) (Object) candidateDailySchedules);
 
-        LocalDate firstDay = DateTimeUtil.getFirstDayOfWeek(request.getDate());
+        LocalDate firstDay = DateTimeUtil.getFirstDayOfWeek(request.date());
 
         Collection<ScheduleForWeek> weeklySchedules = schedules.stream().map(schedule -> (ScheduleForWeek) schedule).toList();
 

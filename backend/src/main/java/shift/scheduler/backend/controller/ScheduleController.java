@@ -1,6 +1,7 @@
 package shift.scheduler.backend.controller;
 
 import jakarta.annotation.security.RolesAllowed;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -9,10 +10,9 @@ import org.springframework.web.bind.annotation.*;
 import shift.scheduler.backend.model.*;
 import shift.scheduler.backend.model.schedule.ScheduleForWeek;
 import shift.scheduler.backend.dto.ScheduleGenerationRequestDTO;
-import shift.scheduler.backend.service.AuthenticationService;
 import shift.scheduler.backend.service.ScheduleGenerationService;
 import shift.scheduler.backend.service.ScheduleService;
-import shift.scheduler.backend.util.DateTimeUtil;
+import shift.scheduler.backend.service.UserService;
 
 import java.time.LocalDate;
 import java.util.Collection;
@@ -22,7 +22,7 @@ import java.util.Collection;
 public class ScheduleController {
 
     @Autowired
-    private AuthenticationService authenticationService;
+    private UserService userService;
 
     @Autowired
     private ScheduleService scheduleService;
@@ -32,31 +32,18 @@ public class ScheduleController {
 
     @GetMapping(value = "/{date}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ScheduleForWeek> get(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
-                                               @PathVariable String date) {
+                                               @PathVariable LocalDate date) {
 
-        User user = authenticationService.getUserFromHeader(authHeader);
-
-        if (user == null || user.getCompany() == null)
-            return ResponseEntity.badRequest().body(null);
-
-        LocalDate parsedDate = DateTimeUtil.parseLocalDate(date);
-
-        if (parsedDate == null)
-            return ResponseEntity.badRequest().body(null);
-
-        return ResponseEntity.ok(scheduleService.findByCompanyAndDate(user.getCompany(), parsedDate));
+        User user = userService.findByAuthHeaderValue(authHeader);
+        return ResponseEntity.ok(scheduleService.findByCompanyAndDate(user.getCompany(), date));
     }
 
     @PostMapping(value = "/generate", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @RolesAllowed("MANAGER")
     public ResponseEntity<Collection<ScheduleForWeek>> generate(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
-                                                                @RequestBody ScheduleGenerationRequestDTO request) {
+                                                                @Valid @RequestBody ScheduleGenerationRequestDTO request) {
 
-        Manager manager = (Manager) authenticationService.getUserFromHeader(authHeader);
-
-        if (manager == null)
-            return ResponseEntity.badRequest().body(null);
-
+        Manager manager = (Manager) userService.findByAuthHeaderValue(authHeader);
         Company company = manager.getCompany();
 
         Collection<ScheduleForWeek> schedules = scheduleGenerationService.generateSchedulesForWeek(request, company);
@@ -72,7 +59,7 @@ public class ScheduleController {
     public ResponseEntity<String> save(@RequestBody ScheduleForWeek schedule) {
 
         try {
-            ScheduleForWeek savedSchedule = scheduleService.save(schedule);
+            scheduleService.save(schedule);
             return ResponseEntity.ok("Schedule saved");
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(e.getMessage());
