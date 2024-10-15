@@ -35,7 +35,12 @@ public class ScheduleController {
                                                @PathVariable LocalDate date) {
 
         User user = userService.findByAuthHeaderValue(authHeader);
-        return ResponseEntity.ok(scheduleService.findByCompanyAndDate(user.getCompany(), date));
+        var result = scheduleService.findByCompanyAndDate(user.getCompany(), date);
+
+        if (result.isPresent())
+            return ResponseEntity.ok(result.get());
+        else
+            return ResponseEntity.unprocessableEntity().build();
     }
 
     @PostMapping(value = "/generate", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -56,13 +61,14 @@ public class ScheduleController {
 
     @PostMapping(value = "", consumes = MediaType.APPLICATION_JSON_VALUE)
     @RolesAllowed("MANAGER")
-    public ResponseEntity<String> save(@RequestBody ScheduleForWeek schedule) {
+    public ResponseEntity<String> save(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
+                                       @RequestBody ScheduleForWeek schedule) {
 
-        try {
-            scheduleService.save(schedule);
+        var result = scheduleService.save(schedule);
+
+        if (result.isPresent())
             return ResponseEntity.ok("Schedule saved");
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().body(e.getMessage());
-        }
+        else
+            return ResponseEntity.internalServerError().body("Failed to save schedule");
     }
 }

@@ -95,10 +95,12 @@ public class CompanyController {
         int today = date.getDayOfWeek().getValue();
 
         // TODO: Optimize schedule retrieval
-        ScheduleForWeek schedule = scheduleService.findByCompanyAndDate(company, date);
+        var scheduleQueryResult = scheduleService.findByCompanyAndDate(company, date);
 
-        if (schedule == null)
+        if (scheduleQueryResult.isEmpty())
             return ResponseEntity.noContent().build();
+
+        var schedule = scheduleQueryResult.get();
 
         CompanyDashboardData.DailyScheduleSummary nextDay = null;
 

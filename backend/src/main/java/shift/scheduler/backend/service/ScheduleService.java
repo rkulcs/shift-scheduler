@@ -4,18 +4,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import shift.scheduler.backend.model.Company;
 import shift.scheduler.backend.model.Employee;
-import shift.scheduler.backend.model.User;
 import shift.scheduler.backend.model.schedule.ScheduleForWeek;
 import shift.scheduler.backend.repository.ScheduleForWeekRepository;
 import shift.scheduler.backend.util.DateTimeUtil;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 @Service
 public class ScheduleService {
 
     @Autowired
-    private UserService employeeService;
+    private UserService userService;
 
     @Autowired
     private CompanyService companyService;
@@ -23,17 +23,14 @@ public class ScheduleService {
     @Autowired
     private ScheduleForWeekRepository scheduleForWeekRepository;
 
-    public ScheduleForWeek findByCompanyAndDate(Company company, LocalDate date) {
-
-        if (company == null || date == null)
-            return null;
+    public Optional<ScheduleForWeek> findByCompanyAndDate(Company company, LocalDate date) {
 
         LocalDate firstDayOfWeek = DateTimeUtil.getFirstDayOfWeek(date);
 
-        return scheduleForWeekRepository.findByCompanyAndFirstDay(company, firstDayOfWeek).orElse(null);
+        return scheduleForWeekRepository.findByCompanyAndFirstDay(company, firstDayOfWeek);
     }
 
-    public ScheduleForWeek save(ScheduleForWeek schedule) throws Exception {
+    public Optional<ScheduleForWeek> save(ScheduleForWeek schedule) {
 
         schedule.setCompany(companyService.findById(schedule.getCompany().getId()));
 
@@ -51,9 +48,13 @@ public class ScheduleService {
         }
 
         schedule.getDailySchedules().forEach(dailySchedule -> {
-            dailySchedule.getShifts().forEach(shift -> shift.setEmployee((Employee) employeeService.findByUsername(shift.getEmployee().getUsername()).get()));
+            dailySchedule.getShifts().forEach(shift -> shift.setEmployee((Employee) userService.findByUsername(shift.getEmployee().getUsername()).get()));
         });
 
-        return scheduleForWeekRepository.save(schedule);
+        try {
+            return Optional.of(scheduleForWeekRepository.save(schedule));
+        } catch (Exception e) {
+            return Optional.empty();
+        }
     }
 }

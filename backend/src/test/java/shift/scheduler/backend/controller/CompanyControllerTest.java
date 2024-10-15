@@ -16,6 +16,7 @@ import shift.scheduler.backend.util.Util;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -146,7 +147,7 @@ public class CompanyControllerTest extends ControllerTest {
         ScheduleForWeek schedule = mock(ScheduleForWeek.class);
 
         when(authenticationService.getUserFromHeader(any())).thenReturn(manager);
-        when(scheduleService.findByCompanyAndDate(any(), any())).thenReturn(schedule);
+        when(scheduleService.findByCompanyAndDate(any(), any())).thenReturn(Optional.of(schedule));
         when(schedule.getDailySchedules()).thenReturn(
                 List.of(new ScheduleForDay(Day.MON, List.of(new Shift((short) 0, (short) 8, new Employee()))))
         );

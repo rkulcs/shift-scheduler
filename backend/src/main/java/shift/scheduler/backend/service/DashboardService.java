@@ -26,10 +26,12 @@ public class DashboardService {
         int today = date.getDayOfWeek().getValue();
 
         // TODO: Optimize shift retrieval
-        ScheduleForWeek schedule = scheduleService.findByCompanyAndDate(employee.getCompany(), date);
+        var scheduleQueryResult = scheduleService.findByCompanyAndDate(employee.getCompany(), date);
 
-        if (schedule == null)
+        if (scheduleQueryResult.isEmpty())
             return null;
+
+        var schedule = scheduleQueryResult.get();
 
         List<Shift> shifts = new ArrayList<>();
         EmployeeDashboardDataDTO.DetailedShiftDataDTO nextShift = null;

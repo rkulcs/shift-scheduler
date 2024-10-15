@@ -19,6 +19,7 @@ import shift.scheduler.backend.util.Util;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -61,10 +62,23 @@ public class ScheduleControllerTest extends ControllerTest {
 
         @ParameterizedTest
         @MethodSource("createValidDates")
-        void getShouldReturnOkWithValidDate(String date) throws Exception {
+        void getShouldReturnOkWithValidDateAndExistingSchedule(String date) throws Exception {
+
+            var schedule = new ScheduleForWeek(new ArrayList<>());
+            when(scheduleService.findByCompanyAndDate(any(), any())).thenReturn(Optional.of(schedule));
 
             mockMvc.perform(get(endpoint(date)).header("Authorization", ""))
                     .andExpect(status().isOk());
+        }
+
+        @ParameterizedTest
+        @MethodSource("createValidDates")
+        void getShouldReturnUnprocessableEntityWithValidDateAndNonexistentSchedule(String date) throws Exception {
+
+            when(scheduleService.findByCompanyAndDate(any(), any())).thenReturn(Optional.empty());
+
+            mockMvc.perform(get(endpoint(date)).header("Authorization", ""))
+                    .andExpect(status().isUnprocessableEntity());
         }
 
         @ParameterizedTest
@@ -196,7 +210,7 @@ public class ScheduleControllerTest extends ControllerTest {
             var schedule = new ScheduleForWeek(new ArrayList<>());
             schedule.setCompany(new Company());
 
-            when(scheduleService.save(any())).thenThrow(new Exception());
+            when(scheduleService.save(any())).thenReturn(Optional.empty());
 
             mockMvc.perform(
                     post(endpoint())
@@ -212,7 +226,7 @@ public class ScheduleControllerTest extends ControllerTest {
             var schedule = new ScheduleForWeek(new ArrayList<>());
             schedule.setCompany(new Company());
 
-            when(scheduleService.save(any())).thenReturn(null);
+            when(scheduleService.save(any())).thenReturn(Optional.of(schedule));
 
             mockMvc.perform(
                     post(endpoint())
