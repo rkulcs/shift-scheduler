@@ -32,7 +32,14 @@ public class ScheduleService {
 
     public Optional<ScheduleForWeek> save(ScheduleForWeek schedule) {
 
-        schedule.setCompany(companyService.findById(schedule.getCompany().getId()));
+        var companyQueryResult = companyService.findById(schedule.getCompany().getId());
+
+        if (companyQueryResult.isEmpty())
+            return Optional.empty();
+
+        var company = companyQueryResult.get();
+
+        schedule.setCompany(company);
 
         LocalDate firstDayOfWeek = DateTimeUtil.getFirstDayOfWeek(schedule.getFirstDay());
         schedule.setFirstDay(firstDayOfWeek);

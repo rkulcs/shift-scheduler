@@ -122,7 +122,7 @@ public class CompanyControllerTest extends ControllerTest {
         Manager manager = Util.createValidManager();
 
         when(authenticationService.getUserFromHeader(any())).thenReturn(manager);
-        when(companyService.save(any())).thenReturn(manager.getCompany());
+//        when(companyService.save(any())).thenReturn(manager.getCompany());
 
         mockMvc.perform(
                         postJson("/company/hours", createTimePeriodRequest(manager.getCompany()))

@@ -59,6 +59,9 @@ public class ScheduleController {
             return ResponseEntity.ok(schedules);
     }
 
+    /* TODO: Update to use DTO as request body. The generated schedules could also be cached for a
+       limited period, allowing users to simply provide the ID of the cached schedule to persist to
+       the database. */
     @PostMapping(value = "", consumes = MediaType.APPLICATION_JSON_VALUE)
     @RolesAllowed("MANAGER")
     public ResponseEntity<String> save(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
