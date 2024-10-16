@@ -18,9 +18,9 @@ public class UserService {
 
     private final UserRepository repository;
 
-    private JwtService jwtService;
+    private final JwtService jwtService;
 
-    private ModelMapper modelMapper;
+    private final ModelMapper modelMapper;
 
     public UserService(UserRepository repository, JwtService jwtService, ModelMapper modelMapper) {
 

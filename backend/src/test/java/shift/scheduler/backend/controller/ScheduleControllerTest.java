@@ -14,7 +14,6 @@ import shift.scheduler.backend.model.schedule.ScheduleForWeek;
 import shift.scheduler.backend.service.ScheduleGenerationService;
 import shift.scheduler.backend.service.ScheduleService;
 import shift.scheduler.backend.service.UserService;
-import shift.scheduler.backend.util.Util;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
