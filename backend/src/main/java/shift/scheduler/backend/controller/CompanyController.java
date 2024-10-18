@@ -12,12 +12,8 @@ import shift.scheduler.backend.model.*;
 import shift.scheduler.backend.model.view.EntityViews;
 import shift.scheduler.backend.service.CompanyService;
 import shift.scheduler.backend.service.DashboardService;
-import shift.scheduler.backend.service.ScheduleService;
 import shift.scheduler.backend.service.UserService;
 
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.temporal.TemporalAdjusters;
 import java.util.*;
 
 @RestController
@@ -60,7 +56,7 @@ public class CompanyController {
     }
 
     @PostMapping(value = "/hours", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> setTimePeriod(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
+    public ResponseEntity<String> setHours(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
                                                 @RequestBody Collection<TimePeriodDTO> timePeriods) {
 
         Manager manager = (Manager) userService.findByAuthHeaderValue(authHeader);
