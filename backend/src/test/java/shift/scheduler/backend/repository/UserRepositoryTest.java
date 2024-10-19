@@ -1,5 +1,7 @@
 package shift.scheduler.backend.repository;
 
+import org.h2.tools.Server;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -15,6 +17,7 @@ import shift.scheduler.backend.util.builder.CompanyBuilder;
 import shift.scheduler.backend.util.builder.EmployeeBuilder;
 import shift.scheduler.backend.util.builder.ManagerBuilder;
 
+import java.sql.SQLException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -26,6 +29,14 @@ public class UserRepositoryTest {
 
     @Autowired
     UserRepository userRepository;
+
+    /**
+     * Starts a web server which allows for accessing the H2 console for debugging purposes.
+     */
+    @BeforeAll
+    static void initWebServer() throws SQLException {
+        Server.createWebServer("-web", "-webAllowOthers", "-webPort", "8082").start();
+    }
 
     @Test
     void saveAndFlushShouldSaveValidManager() throws Exception {

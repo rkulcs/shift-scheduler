@@ -22,13 +22,13 @@ public class Employee extends User {
 
     @Valid
     @NotNull
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "daily_hours_id")
     private TimePeriod hoursPerDayRange;
 
     @Valid
     @NotNull
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "weekly_hours_id")
     private TimePeriod hoursPerWeekRange;
 

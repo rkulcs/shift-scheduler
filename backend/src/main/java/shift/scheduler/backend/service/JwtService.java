@@ -43,12 +43,12 @@ public class JwtService {
     private JwtRepository jwtRepository;
 
     public String extractTokenFromHeader(String header) {
-        var token = header.substring(HEADER_JWT_START_INDEX);
 
-        if (token == null)
+        if (header == null || header.length() <= HEADER_JWT_START_INDEX)
             throw new AuthenticationException(List.of("Missing JWT from authentication header"));
 
-        return token;
+        // Return token after "Bearer " in authentication header value
+        return header.substring(HEADER_JWT_START_INDEX);
     }
 
     public String generateToken(UserDetails userDetails) {

@@ -31,7 +31,7 @@ public class AuthenticationService {
     @Autowired
     private JwtService jwtService;
 
-    private ModelMapper modelMapper;
+    private final ModelMapper modelMapper;
 
     @Autowired
     public AuthenticationService(ModelMapper modelMapper) {
@@ -105,9 +105,6 @@ public class AuthenticationService {
 
         String token = jwtService.extractTokenFromHeader(authHeader);
         String username = jwtService.extractUsername(token);
-
-        Account account = accountService.findByUsername(username)
-                .orElseThrow(() -> new AuthenticationException(List.of("User does not exist")));
 
         return userService.findByUsername(username)
                 .orElseThrow(() -> new AuthenticationException(List.of("User does not exist")));
