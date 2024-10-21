@@ -30,8 +30,8 @@ export default function Login() {
     unauthenticatedPostRequest('user/login', {...data})
       .then(res => {
         if (res.ok) {
-          res.json()
-            .then(body => storeJWT(body.token))
+            res.text()
+            .then((token: string) => storeJWT(token))
             .then(() => {
               // Store username and role locally
               const payload: TokenPayload = jwtDecode(getJWT() as string)
