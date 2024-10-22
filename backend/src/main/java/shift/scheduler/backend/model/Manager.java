@@ -4,6 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 
@@ -11,6 +12,7 @@ import org.hibernate.annotations.CascadeType;
 public class Manager extends User {
 
     @Valid
+    @NotNull
     @OneToOne
     @JoinColumn(name = "company_id")
     @Cascade(CascadeType.ALL)
@@ -26,6 +28,7 @@ public class Manager extends User {
 
     public Manager(Account account, Company company) {
         super(account);
+        setCompany(company);
     }
 
     public Company getCompany() {
@@ -34,5 +37,6 @@ public class Manager extends User {
 
     public void setCompany(Company company) {
         this.company = company;
+        company.setManager(this);
     }
 }

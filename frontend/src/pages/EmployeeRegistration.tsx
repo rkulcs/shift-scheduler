@@ -25,22 +25,37 @@ export default function EmployeeRegistration() {
     handleSubmit,
     setValue,
     formState: { errors }
-  } = useForm<UserRegistrationFormInput>()
+  } = useForm<UserRegistrationFormInput>({
+    defaultValues: {
+      account: {
+        username: '',
+        name: '',
+        role: 'EMPLOYEE'
+      },
+      company: {
+        name: '',
+        location: ''
+      }
+    }
+  })
 
   const onSubmit: SubmitHandler<UserRegistrationFormInput> = (data) => {
-    unauthenticatedPostRequest('user/register', {...data, company: companies[selectedCompany], role: "EMPLOYEE"})
-      .then(res => res.json())
-      .then(body => {
-        if (body.error) {
-          setError(body.error)
-          return false
-        } else {
-          setError('')
-          const user = new User(data.username, 'EMPLOYEE')
-          login(user, body.token)
-          dispatch(setUser(user.serialize()))
-          return true
-        }
+    unauthenticatedPostRequest('user/register', {...data})
+      .then(res => {
+        return (async () => {
+          if (res.ok) {
+            setError('')
+            const user = new User(data.account.username, 'EMPLOYEE')
+            const token = await res.text()
+            login(user, token)
+            dispatch(setUser(user.serialize()))
+            return true
+          } else {
+            const body = await res.json()
+            setError(body.errors[0])
+            return false
+          }
+        })()
       })
       .then(ok => ok && navigate('/'))
       .catch(() => setError('Invalid registration details'))
@@ -74,9 +89,9 @@ export default function EmployeeRegistration() {
         {error && <Alert severity="error">{error}</Alert>}
         
         <FormSection title="Employee Details">
-          <TextInputField name="username" label="Username" control={control} />
-          <TextInputField name="name" label="Name" control={control} />
-          <TextInputField name="password" label="Password" control={control} password />
+          <TextInputField name="account.username" label="Username" control={control} />
+          <TextInputField name="account.name" label="Name" control={control} />
+          <TextInputField name="account.password" label="Password" control={control} password />
 
           <FormControl fullWidth>
             <InputLabel id="company-label">Company</InputLabel>

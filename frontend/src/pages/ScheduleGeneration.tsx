@@ -97,7 +97,7 @@ export default function ScheduleGeneration() {
             </Grid>
           </FormSection>
 
-          <Button variant="contained" type="submit">Generate</Button>
+          <Button id="generate-button" variant="contained" type="submit">Generate</Button>
         </form>
       </LocalizationProvider>
       <Backdrop open={showBackdrop}>

@@ -24,13 +24,13 @@ public class Employee extends User {
     @NotNull
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "daily_hours_id")
-    private TimePeriod hoursPerDayRange;
+    private TimePeriod hoursPerDayRange = new TimePeriod((short) 0, (short) 4);
 
     @Valid
     @NotNull
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "weekly_hours_id")
-    private TimePeriod hoursPerWeekRange;
+    private TimePeriod hoursPerWeekRange = new TimePeriod((short) 0, (short) 4);
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private Collection<TimePeriod> availabilities;

@@ -3,6 +3,7 @@ package shift.scheduler.backend.model;
 import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.Cascade;
 import shift.scheduler.backend.model.period.TimePeriod;
 import shift.scheduler.backend.model.view.EntityViews;
@@ -30,9 +31,8 @@ public class Company {
     @JsonView(EntityViews.Associate.class)
     private Collection<TimePeriod> hoursOfOperation;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "manager_id")
-    @Cascade(org.hibernate.annotations.CascadeType.ALL)
     private Manager manager;
 
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true)

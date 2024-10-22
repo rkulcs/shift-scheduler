@@ -19,25 +19,43 @@ export default function CompanyRegistration() {
   const {
     control,
     handleSubmit,
+    setValue,
     formState: { errors }
-  } = useForm<UserRegistrationFormInput>()
+  } = useForm<UserRegistrationFormInput>({
+    defaultValues: {
+      account: {
+        username: '',
+        name: '',
+        role: 'MANAGER'
+      },
+      company: {
+        name: '',
+        location: ''
+      }
+    }
+  })
 
   const [error, setError] = useState<string>('')
 
   const onSubmit: SubmitHandler<UserRegistrationFormInput> = (data) => {
-    unauthenticatedPostRequest('user/register', {...data, role: "MANAGER"})
-      .then(res => res.json())
-      .then(body => {
-        if (body.error) {
-          setError(body.error)
-          return false
-        } else {
-          setError('')
-          const user = new User(data.username, 'MANAGER')
-          login(user, body.token)
-          dispatch(setUser(user.serialize()))
-          return true
-        }
+    console.log(data)
+
+    unauthenticatedPostRequest('user/register', {...data})
+      .then(res => {
+        return (async () => {
+          if (res.ok) {
+            setError('')
+            const user = new User(data.account.username, 'MANAGER')
+            const token = await res.text()
+            login(user, token)
+            dispatch(setUser(user.serialize()))
+            return true
+          } else {
+            const body = await res.json()
+            setError(body.errors[0])
+            return false
+          }
+        })()
       })
       .then(ok => ok && navigate('/'))
       .catch(() => setError('Invalid registration details'))
@@ -48,9 +66,9 @@ export default function CompanyRegistration() {
       <form onSubmit={handleSubmit(onSubmit)}>
         {error && <Alert severity="error">{error}</Alert>}
         <FormSection title="Manager Details">
-          <TextInputField name="username" label="Username" control={control} />
-          <TextInputField name="name" label="Name" control={control} />
-          <TextInputField name="password" label="Password" control={control} password />
+          <TextInputField name="account.username" label="Username" control={control} />
+          <TextInputField name="account.name" label="Name" control={control} />
+          <TextInputField name="account.password" label="Password" control={control} password />
         </FormSection>
 
         <FormSection title="Company Details">

@@ -36,7 +36,8 @@ public class UserService {
     public <T extends User> Optional<T> save(T user) {
 
         try {
-            return Optional.of(repository.save(user));
+            repository.saveAndFlush(user);
+            return Optional.of(user);
         } catch (Exception e) {
             return Optional.empty();
         }

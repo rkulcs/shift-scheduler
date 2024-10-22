@@ -14,7 +14,7 @@ public class AccountService {
     private AccountRepository accountRepository;
 
     public boolean exists(String username) {
-        return accountRepository.findById(username).isEmpty();
+        return accountRepository.findById(username).isPresent();
     }
 
     public Optional<Account> findByUsername(String username) {
