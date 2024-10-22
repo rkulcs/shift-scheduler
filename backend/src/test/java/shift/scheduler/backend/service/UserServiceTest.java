@@ -3,13 +3,9 @@ package shift.scheduler.backend.service;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.modelmapper.ModelMapper;
-import org.modelmapper.record.RecordModule;
 import shift.scheduler.backend.dto.AvailabilityDTO;
 import shift.scheduler.backend.dto.EmployeeSettingsDTO;
 import shift.scheduler.backend.dto.TimeIntervalDTO;
@@ -25,24 +21,13 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-@ExtendWith(MockitoExtension.class)
-public class UserServiceTest {
-
-    private static final Employee sampleEmployee = new Employee(
-            new Account(), new Company(), (short) 12, (short) 16, (short) 12, (short) 16
-    );
-
-    private static final Manager sampleManager = new Manager();
-
-    private static final List<User> sampleUsers = List.of(sampleManager, sampleEmployee);
+public class UserServiceTest extends ServiceTest {
 
     @Mock
     UserRepository userRepository;
 
     @Mock
     JwtService jwtService;
-
-    ModelMapper modelMapper = new ModelMapper().registerModule(new RecordModule());
 
     UserService userService;
 
@@ -71,16 +56,15 @@ public class UserServiceTest {
     class Save {
 
         @ParameterizedTest
-        @MethodSource("shift.scheduler.backend.service.UserServiceTest#getSampleUsers")
+        @MethodSource("shift.scheduler.backend.service.ServiceTest#getSampleUsers")
         void saveShouldReturnSavedUserIfSuccessful(User user) throws Exception {
-            when(userRepository.save(any())).thenReturn(user);
             assertTrue(userService.save(user).isPresent());
         }
 
         @ParameterizedTest
-        @MethodSource("shift.scheduler.backend.service.UserServiceTest#getSampleUsers")
+        @MethodSource("shift.scheduler.backend.service.ServiceTest#getSampleUsers")
         void saveShouldReturnEmptyUserIfUnsuccessful(User user) throws Exception {
-            when(userRepository.save(any())).thenReturn(Optional.empty());
+            when(userRepository.saveAndFlush(any())).thenThrow(RuntimeException.class);
             assertTrue(userService.save(user).isEmpty());
         }
     }
@@ -89,7 +73,7 @@ public class UserServiceTest {
     class FindByUsername {
 
         @ParameterizedTest
-        @MethodSource("shift.scheduler.backend.service.UserServiceTest#getSampleUsers")
+        @MethodSource("shift.scheduler.backend.service.ServiceTest#getSampleUsers")
         void findShouldReturnUserWithTakenUsername(User user) throws Exception {
 
             when(userRepository.findByAccountUsername(any())).thenReturn(Optional.of(user));
@@ -100,7 +84,7 @@ public class UserServiceTest {
         }
 
         @ParameterizedTest
-        @MethodSource("shift.scheduler.backend.service.UserServiceTest#getSampleUsers")
+        @MethodSource("shift.scheduler.backend.service.ServiceTest#getSampleUsers")
         void findShouldReturnEmptyUserWithUnusedUsername(User user) throws Exception {
             when(userRepository.findByAccountUsername(any())).thenReturn(Optional.empty());
             assertTrue(userService.findByUsername("username").isEmpty());
@@ -111,7 +95,7 @@ public class UserServiceTest {
     class FindByAuthHeaderValue {
 
         @ParameterizedTest
-        @MethodSource("shift.scheduler.backend.service.UserServiceTest#getSampleUsers")
+        @MethodSource("shift.scheduler.backend.service.ServiceTest#getSampleUsers")
         void findShouldReturnUserWithValidAuthHeader(User user) throws Exception {
             when(userService.findByUsername(any())).thenReturn(Optional.of(user));
             assertEquals(user, userService.findByAuthHeaderValue("Bearer JWT"));
@@ -136,8 +120,6 @@ public class UserServiceTest {
                     List.of(new AvailabilityDTO(Day.MON, (short) 4, (short) 16))
             );
 
-            when(userRepository.save(any())).thenReturn(sampleEmployee);
-
             assertTrue(userService.updateEmployeeSettings(sampleEmployee, settings));
         }
 
@@ -153,9 +135,5 @@ public class UserServiceTest {
             when(userService.save(any())).thenReturn(Optional.empty());
             assertFalse(userService.updateEmployeeSettings(sampleEmployee, settings));
         }
-    }
-
-    static List<User> getSampleUsers() {
-        return sampleUsers;
     }
 }
