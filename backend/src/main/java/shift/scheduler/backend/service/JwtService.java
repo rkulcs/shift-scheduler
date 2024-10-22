@@ -1,6 +1,7 @@
 package shift.scheduler.backend.service;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -80,12 +81,20 @@ public class JwtService {
      */
     public boolean isTokenValid(String token, UserDetails userDetails) {
 
+        var expirationClaim = extractClaim(token, Claims::getExpiration);
+
+        if (expirationClaim == null)
+            return false;
+
+        if (expirationClaim.before(new Date()))
+            return false;
+
         String username = extractUsername(token);
 
-        boolean isExpired = extractClaim(token, Claims::getExpiration).before(new Date());
-        boolean isValidUser = username.equals(userDetails.getUsername());
+        if (username == null || !username.equals(userDetails.getUsername()))
+            return false;
 
-        return !isExpired && isValidUser;
+        return true;
     }
 
     /**
@@ -135,6 +144,10 @@ public class JwtService {
     private <T> T extractClaim(String token, Function<Claims, T> claimResolver) {
 
         final Claims claims = extractAllClaims(token);
+
+        if (claims == null)
+            return null;
+
         return claimResolver.apply(claims);
     }
 
@@ -152,7 +165,11 @@ public class JwtService {
 
     // Based on https://github.com/jwtk/jjwt#reading-a-jwt
     private Claims extractAllClaims(String token) {
-        return Jwts.parser().verifyWith(getSecretKey()).build().parseSignedClaims(token).getPayload();
+        try {
+            return Jwts.parser().verifyWith(getSecretKey()).build().parseSignedClaims(token).getPayload();
+        } catch (JwtException e) {
+            return null;
+        }
     }
 
     private SecretKey getSecretKey() {
