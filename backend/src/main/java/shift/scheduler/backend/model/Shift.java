@@ -1,6 +1,9 @@
 package shift.scheduler.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import shift.scheduler.backend.model.period.TimePeriod;
 
 @Entity
@@ -14,7 +17,8 @@ public class Shift {
     @ManyToOne
     private Employee employee;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @NotNull
     private TimePeriod timePeriod;
 
     public Shift() {
@@ -42,14 +46,25 @@ public class Shift {
         this.employee = employee;
     }
 
+    public TimePeriod getTimePeriod() {
+        return timePeriod;
+    }
+
+    public void setTimePeriod(@NotNull TimePeriod timePeriod) {
+        this.timePeriod = timePeriod;
+    }
+
+    @JsonIgnore
     public Short getStart() {
         return timePeriod.getStartHour();
     }
 
+    @JsonIgnore
     public Short getEnd() {
         return timePeriod.getEndHour();
     }
 
+    @JsonIgnore
     public int getLength() {
         return timePeriod.getLength();
     }

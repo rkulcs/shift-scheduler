@@ -4,6 +4,7 @@ import { Day } from "../model/Day"
 import { VALID_HOURS } from "../model/TimePeriod"
 import { Shift } from "../model/Shift"
 import PersonIcon from '@mui/icons-material/Person'
+import { DailySchedule } from "../model/DailySchedule"
 
 export default function Schedule({ schedule }: { schedule: WeeklySchedule }) {
   // Store each shift in a map for easier access
@@ -11,9 +12,9 @@ export default function Schedule({ schedule }: { schedule: WeeklySchedule }) {
   Object.keys(Day).filter(key => isNaN(parseInt(key))).forEach(day => blocks.set(day, new Map()))
   blocks.forEach(entry => VALID_HOURS.slice(0, -1).forEach(hour => entry.set(hour, new Array())))
 
-  schedule.dailySchedules.forEach(dailySchedule => {
-    dailySchedule.shifts.forEach(shift => {
-      for (let i = shift.startHour; i < shift.endHour; i += 4) {
+  schedule.dailySchedules.forEach((dailySchedule: DailySchedule) => {
+    dailySchedule.shifts.forEach((shift: Shift) => {
+      for (let i = shift.timePeriod.startHour; i < shift.timePeriod.endHour; i += 4) {
         blocks.get(dailySchedule.day.toString())?.get(i)?.push(shift)
       }
     })

@@ -1,8 +1,7 @@
 import { Employee } from "./Employee"
+import { TimePeriod } from "./TimePeriod"
 
 export type Shift = {
   employee: Employee
-  date: Date
-  startHour: number
-  endHour: number
+  timePeriod: TimePeriod
 }
