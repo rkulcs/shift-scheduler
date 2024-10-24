@@ -38,8 +38,6 @@ export default function CompanyRegistration() {
   const [error, setError] = useState<string>('')
 
   const onSubmit: SubmitHandler<UserRegistrationFormInput> = (data) => {
-    console.log(data)
-
     unauthenticatedPostRequest('user/register', {...data})
       .then(res => {
         return (async () => {

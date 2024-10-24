@@ -10,8 +10,18 @@ import { getRequest, postRequest } from "../components/client/client"
 import { Employee } from "../model/Employee"
 import { FormSubmissionStatus } from "../types/FormSubmissionStatus"
 
+type Availability = TimePeriod & { active: boolean }
+
 type EmployeeFormInput = {
-  employee: Employee
+  hoursPerDayRange: {
+    start: number,
+    end: number
+  } 
+  hoursPerWeekRange: {
+    start: number,
+    end: number
+  },
+  availabilities: Availability[]
 }
 
 const MIN_WEEKLY_HOURS = 0
@@ -26,28 +36,29 @@ export default function Availabilities() {
     formState: { errors }
   } = useForm<EmployeeFormInput>({
     defaultValues: {
-      employee: {
-        id: 0,
-        minHoursPerDay: 0,
-        maxHoursPerDay: 0,
-        minHoursPerWeek: 0,
-        maxHoursPerWeek: 0,
-        availabilities: Object.keys(Day).filter(key => isNaN(Number(key))).map(day => {
-          return { day: day, startHour: 0, endHour: 0, active: false }
-        })
-      }
+      hoursPerDayRange: { start: 0, end: 0 },
+      hoursPerWeekRange: { start: 0, end: 0 },
+      availabilities: Object.keys(Day).filter(key => isNaN(Number(key))).map(day => {
+        return { day: day, startHour: 0, endHour: 0, active: false }
+      })
     }
   })
 
-  const [employee, setEmployee] = useState<Employee>(getValues().employee)
+  const [minHoursPerDay, setMinHoursPerDay] = useState<number>(0)
+  const [maxHoursPerDay, setMaxHoursPerDay] = useState<number>(0)
+  const [minHoursPerWeek, setMinHoursPerWeek] = useState<number>(0)
+  const [maxHoursPerWeek, setMaxHoursPerWeek] = useState<number>(0)
+  const [availabilities, setAvailabilities] = useState<Availability[]>(getValues().availabilities)
 
   const [submissionStatus, setSubmissionStatus] = useState<FormSubmissionStatus>({ type: undefined, message: '' })
 
   const onSubmit: SubmitHandler<EmployeeFormInput> = (data) => {
-    const activeAvailabilities: TimePeriod[] = data.employee.availabilities.filter(entry => entry.active)
-    data.employee.availabilities = activeAvailabilities
+    const activeAvailabilities: Availability[] = getValues().availabilities.filter(entry => entry.active)
+    data.availabilities = activeAvailabilities
+    data.hoursPerDayRange = { start: minHoursPerDay, end: maxHoursPerDay }
+    data.hoursPerWeekRange = { start: minHoursPerWeek, end: maxHoursPerWeek }
 
-    postRequest('employee', data.employee)
+    postRequest('employee', data)
       .then(res => {
         if (res.ok) {
           setSubmissionStatus({ type: 'success', message: 'Hours updated' })
@@ -63,25 +74,21 @@ export default function Availabilities() {
     getRequest('employee')
       .then(res => res.json())
       .then((employee: Employee) => {
-        let updatedPeriods: TimePeriod[] = getValues().employee.availabilities
+        setMinHoursPerDay(employee.hoursPerDayRange.startHour)
+        setMaxHoursPerDay(employee.hoursPerDayRange.endHour)
+        setMinHoursPerWeek(employee.hoursPerWeekRange.startHour)
+        setMaxHoursPerWeek(employee.hoursPerWeekRange.endHour)
+        let updatedPeriods: Availability[] = getValues().availabilities
 
         employee.availabilities.forEach((entry: TimePeriod) => {
           const index: number = Day[entry.day as keyof typeof Day]
           updatedPeriods[index] = { ...entry, active: true }
         })
 
-        employee.availabilities = updatedPeriods
-
-        setValue('employee', employee)
-
-        return employee
+        setValue('availabilities', updatedPeriods)
+        setAvailabilities(updatedPeriods)
       })
-      .then(employee => setEmployee(employee))
   }, [])
-
-  useEffect(() => {
-    setValue('employee', {...employee})
-  }, [employee])
 
   return (
     <Container fixed>
@@ -93,42 +100,42 @@ export default function Availabilities() {
         <FormSection title="Hours per Day">
           <HourSelect
             label="Minimum"
-            value={employee.minHoursPerDay}
+            value={minHoursPerDay}
             onChange={e => {
-              setEmployee({...employee, minHoursPerDay: e.target.value as number})
-              return
+              const value = e.target.value as number
+              setMinHoursPerDay(value)
             }}
           />
 
           <HourSelect
             label="Maximum"
-            value={employee.maxHoursPerDay}
+            value={maxHoursPerDay}
             onChange={e => {
-              setEmployee({...employee, maxHoursPerDay: e.target.value as number})
-              return
+              const value = e.target.value as number
+              setMaxHoursPerDay(value)
             }}
           />
         </FormSection>
         <FormSection title="Hours per Week">
           <HourSelect
             label="Minimum"
-            value={employee.minHoursPerWeek}
+            value={minHoursPerWeek}
             min={MIN_WEEKLY_HOURS}
             max={MAX_WEEKLY_HOURS}
             onChange={e => {
-              setEmployee({...employee, minHoursPerWeek: e.target.value as number})
-              return
+              const value = e.target.value as number
+              setMinHoursPerWeek(value)
             }}
           />
 
           <HourSelect
             label="Maximum"
-            value={employee.maxHoursPerWeek}
+            value={maxHoursPerWeek}
             min={MIN_WEEKLY_HOURS}
             max={MAX_WEEKLY_HOURS}
             onChange={e => {
-              setEmployee({...employee, maxHoursPerWeek: e.target.value as number})
-              return
+              const value = e.target.value as number
+              setMaxHoursPerWeek(value)
             }}
           />
         </FormSection>
@@ -139,30 +146,32 @@ export default function Availabilities() {
                 <Grid item key={i} xs={1.7}>
                   <Paper sx={{ padding: 0.5 }}>
                     <LabeledCheckbox
-                      name={`employee.availabilities.${i}.active`}
-                      label={getValues().employee.availabilities[i].day}
+                      name={`availabilities.${i}.active`}
+                      label={availabilities[i].day as string}
                       control={control as any}
                     />
 
                     <HourSelect
                       i={i}
                       label="Start Hour"
-                      value={employee.availabilities[i].startHour}
+                      value={availabilities[i].startHour}
                       onChange={e => {
-                        let updatedHours: TimePeriod[] = [...employee.availabilities]
+                        let updatedHours: Availability[] = [...getValues().availabilities]
                         updatedHours[i].startHour = e.target.value as number
-                        setEmployee({ ...employee, availabilities: updatedHours })
-                      }}
+                        setValue('availabilities', updatedHours)
+                        setAvailabilities(updatedHours)
+                       }}
                     />
 
                     <HourSelect
                       i={i}
                       label="End Hour"
-                      value={employee.availabilities[i].endHour}
+                      value={availabilities[i].endHour}
                       onChange={e => {
-                        let updatedHours: TimePeriod[] = [...employee.availabilities]
+                        let updatedHours: Availability[] = [...getValues().availabilities]
                         updatedHours[i].endHour = e.target.value as number
-                        setEmployee({ ...employee, availabilities: updatedHours })
+                        setValue('availabilities', updatedHours)
+                        setAvailabilities(updatedHours)
                       }}
                     />
                   </Paper>

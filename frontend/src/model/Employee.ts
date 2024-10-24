@@ -5,10 +5,8 @@ export type Employee = {
   account?: {
     username: string,
     name: string
-  }
-  minHoursPerDay: number,
-  maxHoursPerDay: number,
-  minHoursPerWeek: number,
-  maxHoursPerWeek: number,
+  },
+  hoursPerDayRange: TimePeriod,
+  hoursPerWeekRange: TimePeriod
   availabilities: TimePeriod[]
 }
