@@ -43,10 +43,10 @@ export default function Login() {
             .then(() => navigate('/'))
         } else {
           res.json().then(body => {
-            const invalidField = (body.error.includes('password')) ?
-                                                        'password' : 'username'
+            const error = body.errors[0]
+            const invalidField = (error.includes('password')) ? 'password' : 'username'
 
-            setError(invalidField, { type: 'manual', message: body.error })
+            setError(invalidField, { type: 'manual', message: error })
           })
         }
       })

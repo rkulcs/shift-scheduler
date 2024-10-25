@@ -6,7 +6,9 @@ import jakarta.validation.constraints.NotNull;
 import shift.scheduler.backend.model.period.Day;
 import shift.scheduler.backend.model.period.TimeInterval;
 import shift.scheduler.backend.util.validator.Hour;
+import shift.scheduler.backend.util.validator.Interval;
 
+@Interval
 public record TimePeriodDTO(
         @Enumerated(EnumType.ORDINAL)
         Day day,

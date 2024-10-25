@@ -1,12 +1,14 @@
 package shift.scheduler.backend.controller;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import shift.scheduler.backend.dto.CompanyDashboardDataDTO;
+import shift.scheduler.backend.dto.HoursOfOperationDTO;
 import shift.scheduler.backend.dto.TimePeriodDTO;
 import shift.scheduler.backend.model.*;
 import shift.scheduler.backend.model.view.EntityViews;
@@ -57,10 +59,10 @@ public class CompanyController {
 
     @PostMapping(value = "/hours", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> setHours(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
-                                                @RequestBody Collection<TimePeriodDTO> timePeriods) {
+                                           @Valid @RequestBody HoursOfOperationDTO newHours) {
 
         Manager manager = (Manager) userService.findByAuthHeaderValue(authHeader);
-        var updateIsSuccessful = companyService.updateHoursOfOperation(manager.getCompany(), timePeriods);
+        var updateIsSuccessful = companyService.updateHoursOfOperation(manager.getCompany(), newHours.timePeriods());
 
         if (updateIsSuccessful)
             return ResponseEntity.ok("Successfully updated hours of operation");

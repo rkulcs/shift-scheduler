@@ -31,7 +31,9 @@ export default function HoursOfOperationForm() {
   const [submissionStatus, setSubmissionStatus] = useState<FormSubmissionStatus>({ type: undefined, message: '' })
 
   const onSubmit: SubmitHandler<TimePeriodFormInput> = (data) => {
-    const payload: TimePeriod[] = data.periods.filter(entry => entry.active)
+    const payload = {
+      timePeriods: data.periods.filter(entry => entry.active)
+    }
 
     postRequest('company/hours', payload)
       .then(res => {
@@ -53,7 +55,6 @@ export default function HoursOfOperationForm() {
 
         company.hoursOfOperation.forEach((entry: TimePeriod) => {
           const index: number = Day[entry.day as keyof typeof Day]
-          console.log(entry)
           updatedPeriods[index] = {...entry, active: true}
         })
 
