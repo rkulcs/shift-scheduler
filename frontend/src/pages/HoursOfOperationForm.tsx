@@ -5,7 +5,7 @@ import { useForm, SubmitHandler } from "react-hook-form"
 import Company from "../model/Company"
 import { Day } from "../model/Day"
 import { TimePeriod } from "../model/TimePeriod"
-import { TimePeriodFormInput } from "../types/TimePeriodFormInput"
+import { TimePeriodFormInput, TimePeriodInput } from "../types/TimePeriodFormInput"
 import FormSection from "../components/forms/FormSection"
 import HourSelect from "../components/forms/HourSelect"
 import LabeledCheckbox from "../components/forms/LabeledCheckbox"
@@ -27,7 +27,7 @@ export default function HoursOfOperationForm() {
     }
   })
 
-  const [company, setCompany] = useState<Company>(new Company('', '', getValues().periods))
+  const [hoursOfOperation, setHoursOfOperation] = useState<TimePeriodInput[]>(getValues().periods as TimePeriodInput[])
   const [submissionStatus, setSubmissionStatus] = useState<FormSubmissionStatus>({ type: undefined, message: '' })
 
   const onSubmit: SubmitHandler<TimePeriodFormInput> = (data) => {
@@ -48,26 +48,24 @@ export default function HoursOfOperationForm() {
   useEffect(() => {
     getRequest('company')
       .then(res => res.json())
-      .then(data => {
-        let updatedPeriods: TimePeriod[] = getValues().periods
+      .then((company: Company) => {
+        let updatedPeriods: TimePeriodInput[] = getValues().periods
 
-        data.hoursOfOperation?.forEach((entry: TimePeriod) => {
+        company.hoursOfOperation.forEach((entry: TimePeriod) => {
           const index: number = Day[entry.day as keyof typeof Day]
+          console.log(entry)
           updatedPeriods[index] = {...entry, active: true}
         })
 
         setValue('periods', updatedPeriods)
-        data.hoursOfOperation = updatedPeriods
-
-        return data
+        setHoursOfOperation(updatedPeriods)
       })
-      .then(data => setCompany(data))
   }, [])
 
   // Handle hour selections
   useEffect(() => {
-    setValue('periods', [...(company.hoursOfOperation)])
-  }, [company])
+    setValue('periods', hoursOfOperation)
+  }, [hoursOfOperation])
 
   function getStatusBox(): ReactElement {
     return (
@@ -89,29 +87,29 @@ export default function HoursOfOperationForm() {
                   <Paper sx={{ padding: 0.5 }}>
                     <LabeledCheckbox
                       name={`periods.${i}.active`}
-                      label={getValues().periods[i].day}
+                      label={getValues().periods[i].day as string}
                       control={control as any}
                     />
 
                     <HourSelect
                       i={i}
                       label="Start Hour"
-                      value={company.hoursOfOperation[i].startHour}
+                      value={hoursOfOperation[i].startHour}
                       onChange={e => {
-                        let updatedHours: TimePeriod[] = getValues().periods
+                        let updatedHours: TimePeriodInput[] = getValues().periods
                         updatedHours[i].startHour = e.target.value as number
-                        setCompany({ ...company, hoursOfOperation: updatedHours })
+                        setHoursOfOperation(updatedHours)
                       }}
                     />
 
                     <HourSelect
                       i={i}
                       label="End Hour"
-                      value={company.hoursOfOperation[i].endHour}
+                      value={hoursOfOperation[i].endHour}
                       onChange={e => {
-                        let updatedHours: TimePeriod[] = getValues().periods
+                        let updatedHours: TimePeriodInput[] = getValues().periods
                         updatedHours[i].endHour = e.target.value as number
-                        setCompany({ ...company, hoursOfOperation: updatedHours })
+                        setHoursOfOperation(updatedHours)
                       }}
                     />
                   </Paper>

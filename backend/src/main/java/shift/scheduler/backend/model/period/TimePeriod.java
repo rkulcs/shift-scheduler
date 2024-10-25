@@ -1,5 +1,6 @@
 package shift.scheduler.backend.model.period;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
@@ -17,6 +18,7 @@ public class TimePeriod {
     private Long id;
 
     @Enumerated(EnumType.ORDINAL)
+    @JsonView(EntityViews.Associate.class)
     private Day day;
 
     @Hour
@@ -78,13 +80,11 @@ public class TimePeriod {
         return endHour - startHour;
     }
 
-    @JsonIgnore
     public boolean contains(TimePeriod interval) {
         return (startHour <= interval.getStartHour() && interval.getEndHour() <= endHour);
     }
 
     @Override
-    @JsonIgnore
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -93,7 +93,6 @@ public class TimePeriod {
     }
 
     @Override
-    @JsonIgnore
     public int hashCode() {
         return Objects.hash(startHour, endHour);
     }
