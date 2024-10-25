@@ -90,7 +90,7 @@ export function EmployeeDashboard() {
 
     const date = new Date(data.nextShift.date).toLocaleString('en-us', { weekday: 'long', month: 'long', day: 'numeric' })
 
-    return `${date} (${data.nextShift.shift.startHour}:00 to ${data.nextShift.shift.endHour}:00)`
+    return `${date} (${data.nextShift.shift.timePeriod.startHour}:00 to ${data.nextShift.shift.timePeriod.endHour}:00)`
   }
 
   return (
