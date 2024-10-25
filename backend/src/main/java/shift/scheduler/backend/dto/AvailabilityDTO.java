@@ -27,12 +27,12 @@ public record AvailabilityDTO(
 ) implements TimeInterval {
 
         @Override
-        public Short getStart() {
-                return startHour;
+        public boolean areBothEndsNonNull() {
+                return (startHour != null && endHour != null);
         }
 
         @Override
-        public Short getEnd() {
-                return endHour;
+        public int compareEnds() {
+            return Integer.compare(endHour - startHour, 0);
         }
 }

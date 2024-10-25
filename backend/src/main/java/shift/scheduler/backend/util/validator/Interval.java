@@ -11,7 +11,7 @@ import java.lang.annotation.*;
  * 0 is midnight as a starting hour, and 24 is midnight as an ending hour.
  */
 @Constraint(validatedBy = IntervalValidator.class)
-@Target({ ElementType.TYPE })
+@Target({ElementType.TYPE_USE, ElementType.FIELD, ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface Interval {
@@ -19,4 +19,7 @@ public @interface Interval {
     String message() default "The interval's start hour must be before its end hour";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
+
+    // Set to true to allow the start and end values to be equal
+    boolean areEqualValuesAllowed() default false;
 }

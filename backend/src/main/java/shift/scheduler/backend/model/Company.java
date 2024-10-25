@@ -3,10 +3,9 @@ package shift.scheduler.backend.model;
 import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-import org.hibernate.annotations.Cascade;
 import shift.scheduler.backend.model.period.TimePeriod;
 import shift.scheduler.backend.model.view.EntityViews;
+import shift.scheduler.backend.util.validator.Interval;
 
 import java.util.Collection;
 
@@ -29,7 +28,7 @@ public class Company {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonView(EntityViews.Associate.class)
-    private Collection<TimePeriod> hoursOfOperation;
+    private Collection<@Interval TimePeriod> hoursOfOperation;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "manager_id")

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import shift.scheduler.backend.model.period.TimePeriod;
+import shift.scheduler.backend.util.validator.Interval;
 
 @Entity
 @Table(name = "shift")
@@ -17,8 +18,9 @@ public class Shift {
     @ManyToOne
     private Employee employee;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @NotNull
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @Interval
     private TimePeriod timePeriod;
 
     public Shift() {

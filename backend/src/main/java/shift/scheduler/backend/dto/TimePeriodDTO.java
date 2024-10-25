@@ -6,9 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import shift.scheduler.backend.model.period.Day;
 import shift.scheduler.backend.model.period.TimeInterval;
 import shift.scheduler.backend.util.validator.Hour;
-import shift.scheduler.backend.util.validator.Interval;
 
-@Interval
 public record TimePeriodDTO(
         @Enumerated(EnumType.ORDINAL)
         Day day,
@@ -20,15 +18,15 @@ public record TimePeriodDTO(
         @Hour
         @NotNull
         Short endHour
-) implements TimeInterval
-{
+) implements TimeInterval {
+
     @Override
-    public Short getStart() {
-        return startHour;
+    public boolean areBothEndsNonNull() {
+        return (startHour != null && endHour != null);
     }
 
     @Override
-    public Short getEnd() {
-        return endHour;
+    public int compareEnds() {
+        return Integer.compare(endHour - startHour, 0);
     }
 }

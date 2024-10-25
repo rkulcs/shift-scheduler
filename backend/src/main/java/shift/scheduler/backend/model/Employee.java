@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.Cascade;
 import shift.scheduler.backend.model.period.*;
 import shift.scheduler.backend.util.Period;
+import shift.scheduler.backend.util.validator.Interval;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -24,16 +25,18 @@ public class Employee extends User {
     @NotNull
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "daily_hours_id")
+    @Interval(areEqualValuesAllowed = true)
     private TimePeriod hoursPerDayRange = new TimePeriod((short) 0, (short) 4);
 
     @Valid
     @NotNull
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "weekly_hours_id")
+    @Interval(areEqualValuesAllowed = true)
     private TimePeriod hoursPerWeekRange = new TimePeriod((short) 0, (short) 4);
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    private Collection<TimePeriod> availabilities;
+    private Collection<@Interval TimePeriod> availabilities;
 
     public Employee() {}
 
