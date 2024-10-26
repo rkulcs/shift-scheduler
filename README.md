@@ -19,7 +19,6 @@ There are eight sample users available for trying out the application:
 | employee5     | password123 |
 | employee6     | password123 |
 | employee7     | password123 |
-| employee8     | password123 |
 
 # Running the Application with Docker Compose
 
