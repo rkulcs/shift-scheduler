@@ -17,15 +17,14 @@ import java.util.*;
 @Service
 public class ScheduleGenerationService {
 
-    /* The difference between the integer representations of the Day enum and the
-       Calendar type's day enums */
-    private static final int DAY_TO_CALENDAR_DAY_SHIFT = 2;
-
-    private class DailyScheduleWorker implements Runnable {
-        private TimePeriod period;
-        private short numEmployeesPerHour;
-        private List<Employee> employees;
-        private List<List<Schedule>> candidateDailySchedules;
+    /**
+     * Generates a schedule for a given day's hours of operation.
+     */
+    private static class DailyScheduleWorker implements Runnable {
+        private final TimePeriod period;
+        private final short numEmployeesPerHour;
+        private final List<Employee> employees;
+        private final List<List<Schedule>> candidateDailySchedules;
 
         DailyScheduleWorker(TimePeriod period, short numEmployeesPerHour, List<Employee> employees, List<List<Schedule>> candidateDailySchedules) {
             this.period = period;
@@ -36,7 +35,23 @@ public class ScheduleGenerationService {
 
         @Override
         public void run() {
-            candidateDailySchedules.add(generateCandidateSchedulesForDay(period, numEmployeesPerHour, employees));
+            candidateDailySchedules.add(generateCandidateSchedulesForDay());
+        }
+
+        private List<Schedule> generateCandidateSchedulesForDay() {
+
+        /* For each employee, generate all possible shifts that they could work on this day based
+           on their availability */
+            List<List<Shift>> potentialShifts = new ArrayList<>();
+            employees.forEach(e -> potentialShifts.add((List<Shift>) e.generatePotentialShifts(period)));
+
+            // Generate possible schedules for the day using a genetic algorithm
+            DailyScheduleGenerator generator = new DailyScheduleGenerator(period, numEmployeesPerHour);
+            Collection<Schedule> generatedSchedules = generator.generateSchedules(potentialShifts);
+
+            generatedSchedules.forEach(schedule -> ((ScheduleForDay) schedule).setDay(period.getDay()));
+
+            return (List<Schedule>) generatedSchedules;
         }
     }
 
@@ -71,10 +86,12 @@ public class ScheduleGenerationService {
             try {
                 thread.join();
             } catch (InterruptedException e) {
+                // TODO: Log exception
                 System.out.println(e);
             }
         }
 
+        // Generate possible weekly schedules using the generated daily schedules
         WeeklyScheduleGenerator weeklyScheduleGenerator = new WeeklyScheduleGenerator();
         Collection<Schedule> schedules = weeklyScheduleGenerator.generateSchedules((List<List<ScheduleForDay>>) (Object) candidateDailySchedules);
 
@@ -88,20 +105,5 @@ public class ScheduleGenerationService {
         });
 
         return weeklySchedules;
-    }
-
-    private List<Schedule> generateCandidateSchedulesForDay(TimePeriod period,
-                                                                 short numEmployeesPerHour,
-                                                                 Collection<Employee> employees) {
-
-        List<List<Shift>> potentialShifts = new ArrayList<>();
-        employees.forEach(e -> potentialShifts.add((List<Shift>) e.generatePotentialShifts(period)));
-
-        DailyScheduleGenerator generator = new DailyScheduleGenerator(period, numEmployeesPerHour);
-        Collection<Schedule> generatedSchedules = generator.generateSchedules(potentialShifts);
-
-        generatedSchedules.forEach(schedule -> ((ScheduleForDay) schedule).setDay(period.getDay()));
-
-        return (List<Schedule>) generatedSchedules;
     }
 }
