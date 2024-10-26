@@ -8,6 +8,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import shift.scheduler.backend.dto.CompanyDashboardDataDTO;
+import shift.scheduler.backend.dto.HoursOfOperationDTO;
 import shift.scheduler.backend.dto.TimePeriodDTO;
 import shift.scheduler.backend.model.*;
 import shift.scheduler.backend.model.period.Day;
@@ -155,7 +156,7 @@ public class CompanyControllerTest extends ControllerTest {
             when(companyService.updateHoursOfOperation(any(), any())).thenReturn(true);
 
             mockMvc.perform(postJson(endpoint(), hours)
-                                    .header("Authorization", ""))
+                            .header("Authorization", ""))
                     .andExpect(status().isOk());
         }
 
@@ -166,11 +167,17 @@ public class CompanyControllerTest extends ControllerTest {
             for (int i = 4; i <= 24; i += 4) {
                 int end = i;
                 requestBodies.add(stringify(
-                        Arrays.stream(Day.values()).map(day -> new TimePeriodDTO(day, (short) 0, (short) end)).toList()
+                        new HoursOfOperationDTO(
+                                Arrays.stream(Day.values()).map(day -> new TimePeriodDTO(day, (short) 0, (short) end)).toList()
+                        )
                 ));
             }
 
-            requestBodies.add(stringify(List.of(new TimePeriodDTO(Day.TUE, (short) 8, (short) 16))));
+            requestBodies.add(stringify(
+                            new HoursOfOperationDTO(
+                                    List.of(new TimePeriodDTO(Day.TUE, (short) 8, (short) 16)))
+                    )
+            );
 
             return requestBodies;
         }
