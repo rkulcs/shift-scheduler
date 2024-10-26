@@ -23,16 +23,16 @@ public class CompanyService {
         this.modelMapper = modelMapper;
     }
 
+    public boolean exists(String name, String location) {
+        return companyRepository.findByNameAndLocation(name, location).isPresent();
+    }
+
     public Collection<Company> findAll() {
         return companyRepository.findAll();
     }
 
     public Optional<Company> findById(Long id) {
         return companyRepository.findById(id);
-    }
-
-    public boolean exists(String name, String location) {
-        return companyRepository.findByNameAndLocation(name, location).isPresent();
     }
 
     public Optional<Company> findByNameAndLocation(String name, String location) {
