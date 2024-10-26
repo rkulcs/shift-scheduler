@@ -5,6 +5,22 @@ Employees can specify the periods of the week during which they are available to
 Managers can set the hours of operation of their businesses, as well as the number of employees they need per hour, then request the generation of schedules 
 that meet their needs, while also respecting their employees' availabilities.
 
+# Sample Users
+
+There are eight sample users available for trying out the application:
+
+| Username      | Password    |
+| ------------- | ----------- |
+| sampleManager | password123 |
+| employee1     | password123 |
+| employee2     | password123 |
+| employee3     | password123 |
+| employee4     | password123 |
+| employee5     | password123 |
+| employee6     | password123 |
+| employee7     | password123 |
+| employee8     | password123 |
+
 # Running the Application with Docker Compose
 
 1. Build the images: `docker compose build`
