@@ -24,7 +24,8 @@ public class DashboardService {
     public EmployeeDashboardDataDTO getEmployeeDashboardData(Employee employee) {
 
         LocalDate date = LocalDate.now();
-        int today = date.getDayOfWeek().getValue();
+
+        int today = date.getDayOfWeek().getValue() - 1;
 
         // TODO: Optimize shift retrieval
         var scheduleQueryResult = scheduleService.findByCompanyAndDate(employee.getCompany(), date);
@@ -41,7 +42,9 @@ public class DashboardService {
         // Keep track of the number of hours that the employee will work this week
         int numHours = 0;
 
-        for (ScheduleForDay dailySchedule : schedule.getDailySchedules()) {
+        var sortedDailySchedules = schedule.getDailySchedules().stream().sorted(Comparator.comparingInt(s -> s.getDay().ordinal())).toList();
+
+        for (ScheduleForDay dailySchedule : sortedDailySchedules) {
             Shift shift = dailySchedule.getShifts().stream().filter(s -> s.getEmployee().equals(employee)).findFirst().orElse(null);
 
             if (shift == null)
@@ -50,11 +53,11 @@ public class DashboardService {
             shifts.add(shift);
             numHours += shift.getLength();
 
-            int day = dailySchedule.getDay().toDayOfWeekValue();
+            int day = dailySchedule.getDay().ordinal();
 
             // Set the next details of the next shift that the employee will work
             if (nextShift == null && day >= today) {
-                LocalDate shiftDate = date.with(TemporalAdjusters.nextOrSame(DayOfWeek.of(day)));
+                LocalDate shiftDate = date.with(TemporalAdjusters.nextOrSame(DayOfWeek.of(day + 1)));
                 nextShift = new EmployeeDashboardDataDTO.DetailedShiftDataDTO(shift, shiftDate);
             }
         }
@@ -67,7 +70,8 @@ public class DashboardService {
         Company company = manager.getCompany();
 
         LocalDate date = LocalDate.now();
-        int today = date.getDayOfWeek().getValue();
+
+        int today = date.getDayOfWeek().getValue() - 1;
 
         // TODO: Optimize schedule retrieval
         var scheduleQueryResult = scheduleService.findByCompanyAndDate(company, date);
@@ -85,17 +89,19 @@ public class DashboardService {
         // Keep track of the total number of employee hours
         int totalHours = 0;
 
-        for (ScheduleForDay dailySchedule : schedule.getDailySchedules()) {
+        var sortedDailySchedules = schedule.getDailySchedules().stream().sorted(Comparator.comparingInt(s -> s.getDay().ordinal())).toList();
+
+        for (ScheduleForDay dailySchedule : sortedDailySchedules) {
             for (Shift shift : dailySchedule.getShifts()) {
                 employees.add(shift.getEmployee());
                 totalHours += shift.getLength();
             }
 
-            int day = dailySchedule.getDay().toDayOfWeekValue();
+            int day = dailySchedule.getDay().ordinal();
 
             // Set the details of the next day of operations
             if (nextDay == null && day >= today) {
-                LocalDate scheduleDate = date.with(TemporalAdjusters.nextOrSame(DayOfWeek.of(day)));
+                LocalDate scheduleDate = date.with(TemporalAdjusters.nextOrSame(DayOfWeek.of(day + 1)));
 
                 int start = Integer.MAX_VALUE;
                 int end = -Integer.MAX_VALUE;

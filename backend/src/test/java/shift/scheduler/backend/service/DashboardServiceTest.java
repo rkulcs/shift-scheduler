@@ -6,6 +6,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import shift.scheduler.backend.dto.CompanyDashboardDataDTO;
 import shift.scheduler.backend.dto.EmployeeDashboardDataDTO;
 import shift.scheduler.backend.model.Employee;
 import shift.scheduler.backend.model.Shift;
@@ -114,5 +115,69 @@ public class DashboardServiceTest extends ServiceTest {
     @Nested
     class GetCompanyDashboardData {
 
+        static class TestCase {
+            ScheduleForWeek schedule;
+            LocalDate queryDate;
+            LocalDate nextDate;
+            int startHour;
+            int endHour;
+            int numEmployees;
+            int numHours;
+
+            public TestCase(ScheduleForWeek schedule, LocalDate queryDate, LocalDate nextDate, int startHour, int endHour, int numEmployees, int numHours) {
+                this.schedule = schedule;
+                this.queryDate = queryDate;
+                this.nextDate = nextDate;
+                this.startHour = startHour;
+                this.endHour = endHour;
+                this.numEmployees = numEmployees;
+                this.numHours = numHours;
+            }
+        }
+
+        @Test
+        void shouldReturnNullIfNoScheduleWasFound() {
+            when(scheduleService.findByCompanyAndDate(any(), any())).thenReturn(Optional.empty());
+            assertNull(dashboardService.getCompanyDashboardData(sampleManager));
+        }
+
+        @ParameterizedTest
+        @MethodSource("createTestCases")
+        void shouldReturnCorrectDataWithValidSchedule(TestCase testCase) {
+            CompanyDashboardDataDTO data;
+
+            try (var localDateMock = mockStatic(LocalDate.class)) {
+                localDateMock.when(LocalDate::now).thenReturn(testCase.queryDate);
+                when(scheduleService.findByCompanyAndDate(any(), any())).thenReturn(Optional.of(testCase.schedule));
+
+                data = dashboardService.getCompanyDashboardData(sampleManager);
+            }
+
+            assertEquals(testCase.nextDate, data.nextDay().date());
+            assertEquals(testCase.startHour, data.nextDay().startHour());
+            assertEquals(testCase.endHour, data.nextDay().endHour());
+            assertEquals(testCase.numEmployees, data.numEmployees());
+            assertEquals(testCase.numHours, data.totalHours());
+        }
+
+        static List<TestCase> createTestCases() {
+
+            List<TestCase> cases = new ArrayList<>();
+
+            LocalDate firstDay = LocalDate.of(2024, 10, 7);
+
+            var schedule1 = new ScheduleForWeekBuilder()
+                    .setFirstDay(firstDay)
+                    .setCompany(sampleCompany)
+                    .addShift(sampleEmployee, Day.MON, 4, 12)
+                    .addShift(sampleEmployee, Day.TUE, 4, 12)
+                    .addShift(sampleEmployee, Day.SUN, 4, 16)
+                    .build();
+
+            cases.add(new TestCase(schedule1, firstDay, firstDay, 4, 12, 1, 28));
+            cases.add(new TestCase(schedule1, LocalDate.of(2024, 10, 12), LocalDate.of(2024, 10, 13), 4, 16, 1, 28));
+
+            return cases;
+        }
     }
 }
