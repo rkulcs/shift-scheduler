@@ -82,6 +82,9 @@ public class WebSecurityConfig {
                 .headers(headersCustomizer -> headersCustomizer.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
                 .authorizeHttpRequests(authorize -> {
                     authorize
+                            .requestMatchers("/swagger-ui.html").permitAll()
+                            .requestMatchers("/swagger-ui/**").permitAll()
+                            .requestMatchers("/v3/api-docs/**").permitAll()
                             .requestMatchers("/h2-console/**").permitAll()
                             .requestMatchers("/user/**").permitAll()
                             .requestMatchers("/company/**").permitAll()
