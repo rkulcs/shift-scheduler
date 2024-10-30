@@ -6,6 +6,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import shift.scheduler.backend.controller.documentation.ExcludeFromDocumentation;
 import shift.scheduler.backend.dto.EmployeeSettingsDTO;
 import shift.scheduler.backend.model.Employee;
 import shift.scheduler.backend.dto.EmployeeDashboardDataDTO;
@@ -24,15 +25,17 @@ public class EmployeeController {
     private DashboardService dashboardService;
 
     @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Employee> get(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
+    public ResponseEntity<Employee> get(
+            @ExcludeFromDocumentation @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
 
         var employee = (Employee) userService.findByAuthHeaderValue(authHeader);
         return ResponseEntity.ok(employee);
     }
 
     @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> updateSettings(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
-                                                 @Valid @RequestBody EmployeeSettingsDTO settings) {
+    public ResponseEntity<String> updateSettings(
+            @ExcludeFromDocumentation @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
+            @Valid @RequestBody EmployeeSettingsDTO settings) {
 
         var employee = (Employee) userService.findByAuthHeaderValue(authHeader);
         var isUpdated = userService.updateEmployeeSettings(employee, settings);
@@ -44,7 +47,8 @@ public class EmployeeController {
     }
 
     @GetMapping(value = "/dashboard", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<EmployeeDashboardDataDTO> getDashboard(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
+    public ResponseEntity<EmployeeDashboardDataDTO> getDashboard(
+            @ExcludeFromDocumentation @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
 
         var employee = (Employee) userService.findByAuthHeaderValue(authHeader);
         var data = dashboardService.getEmployeeDashboardData(employee);

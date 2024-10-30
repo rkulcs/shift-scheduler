@@ -6,6 +6,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import shift.scheduler.backend.controller.documentation.ExcludeFromDocumentation;
 import shift.scheduler.backend.dto.LoginRequestDTO;
 import shift.scheduler.backend.dto.RegistrationRequestDTO;
 import shift.scheduler.backend.service.AuthenticationService;
@@ -32,7 +33,8 @@ public class UserController {
     }
 
     @PostMapping(value = "/logout")
-    public ResponseEntity<Void> logout(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
+    public ResponseEntity<Void> logout(
+            @ExcludeFromDocumentation @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
 
         authenticationService.logout(authHeader);
         return ResponseEntity.ok().build();

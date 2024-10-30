@@ -39,9 +39,13 @@ public class Company {
 
     public Company() {}
 
-    public Company(String name, String location, Collection<TimePeriod> hoursOfOperation) {
+    public Company(String name, String location) {
         this.name = name;
         this.location = location;
+    }
+
+    public Company(String name, String location, Collection<TimePeriod> hoursOfOperation) {
+        this(name, location);
         this.hoursOfOperation = hoursOfOperation;
     }
 
