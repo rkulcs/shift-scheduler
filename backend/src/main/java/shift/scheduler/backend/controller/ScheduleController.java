@@ -7,6 +7,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import shift.scheduler.backend.controller.documentation.ExcludeFromDocumentation;
 import shift.scheduler.backend.model.*;
 import shift.scheduler.backend.model.schedule.ScheduleForWeek;
 import shift.scheduler.backend.dto.ScheduleGenerationRequestDTO;
@@ -31,8 +32,9 @@ public class ScheduleController {
     private ScheduleGenerationService scheduleGenerationService;
 
     @GetMapping(value = "/{date}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ScheduleForWeek> get(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
-                                               @PathVariable LocalDate date) {
+    public ResponseEntity<ScheduleForWeek> get(
+            @ExcludeFromDocumentation @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
+            @PathVariable LocalDate date) {
 
         User user = userService.findByAuthHeaderValue(authHeader);
         var result = scheduleService.findByCompanyAndDate(user.getCompany(), date);
@@ -45,8 +47,9 @@ public class ScheduleController {
 
     @PostMapping(value = "/generate", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @RolesAllowed("MANAGER")
-    public ResponseEntity<Collection<ScheduleForWeek>> generate(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
-                                                                @Valid @RequestBody ScheduleGenerationRequestDTO request) {
+    public ResponseEntity<Collection<ScheduleForWeek>> generate(
+            @ExcludeFromDocumentation @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
+            @Valid @RequestBody ScheduleGenerationRequestDTO request) {
 
         Manager manager = (Manager) userService.findByAuthHeaderValue(authHeader);
         Company company = manager.getCompany();
@@ -64,8 +67,9 @@ public class ScheduleController {
        the database. */
     @PostMapping(value = "", consumes = MediaType.APPLICATION_JSON_VALUE)
     @RolesAllowed("MANAGER")
-    public ResponseEntity<String> save(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
-                                       @RequestBody ScheduleForWeek schedule) {
+    public ResponseEntity<String> save(
+            @ExcludeFromDocumentation @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
+            @RequestBody ScheduleForWeek schedule) {
 
         var result = scheduleService.save(schedule);
 

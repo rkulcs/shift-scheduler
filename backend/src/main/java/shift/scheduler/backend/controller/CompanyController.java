@@ -1,15 +1,16 @@
 package shift.scheduler.backend.controller;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import shift.scheduler.backend.controller.documentation.ExcludeFromDocumentation;
 import shift.scheduler.backend.dto.CompanyDashboardDataDTO;
 import shift.scheduler.backend.dto.HoursOfOperationDTO;
-import shift.scheduler.backend.dto.TimePeriodDTO;
 import shift.scheduler.backend.model.*;
 import shift.scheduler.backend.model.view.EntityViews;
 import shift.scheduler.backend.service.CompanyService;
@@ -45,7 +46,8 @@ public class CompanyController {
 
     @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     @JsonView(EntityViews.Associate.class)
-    public ResponseEntity<Company> get(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
+    public ResponseEntity<Company> get(
+            @Parameter(required = false, hidden = true) @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
 
         User user = userService.findByAuthHeaderValue(authHeader);
 
@@ -58,8 +60,9 @@ public class CompanyController {
     }
 
     @PostMapping(value = "/hours", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> setHours(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
-                                           @Valid @RequestBody HoursOfOperationDTO newHours) {
+    public ResponseEntity<String> setHours(
+            @ExcludeFromDocumentation @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
+            @Valid @RequestBody HoursOfOperationDTO newHours) {
 
         Manager manager = (Manager) userService.findByAuthHeaderValue(authHeader);
         var updateIsSuccessful = companyService.updateHoursOfOperation(manager.getCompany(), newHours.timePeriods());
@@ -72,7 +75,8 @@ public class CompanyController {
 
 
     @GetMapping(value = "/dashboard", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<CompanyDashboardDataDTO> getDashboard(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
+    public ResponseEntity<CompanyDashboardDataDTO> getDashboard(
+            @ExcludeFromDocumentation @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
 
         Manager manager = (Manager) userService.findByAuthHeaderValue(authHeader);
         var data = dashboardService.getCompanyDashboardData(manager);
