@@ -48,6 +48,10 @@ npm install
 npx vite
 ```
 
+# Swagger UI
+
+The OpenAPI documentation of the backend API endpoints can be viewed at `https://localhost:8443/api/swagger-ui/index.html`. To use any endpoints which require authorization, click on the "Authorize" button above the list of endpoints, and provide a valid JWT, which can be obtained by sending a request to `/user/login` or `/user/register`.
+
 # Screenshots
 
 <details>
