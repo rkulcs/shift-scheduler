@@ -7,6 +7,10 @@ a {
     text-decoration: none;
 }
 
+.page-menu-item {
+    cursor: pointer;
+}
+
 
 @media (min-device-width:0px) {
     #home-banner-container {

@@ -60,7 +60,7 @@ export default function CompanyRegistration() {
   }
 
   return (
-    <Container fixed>
+    <Container fixed sx={{ padding: 3 }}>
       <form onSubmit={handleSubmit(onSubmit)}>
         {error && <Alert severity="error">{error}</Alert>}
         <FormSection title="Manager Details">

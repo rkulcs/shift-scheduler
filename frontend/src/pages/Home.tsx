@@ -6,8 +6,12 @@ import { CompanyDashboard, EmployeeDashboard } from "../components/Dashboard"
 import LoginIcon from '@mui/icons-material/Login'
 import StoreIcon from '@mui/icons-material/Store'
 import BadgeIcon from '@mui/icons-material/Badge'
-import { Container, Typography } from "@mui/material"
+import { Button, Container, Dialog, DialogTitle, Typography } from "@mui/material"
 import PageMenu, { PageMenuItem } from "../components/PageMenu"
+import Login from "./Login"
+import CompanyRegistration from "./CompanyRegistration"
+import EmployeeRegistration from "./EmployeeRegistration"
+import FormDialog from "../components/FormDialog"
 
 export default function Home() {
   const store = useStore()
@@ -30,6 +34,9 @@ export default function Home() {
 }
 
 function HomeMenu() {
+  const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false)
+  const [formToShow, setFormToShow] = useState(<Login/>)
+
   return (
     <>
       <Container
@@ -54,21 +61,36 @@ function HomeMenu() {
           icon={<LoginIcon />}
           title="Log In"
           description="Manage or view your company's employee schedules."
-          link="/login"
+          onClick={() => {
+            setFormToShow(<Login/>)
+            setIsDialogOpen(true)
+          }}
         />
         <PageMenuItem
           icon={<StoreIcon />}
           title="Company Registration"
           description="Register your company to generate employee schedules."
-          link="/register-company"
+          onClick={() => {
+            setFormToShow(<CompanyRegistration/>)
+            setIsDialogOpen(true)
+          }}
         />
         <PageMenuItem
           icon={<BadgeIcon />}
           title="Employee Registration"
           description="Create an employee account to view your upcoming shifts."
-          link="/register-employee"
+          onClick={() => {
+            setFormToShow(<EmployeeRegistration/>)
+            setIsDialogOpen(true)
+          }}
         />
       </PageMenu>
+      <FormDialog
+        open={isDialogOpen}
+        onClose={() => setIsDialogOpen(false)}
+      >
+        {formToShow}
+      </FormDialog>
     </>
   )
 }

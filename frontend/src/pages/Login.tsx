@@ -53,7 +53,7 @@ export default function Login() {
   }
   
   return (
-    <Container fixed>
+    <Container fixed sx={{ padding: 3 }}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <FormSection title="Login">
           <TextInputField 

@@ -1,5 +1,5 @@
 import { Grid, Paper, Typography } from "@mui/material"
-import { ReactElement } from "react"
+import { MouseEventHandler, ReactElement } from "react"
 import { Link } from "react-router-dom"
 import ArrowCircleRightIcon from '@mui/icons-material/ArrowCircleRight'
 
@@ -17,14 +17,14 @@ type PageMenuItemProps = {
   icon: ReactElement<any, any> 
   title: string
   description: string
-  link: string
+  onClick: MouseEventHandler<HTMLAnchorElement>
 }
 
-export function PageMenuItem({ icon, title, description, link }: PageMenuItemProps) {
+export function PageMenuItem({ icon, title, description, onClick }: PageMenuItemProps) {
 
   return (
     <Grid item xs={3}>
-      <Link to={link}>
+      <a className="page-menu-item" onClick={onClick}>
         <Paper sx={{ padding: 2 }}>
           {icon}
           <Typography variant="h6">{title}</Typography>
@@ -33,7 +33,7 @@ export function PageMenuItem({ icon, title, description, link }: PageMenuItemPro
           </Typography>
           <ArrowCircleRightIcon />
         </Paper>
-      </Link>
+      </a>
     </Grid>
   )
 }

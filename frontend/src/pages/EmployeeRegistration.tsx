@@ -84,7 +84,7 @@ export default function EmployeeRegistration() {
   }, [selectedCompany])
 
   return (
-    <Container fixed>
+    <Container fixed sx={{ padding: 3 }}>
       <form onSubmit={handleSubmit(onSubmit)}>
         {error && <Alert severity="error">{error}</Alert>}
         
