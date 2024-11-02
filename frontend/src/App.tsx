@@ -28,22 +28,20 @@ function App() {
             <NavBar />
           </Box>
           <Box mt={2}>
-            <Container>
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/register-company" element={<CompanyRegistration />} />
-                <Route path="/register-employee" element={<EmployeeRegistration />} />
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register-company" element={<CompanyRegistration />} />
+              <Route path="/register-employee" element={<EmployeeRegistration />} />
 
-                <Route path="/hours" element={<HoursOfOperationForm />} />
-                <Route path="/generate-schedules" element={<ScheduleGeneration />} />
-                <Route path="/select-schedule" element={<ScheduleSelection />} />
+              <Route path="/hours" element={<HoursOfOperationForm />} />
+              <Route path="/generate-schedules" element={<ScheduleGeneration />} />
+              <Route path="/select-schedule" element={<ScheduleSelection />} />
 
-                <Route path="/availabilities" element={<Availabilities />} />
+              <Route path="/availabilities" element={<Availabilities />} />
 
-                <Route path="/schedules" element={<ScheduleBrowser />} />
-              </Routes>
-            </Container>
+              <Route path="/schedules" element={<ScheduleBrowser />} />
+            </Routes>
           </Box>
         </Stack>
       </BrowserRouter>
