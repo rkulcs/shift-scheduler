@@ -1,6 +1,6 @@
 import { useForm, SubmitHandler } from "react-hook-form"
 import UserRegistrationFormInput from "../types/UserRegistrationFormInput"
-import { Container, Button, Select, MenuItem, FormControl, InputLabel, Alert } from "@mui/material"
+import { Button, Select, MenuItem, FormControl, InputLabel, Alert } from "@mui/material"
 import FormSection from "../components/forms/FormSection"
 import TextInputField from "../components/forms/TextInputField"
 import { useEffect, useState } from "react"
@@ -11,6 +11,7 @@ import { login } from "../util/session"
 import { useDispatch } from "react-redux"
 import { setUser } from "../redux/user"
 import { useNavigate } from "react-router-dom"
+import FormContainer from "../components/forms/FormContainer"
 
 export default function EmployeeRegistration() {
   const dispatch = useDispatch()
@@ -84,7 +85,7 @@ export default function EmployeeRegistration() {
   }, [selectedCompany])
 
   return (
-    <Container fixed sx={{ padding: 3 }}>
+    <FormContainer>
       <form onSubmit={handleSubmit(onSubmit)}>
         {error && <Alert severity="error">{error}</Alert>}
         
@@ -109,6 +110,6 @@ export default function EmployeeRegistration() {
 
         <Button id="register-button" variant="contained" type="submit">Register</Button>
       </form>
-    </Container>
+    </FormContainer>
   )
 }

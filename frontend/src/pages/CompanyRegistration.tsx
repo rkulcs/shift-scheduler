@@ -8,9 +8,9 @@ import { useState } from "react"
 import { useDispatch } from "react-redux"
 import User from "../model/User"
 import { setUser } from "../redux/user"
-import { storeJWT } from "../util/jwt"
 import { useNavigate } from "react-router-dom"
 import { login } from "../util/session"
+import FormContainer from "../components/forms/FormContainer"
 
 export default function CompanyRegistration() {
   const dispatch = useDispatch()
@@ -60,7 +60,7 @@ export default function CompanyRegistration() {
   }
 
   return (
-    <Container fixed sx={{ padding: 3 }}>
+    <FormContainer>
       <form onSubmit={handleSubmit(onSubmit)}>
         {error && <Alert severity="error">{error}</Alert>}
         <FormSection title="Manager Details">
@@ -76,6 +76,6 @@ export default function CompanyRegistration() {
 
         <Button id="register-button" variant="contained" type="submit">Register</Button>
       </form>
-    </Container>
+    </FormContainer>
   )
 }

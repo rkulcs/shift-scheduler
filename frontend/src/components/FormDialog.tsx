@@ -8,7 +8,7 @@ type FormDialogProps = {
 
 export default function FormDialog({ onClose, open, children }: FormDialogProps) {
   return (
-    <Dialog onClose={onClose} open={open}>
+    <Dialog onClose={onClose} open={open} maxWidth='xl'>
       {children}
     </Dialog>
   )

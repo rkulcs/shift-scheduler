@@ -6,7 +6,7 @@ import { CompanyDashboard, EmployeeDashboard } from "../components/Dashboard"
 import LoginIcon from '@mui/icons-material/Login'
 import StoreIcon from '@mui/icons-material/Store'
 import BadgeIcon from '@mui/icons-material/Badge'
-import { Button, Container, Dialog, DialogTitle, Typography } from "@mui/material"
+import { Container, Typography } from "@mui/material"
 import PageMenu, { PageMenuItem } from "../components/PageMenu"
 import Login from "./Login"
 import CompanyRegistration from "./CompanyRegistration"

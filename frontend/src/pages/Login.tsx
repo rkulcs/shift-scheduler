@@ -1,5 +1,5 @@
 import { useForm, SubmitHandler } from "react-hook-form"
-import { Container, Button } from "@mui/material"
+import { Button } from "@mui/material"
 import { useNavigate } from "react-router-dom"
 import { JwtPayload, jwtDecode } from "jwt-decode"
 import LoginFormInput from "../types/LoginFormInput"
@@ -10,6 +10,7 @@ import User from "../model/User"
 import { useDispatch } from "react-redux"
 import { setUser } from "../redux/user"
 import { unauthenticatedPostRequest } from "../components/client/client"
+import FormContainer from "../components/forms/FormContainer"
 
 interface TokenPayload extends JwtPayload {
   role?: string
@@ -53,7 +54,7 @@ export default function Login() {
   }
   
   return (
-    <Container fixed sx={{ padding: 3 }}>
+    <FormContainer>
       <form onSubmit={handleSubmit(onSubmit)}>
         <FormSection title="Login">
           <TextInputField 
@@ -71,6 +72,6 @@ export default function Login() {
 
         <Button id="login-button" variant="contained" type="submit">Log In</Button>
       </form>
-    </Container>    
+    </FormContainer>    
   )
 }
