@@ -5,7 +5,6 @@ import Toolbar from '@mui/material/Toolbar'
 import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
 import Menu from '@mui/material/Menu'
-import Container from '@mui/material/Container'
 import Avatar from '@mui/material/Avatar'
 import Button from '@mui/material/Button'
 import Tooltip from '@mui/material/Tooltip'
@@ -145,7 +144,8 @@ export default function NavBar() {
             <Typography textAlign="center">Log Out</Typography>
           </MenuItem>
         </Menu>
-      </Box>)
+      </Box>
+    )
   }
 
   function getLoginLink() {
@@ -160,55 +160,44 @@ export default function NavBar() {
 
   return (
     <AppBar position="static">
-      <Container maxWidth="xl">
-        <Toolbar style={{ height: 0 }} variant="dense" disableGutters>
-          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'none' } }}>
-            <IconButton
-              size="large"
-              aria-label="account of current user"
-              aria-controls="menu-appbar"
-              aria-haspopup="true"
-              onClick={handleOpenNavMenu}
-              color="inherit"
-            >
-            </IconButton>
-            <Menu
-              id="menu-appbar"
-              anchorEl={anchorElNav}
-              anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'left',
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'left',
-              }}
-              open={Boolean(anchorElNav)}
-              onClose={handleCloseNavMenu}
-              sx={{
-                display: { xs: 'block', md: 'none' },
-              }}
-            >
-              {pages.map((page) => (
-                <MenuItem key={page.label} onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">{page.label}</Typography>
-                </MenuItem>
-              ))}
-            </Menu>
-          </Box>
-          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+      <Toolbar style={{ height: 0, paddingRight: 5 }} variant="dense" disableGutters>
+        <Box>
+          <Menu
+            id="menu-appbar"
+            anchorEl={anchorElNav}
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'left',
+            }}
+            keepMounted
+            transformOrigin={{
+              vertical: 'top',
+              horizontal: 'left',
+            }}
+            open={Boolean(anchorElNav)}
+            onClose={handleCloseNavMenu}
+            sx={{
+              display: { xs: 'block', md: 'none' },
+            }}
+          >
             {pages.map((page) => (
-              <Link className={`navbar-${page.label.replaceAll(' ', '').toLowerCase()}`} key={page.label} to={page.route}>
-                <Button sx={{ my: 2, color: 'white', display: 'block' }}>
-                  {page.label}
-                </Button>
-              </Link>
+              <MenuItem key={page.label} onClick={handleCloseNavMenu}>
+                <Typography textAlign="center">{page.label}</Typography>
+              </MenuItem>
             ))}
-          </Box>
-          {getUsername() ? getUserMenu() : getLoginLink()}
-        </Toolbar>
-      </Container>
+          </Menu>
+        </Box>
+        <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'flex' } }}>
+          {pages.map((page) => (
+            <Link className={`navbar-${page.label.replaceAll(' ', '').toLowerCase()}`} key={page.label} to={page.route}>
+              <Button sx={{ my: 2, color: 'white', display: 'block' }}>
+                {page.label}
+              </Button>
+            </Link>
+          ))}
+        </Box>
+        {getUsername() ? getUserMenu() : getLoginLink()}
+      </Toolbar>
     </AppBar>
   )
 }
